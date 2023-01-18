@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js" integrity="sha512-9uCjPZs30uENi8K34nm/jrFW9aw7Euk3SCdJYugmjNEgJQuzBhE0WDO9xVxbNdWQC5lWG4M/nFxOTkgTqEKdlA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.css" integrity="sha512-MCgTNsKwC2c/PSk77N5kuTXtsyD8tkpYMh7GnFfzTpOeNAKxuri9YuYswSiAkwPC3fBpIIMs9udL/hJIIapVHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style type="text/css">
+        body {
+          background-color: #DADADA;
+        }
+        body > .grid {
+          height: 100%;
+        }
+        .image {
+          margin-top: -100px;
+        }
+        .column {
+          max-width: 450px;
+        }
+      </style>
+</head>
+<body>
+    <div class="ui middle aligned center aligned grid">
+        <div class="column">
+          <h2 class="ui teal image header">
+            <img src="heartbeat.png" class="image">
+            <div class="content">
+              Sign Up
+            </div>
+          </h2>
+          <form class="ui large form" action="/createUser" method="post">
+            <div class="ui stacked segment">
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="user icon"></i>
+                  <input type="text" name="email" placeholder="Email" id="email" required>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="lock icon"></i>
+                  <input type="password" name="password" placeholder="Password" id="password" required>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="baby icon"></i>
+                  <input type="number" name="age" placeholder="Age" id="age" required>
+                </div>
+              </div>
+              <input class="ui fluid large teal submit button" type="submit" value="Sign Up">
+            </div>
+            
+            
+      
+          </form>
+      
+          <div class="ui message">
+            Existing User? <a href="/">Login here</a>
+          </div>
+        </div>
+      </div>
+</body>
