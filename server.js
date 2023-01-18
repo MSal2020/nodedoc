@@ -118,4 +118,7 @@ app.get('/home', function(request, response) {
 });
 
 
-app.listen(80)  
+// use port 3000 unless there exists a preconfigured port
+var port = process.env.PORT || 3000;
+
+app.listen(port);
