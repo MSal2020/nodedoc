@@ -19,10 +19,7 @@
       margin-bottom: 15px;
     }
 
-    table {
-      width: 100%;
-      table-layout: fixed;
-    }
+  
 
     .tbl-header {
       background-color: rgba(255, 255, 255, 0.3);
@@ -185,7 +182,7 @@ input {
         </p>
 
         <h4>Heart Rate Variability (miliseconds)</h4>
-        Heart rate variability is literally the variance in time between the beats of your hear       
+        Heart rate variability is literally the variance in time between the beats of your heart rate        
         <p style="text-align:left; margin-top: 30px;">
           Heart Rate Variability Max:
           <span style="float:right;">
@@ -210,13 +207,13 @@ input {
         <p style="text-align:left; margin-top: 30px;">
           Respiratory Rate Max:
           <span style="float:right;">
-            <%= average.respiratoryRatemin %> BPM
+            <%= average.respiratoryRatemax %> BPM
           </span>
         </p>
         <p style="text-align:left;">
           Respiratory Rate Min:
           <span style="float:right;">
-            <%= average.respiratoryRateavg %> BPM
+            <%= average.respiratoryRatemin %> BPM
           </span>
         </p>
         <p style="text-align:left;">
@@ -242,7 +239,7 @@ input {
           </span>
         </p>
         <p style="text-align:left;">
-          Diastolic Min:
+          Diastolic Average:
           <span style="float:right;">
             <%= average.diastolicavg %> mmHg
           </span>
@@ -257,13 +254,13 @@ input {
           </span>
         </p>
         <p style="text-align:left;">
-          Diastolic Min:
+          Systolic Min:
           <span style="float:right;">
             <%= average.systolicmin %> mmHg
           </span>
         </p>
         <p style="text-align:left;">
-          Diastolic Average:
+          Systolic Average:
           <span style="float:right;">
             <%= average.systolicavg %> mmHg
           </span>
@@ -310,7 +307,7 @@ input {
 
   <h1 style="margin-top: 100px;">All data readings</h1>
   <div class="tbl-header">
-    <table cellpadding="0" cellspacing="0" border="0">
+    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; table-layout: fixed;">
       <thead>
         <tr>
           <th>Reading No.</th>
@@ -326,7 +323,7 @@ input {
     </table>
   </div>
   <div class="tbl-content">
-    <table cellpadding="0" cellspacing="0" border="0">
+    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; table-layout: fixed;">
       <tbody>
         <% 
         var number=0 
