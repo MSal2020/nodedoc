@@ -107,7 +107,7 @@ app.post('/auth', function(request, response) {
 				{
 					request.session.loggedin = true;
 					request.session.email = resultArray[1];
-					request.session.id = resultArray[0];
+					request.session.deviceID = resultArray[0];
 					request.session.age = resultArray[3]
 					response.redirect('/userdashboard');
 				}
@@ -222,12 +222,20 @@ app.get('/home', function(request, response) {
 app.get('/userdashboard', function (request, response) 
 {
     response.render("afterLogin.ejs")
+    if (request.session.loggedin) {
+		console.log(request.session)
+	}
+    else{
+        response.send('please login to view dashboard')
+        response.end()
+    }
 
 })
 
 //After selecting date
 app.post('/userdashboard', function (req, response) 
 {
+    var id = req.session.deviceID;
     var date = (req.body).date
     if (!date)
     {
@@ -246,7 +254,6 @@ app.post('/userdashboard', function (req, response)
         var Request = require('tedious').Request;
         var TYPES = require('tedious').TYPES;
 
-        var id = req.session.id;
      
         var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN '" + startDate + "'AND'" + endDate + "' AND deviceId='"+id+"' ORDER BY enqueuedTime; ", function (err) {
             if (err) {
@@ -318,8 +325,8 @@ app.post('/userdashboard', function (req, response)
             {
                 
                 row = result[index]
-                var date = row[2]
-                var readings = JSON.parse(row[7])
+                var date = row[1]
+                var readings = JSON.parse(row[2])
                 var heartrate = readings.HeartRate
                 var heartratevariability = readings.HeartRateVariability
                 var respiratoryRate = readings.RespiratoryRate
@@ -410,4 +417,4 @@ app.post('/userdashboard', function (req, response)
 
 })
 var port = process.env.PORT || 3000;
-app.listen(port) 
+app.listen(port)  
