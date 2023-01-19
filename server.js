@@ -255,12 +255,16 @@ app.post('/userdashboard', function (req, response)
         var TYPES = require('tedious').TYPES;
 
      
-        var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN '" + startDate + "'AND'" + endDate + "' AND deviceId='"+id+"' ORDER BY enqueuedTime; ", function (err) {
+        var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN @startDate AND @endDate AND deviceId = @id ORDER BY enqueuedTime;", function (err) 
+        {
             if (err) {
                 console.log(err);
-                
             }
         });
+    
+        request.addParameter('startDate', TYPES.VarChar, startDate);
+        request.addParameter('endDate', TYPES.VarChar, endDate);
+        request.addParameter('id', TYPES.VarChar, id);
         var result = [];
         var row = []
         var columnnumber = 1
@@ -273,7 +277,7 @@ app.post('/userdashboard', function (req, response)
                     console.log('NULL');
                 } else {
 
-                    if (columnnumber == 12) {
+                    if (columnnumber == 3) {
                         row.push(column.value);
                         result.push(row)
                         row = []
