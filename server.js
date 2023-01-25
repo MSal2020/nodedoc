@@ -444,7 +444,7 @@ app.get('/userdashboard', function (req, response)
     
             var id = req.session.deviceID;
     
-            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE userdeviceid != 'mp0kaf9n04k'", function (err) 
+            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role == 'user'", function (err) 
             {
                 if (err) {
                     console.log(err);
