@@ -139,9 +139,46 @@ input {
     display: inline-block !important;
     visibility: visible !important;
   }
+  .topnav {
+            overflow: hidden;
+            background-color: #00b5ad;
+        }
+
+        .topnav a {
+            float: right;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
   </style>
 </head>
+ <div class="topnav">
+        <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
+ "></span>
 
+        <a href="/logout" id="">Logout</a>
+        <a href="">Profile</a>
+        <a href=""> ChatBot </a>
+        <a href="/userdashboard"> Home </a>
+    </div>
 <body style="text-align: center; height: 2200px;">
 
  <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">Data Dashboard</h1> </div>
