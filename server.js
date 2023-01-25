@@ -276,6 +276,7 @@ app.post('/auth', function(request, response) {
                                     request.session.deviceID = resultArray[0];
                                     request.session.age = resultArray[3];
                                     request.session.firstName = resultArray[5];
+				    request.session.role = resultArray[6];
                                     response.redirect('/userdashboard');
                                 }
                                 else{
@@ -364,7 +365,7 @@ app.post('/createUser', function(request, response){
                                         var connection2 = new Connection(config);
                                         connection2.on('connect', function (err) 
                                         {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
-                                            var sql2 = 'INSERT INTO dbo.users (userdeviceid, firstName, email, password, age, tfaSeed) VALUES (@userdeviceidparam, @firstNameparam, @emailparam,@passwordparam,@ageparam,@tfaparam);';
+                                            var sql2 = 'INSERT INTO dbo.users (userdeviceid, firstName, email, password, age, tfaSeed, role) VALUES (@userdeviceidparam, @firstNameparam, @emailparam,@passwordparam,@ageparam,@tfaparam, @roleparam);';
                                             var dbrequest2 = new Request (sql2, function (err,rowCount){
                                                 if (err) {console.log(err);} 
                                             });
@@ -374,7 +375,8 @@ app.post('/createUser', function(request, response){
                                             dbrequest2.addParameter('passwordparam', TYPES.VarChar, hashedPassword);
                                             dbrequest2.addParameter('ageparam', TYPES.Int, age);
                                             dbrequest2.addParameter('tfaparam', TYPES.VarChar, tfaSeed)
-        
+                                            dbrequest2.addParameter('roleparam', TYPES.VarChar, "user")
+
                                             dbrequest2.on("requestCompleted", function (rowCount, more) {
                                                 connection2.close();
                                                 var ua = parser(request.headers['user-agent']);
@@ -384,6 +386,8 @@ app.post('/createUser', function(request, response){
                                                 request.session.firstName = firstName;
                                                 request.session.email = email;
                                                 request.session.age = age
+						request.session.firstName = "user";
+
                                                 response.redirect('/userdashboard');	
                                                 response.end();
                                             });
@@ -417,209 +421,674 @@ app.post('/createUser', function(request, response){
 })
 
 
-//Straight after logging in, ask user to select date
-app.get('/userdashboard', function (request, response) 
+app.get('/logout', function (req, response) 
 {
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
-    if (!request.session.loggedin) {
-		response.send('please login to view dashboard')
-        response.end()
-	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
-        response.send('fingerprint change detected')
-        response.end()
-    }
-    else{
-        response.render("afterLogin.ejs")
-    }
+    //logout
+    response.redirect("/")
 })
-//After selecting date
-app.post('/userdashboard', function (req, response) 
+
+//Straight after logging in, ask user to select date
+app.get('/userdashboard', function (req, response) 
 {
-    var id = req.session.deviceID;
-    var date = (req.body).date
-    if (!date)
+
+	//if doctor acc show doctor home page
+    if (req.session.role == 'doctor' && req.session.loggedin)
     {
-        response.render("afterLogin.ejs")
-    }
-    var date1 = req.body
-
-    var startDate = date + "T00:00:00.0000000"
-    var endDate = date + "T23:59:59.9999999"
-
-    var connection = new Connection(config);
-    connection.on('connect', function (err) 
-    {
-        // If no error, then good to proceed.  
-
-        var Request = require('tedious').Request;
-        var TYPES = require('tedious').TYPES;
-
-     
-        var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN @startDate AND @endDate AND deviceId = @id ORDER BY enqueuedTime;", function (err)
+        var connection = new Connection(config);
+        connection.on('connect', function (err) 
         {
-            if (err) {
-                console.log(err);
-            }
-        });
-        request.addParameter('startDate', TYPES.VarChar, startDate);
-        request.addParameter('endDate', TYPES.VarChar, endDate);
-        request.addParameter('id', TYPES.VarChar, id);
-        var result = [];
-        var row = []
-        var columnnumber = 1
-
-
-        request.on('row', function (columns) 
-        {
-            columns.forEach(function (column) {
-                if (column.value === null) {
-                    console.log('NULL');
-                } else {
-
-                    if (columnnumber == 3) {
-                        row.push(column.value);
-                        result.push(row)
-                        row = []
-                        columnnumber = 0
-
-                    }
-                    else {
-                        row.push(column.value);
-                    }
-                    columnnumber++
-
+            // If no error, then good to proceed.  
+    
+            var Request = require('tedious').Request;
+            var TYPES = require('tedious').TYPES;
+    
+            var id = req.session.deviceID;
+    
+            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE userdeviceid != 'mp0kaf9n04k'", function (err) 
+            {
+                if (err) {
+                    console.log(err);
                 }
             });
+        
 
+            var result = [];
+            var row = []
+            var columnnumber = 1
+    
+            request.on('row', function (columns) 
+            {
+                columns.forEach(function (column) {
+    
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+    
+                        if (columnnumber == 2) {
+                            row.push(column.value);
+                            result.push(row)
+                            row = []
+                            columnnumber = 0
+    
+                        }
+                        else {
+                            row.push(column.value);
+                        }
+                        columnnumber++
+    
+                    }
+                });
+    
+            });
+            
+    
+            
+            request.on("requestCompleted", function (rowCount, more) 
+            {
+                var userdetails = []
+                for (let index = 0; index < result.length; index++)
+                {
+                    let row = result[index];
+                    userdetails.push({email: row[0], deviceid: row[1]})
+                    
+                }
+                    response.render("doctorPage.ejs", {userdetails: userdetails})
+                        
+                
+                connection.close();
+            });
+         
+            connection.execSql(request);
+    
         });
-        
+    
+        connection.connect();
+    }
+    else if(req.session.loggedin)
+    {
+        response.render("afterLogin.ejs")
 
-        
-        request.on("requestCompleted", function (rowCount, more) 
+    }
+    else
+    {
+        response.redirect("/")
+    }
+
+
+})
+
+//After selecting date (only for user acc)
+app.post('/userdashboard', function (req, response) 
+{
+    if(req.session.loggedin)
+    {
+
+    
+    
+        var date = (req.body).date
+        if (!date)
         {
-            if (result.length <= 0)
-            {
-
-                response.render("afterLogin.ejs")
-            }           
-            
-            var data = []
-            var heartratetotal = 0 
-            var heartratevariabilitytotal = 0 
-            var respiratoryRatetotal = 0 
-            var diastolictotal = 0 
-            var systolictotal = 0 
-            var temperaturetotal = 0 
+            response.render("afterLogin.ejs")
+        }
+        var date1 = req.body
     
-            var heartratemax = 0 
-            var heartratevariabilitymax = 0 
-            var respiratoryRatemax = 0 
-            var diastolicmax = 0 
-            var systolicmax = 0 
-            var temperaturemax = 0 
-            
-            var heartratemin = 1000 
-            var heartratevariabilitymin= 1000 
-            var respiratoryRatemin= 1000
-            var diastolicmin = 1000 
-            var systolicmin = 1000 
-            var temperaturemin = 1000 
-            for (let index = 0; index < result.length; index++) 
+        var startDate = date + "T00:00:00.0000000"
+        var endDate = date + "T23:59:59.9999999"
+    
+        var connection = new Connection(config);
+        connection.on('connect', function (err) 
+        {
+            // If no error, then good to proceed.  
+    
+            var Request = require('tedious').Request;
+            var TYPES = require('tedious').TYPES;
+    
+            var id = req.session.deviceID;
+    
+            var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN @startDate AND @endDate AND deviceId = @id ORDER BY enqueuedTime;", function (err) 
             {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        
+            request.addParameter('startDate', TYPES.VarChar, startDate);
+            request.addParameter('endDate', TYPES.VarChar, endDate);
+            request.addParameter('id', TYPES.VarChar, id);
+            var result = [];
+            var row = []
+            var columnnumber = 1
+    
+            request.on('row', function (columns) 
+            {
+                columns.forEach(function (column) {
+    
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+    
+                        if (columnnumber == 3) {
+                            row.push(column.value);
+                            result.push(row)
+                            row = []
+                            columnnumber = 0
+    
+                        }
+                        else {
+                            row.push(column.value);
+                        }
+                        columnnumber++
+    
+                    }
+                });
+    
+            });
+            
+    
+            
+            request.on("requestCompleted", function (rowCount, more) 
+            {
+                if (result.length <= 0)
+                {
+                    response.render("afterLogin.ejs")
+                }           
+                else
+                {
+                    var data = []
+                    var heartratetotal = 0 
+                    var heartratevariabilitytotal = 0 
+                    var respiratoryRatetotal = 0 
+                    var diastolictotal = 0 
+                    var systolictotal = 0 
+                    var temperaturetotal = 0 
+            
+                    var heartratemax = 0 
+                    var heartratevariabilitymax = 0 
+                    var respiratoryRatemax = 0 
+                    var diastolicmax = 0 
+                    var systolicmax = 0 
+                    var temperaturemax = 0 
+                    
+                    var heartratemin = 1000 
+                    var heartratevariabilitymin= 1000 
+                    var respiratoryRatemin= 1000
+                    var diastolicmin = 1000 
+                    var systolicmin = 1000 
+                    var temperaturemin = 1000 
+                    for (let index = 0; index < result.length; index++) 
+                    {
+                        
+                        row = result[index]
+                        
+                        var date = row[1]
+                        var readings = JSON.parse(row[2])
+                        var heartrate = readings.HeartRate
+                        var heartratevariability = readings.HeartRateVariability
+                        var respiratoryRate = readings.RespiratoryRate
+                        var diastolic = (readings.BloodPressure).Diastolic
+                        var systolic = (readings.BloodPressure).Systolic
+                        var temperature = (5/9) * (readings.BodyTemperature - 32)
+                        var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
+                        data.push(reading)
+        
+                        if (heartrate > heartratemax)
+                        {
+                            heartratemax = heartrate
+                        }
+                        else if (heartrate < heartratemin)
+                        {
+                            heartratemin = heartrate
+                        }
+                        if (heartratevariability > heartratevariabilitymax)
+                        {
+                            heartratevariabilitymax = heartratevariability
+                        }
+                        else if (heartratevariability < heartratevariabilitymin)
+                        {
+                            heartratevariabilitymin = heartratevariability
+                        }
+                        if (respiratoryRate > respiratoryRatemax)
+                        {
+                            respiratoryRatemax = respiratoryRate
+                        }
+                        else if (respiratoryRate < respiratoryRatemin)
+                        {
+                            respiratoryRatemin = respiratoryRate
+                        }
+                        if (diastolic > diastolicmax)
+                        {
+                            diastolicmax = diastolic
+                        }
+                        else if (diastolic < diastolicmin)
+                        {
+                            diastolicmin = diastolic
+                        }
+                        if (systolic > systolicmax)
+                        {
+                            systolicmax = systolic
+                        }
+                        else if (systolic < systolicmin)
+                        {
+                            systolicmin = systolic
+                        }
+                        if (temperature > temperaturemax)
+                        {
+                            temperaturemax = temperature
+                        }
+                        else if (temperature < temperaturemin)
+                        {
+                            temperaturemin = temperature
+                        }
+                        
+                        heartratetotal += heartrate
+                        heartratevariabilitytotal += heartratevariability
+                        respiratoryRatetotal += respiratoryRate
+                        diastolictotal += diastolic
+                        systolictotal += systolic
+                        temperaturetotal += temperature 
+        
+                    }
+                    heartrateavg = heartratetotal / result.length
+                    heartratevariabilityavg = heartratevariabilitytotal / result.length
+                    respiratoryRateavg = respiratoryRatetotal / result.length
+                    diastolicavg = diastolictotal / result.length
+                    systolicavg = systolictotal / result.length
+                    temperatureavg = temperaturetotal / result.length
+        
+        
+                    averages = [{ heartratemin: heartratemin, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
+        
+                    response.render("billboard.ejs", { data: data, averages: averages, date1: date1 })
+                }
                 
-                row = result[index]
-                var date = row[1]
-                var readings = JSON.parse(row[2])
-                var heartrate = readings.HeartRate
-                var heartratevariability = readings.HeartRateVariability
-                var respiratoryRate = readings.RespiratoryRate
-                var diastolic = (readings.BloodPressure).Diastolic
-                var systolic = (readings.BloodPressure).Systolic
-                var temperature = (5/9) * (readings.BodyTemperature - 32)
-                var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
-                data.push(reading)
-
-                if (heartrate > heartratemax)
-                {
-                    heartratemax = heartrate
-                }
-                else if (heartrate < heartratemin)
-                {
-                    heartratemin = heartrate
-                }
-                if (heartratevariability > heartratevariabilitymax)
-                {
-                    heartratevariabilitymax = heartratevariability
-                }
-                else if (heartratevariability < heartratevariabilitymin)
-                {
-                    heartratevariabilitymin = heartratevariability
-                }
-                if (respiratoryRate > respiratoryRatemax)
-                {
-                    respiratoryRatemax = respiratoryRate
-                }
-                else if (respiratoryRate < respiratoryRatemin)
-                {
-                    respiratoryRatemin = respiratoryRate
-                }
-                if (diastolic > diastolicmax)
-                {
-                    diastolicmax = diastolic
-                }
-                else if (diastolic < diastolicmin)
-                {
-                    diastolicmin = diastolic
-                }
-                if (systolic > systolicmax)
-                {
-                    systolicmax = systolic
-                }
-                else if (systolic < systolicmin)
-                {
-                    systolicmin = systolic
-                }
-                if (temperature > temperaturemax)
-                {
-                    temperaturemax = temperature
-                }
-                else if (temperature < temperaturemin)
-                {
-                    temperaturemin = temperature
-                }
-                
-                heartratetotal += heartrate
-                heartratevariabilitytotal += heartratevariability
-                respiratoryRatetotal += respiratoryRate
-                diastolictotal += diastolic
-                systolictotal += systolic
-                temperaturetotal += temperature 
-
-            }
-            heartrateavg = heartratetotal / result.length
-            heartratevariabilityavg = heartratevariabilitytotal / result.length
-            respiratoryRateavg = respiratoryRatetotal / result.length
-            diastolicavg = diastolictotal / result.length
-            systolicavg = systolictotal / result.length
-            temperatureavg = temperaturetotal / result.length
-
-
-            averages = [{ heartratemin: heartratemin, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
-
-            response.render("billboard.ejs", { data: data, averages: averages, date1: date1 })
-
-            connection.close();
+    
+                connection.close();
+            });
+         
+            connection.execSql(request);
+    
         });
-     
-        connection.execSql(request);
-
-    });
-
-    connection.connect();
     
+        connection.connect();
+        
+    }
+    else
+    {
+        response.redirect("/")
+    }
+	
+   
 
+})
+
+app.get('/usersdashboard', function (req, response) 
+{
+    if (req.session.role == 'doctor' && req.session.loggedin)
+    {
+        response.redirect("/userdashboard")
+    }
+    else
+    {
+        response.redirect("/")
+    }
+
+})
+app.get('/doctorUserDetails', function (req, response) 
+{
+    if (req.session.role == 'doctor' && req.session.loggedin)
+    {
+        response.redirect("/userdashboard")
+    }
+    else
+    {
+        response.redirect("/")
+    }
+})
+
+
+//user dashboard in doctors page
+app.post('/usersdashboard', function (req, response) 
+{
+    if (req.session.role == 'doctor' && req.session.loggedin)
+    {
+
+    
+		//regen sid
+        var date = (req.body).date
+        var id = (req.body).deviceid;
+        var firstname = (req.body).firstname;
+
+        if (!date)
+        {
+            response.end()
+        }
+        var date1 = {date: date}
+        var userdetails = {deviceid: id, firstname: firstname}
+
+        var startDate = date + "T00:00:00.0000000"
+        var endDate = date + "T23:59:59.9999999"
+    
+        var connection = new Connection(config);
+        connection.on('connect', function (err) 
+        {
+            // If no error, then good to proceed.  
+    
+            var Request = require('tedious').Request;
+            var TYPES = require('tedious').TYPES;
+    
+    
+            var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN @startDate AND @endDate AND deviceId = @id ORDER BY enqueuedTime;", function (err) 
+            {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        
+            request.addParameter('startDate', TYPES.VarChar, startDate);
+            request.addParameter('endDate', TYPES.VarChar, endDate);
+            request.addParameter('id', TYPES.VarChar, id);
+            var result = [];
+            var row = []
+            var columnnumber = 1
+    
+            request.on('row', function (columns) 
+            {
+                columns.forEach(function (column) {
+    
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+    
+                        if (columnnumber == 3) {
+                            row.push(column.value);
+                            result.push(row)
+                            row = []
+                            columnnumber = 0
+    
+                        }
+                        else {
+                            row.push(column.value);
+                        }
+                        columnnumber++
+    
+                    }
+                });
+    
+            });
+            
+    
+            
+            request.on("requestCompleted", function (rowCount, more) 
+            {
+                if (result.length <= 0)
+                {
+                    response.send("Please enter correct date")
+                }         
+                else
+                {
+                
+                var data = []
+                var heartratetotal = 0 
+                var heartratevariabilitytotal = 0 
+                var respiratoryRatetotal = 0 
+                var diastolictotal = 0 
+                var systolictotal = 0 
+                var temperaturetotal = 0 
+        
+                var heartratemax = 0 
+                var heartratevariabilitymax = 0 
+                var respiratoryRatemax = 0 
+                var diastolicmax = 0 
+                var systolicmax = 0 
+                var temperaturemax = 0 
+                
+                var heartratemin = 1000 
+                var heartratevariabilitymin= 1000 
+                var respiratoryRatemin= 1000
+                var diastolicmin = 1000 
+                var systolicmin = 1000 
+                var temperaturemin = 1000 
+                for (let index = 0; index < result.length; index++) 
+                {
+                    
+                    row = result[index]
+                    
+                    var date = row[1]
+                    var readings = JSON.parse(row[2])
+                    var heartrate = readings.HeartRate
+                    var heartratevariability = readings.HeartRateVariability
+                    var respiratoryRate = readings.RespiratoryRate
+                    var diastolic = (readings.BloodPressure).Diastolic
+                    var systolic = (readings.BloodPressure).Systolic
+                    var temperature = (5/9) * (readings.BodyTemperature - 32)
+                    var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
+                    data.push(reading)
+    
+                    if (heartrate > heartratemax)
+                    {
+                        heartratemax = heartrate
+                    }
+                    else if (heartrate < heartratemin)
+                    {
+                        heartratemin = heartrate
+                    }
+                    if (heartratevariability > heartratevariabilitymax)
+                    {
+                        heartratevariabilitymax = heartratevariability
+                    }
+                    else if (heartratevariability < heartratevariabilitymin)
+                    {
+                        heartratevariabilitymin = heartratevariability
+                    }
+                    if (respiratoryRate > respiratoryRatemax)
+                    {
+                        respiratoryRatemax = respiratoryRate
+                    }
+                    else if (respiratoryRate < respiratoryRatemin)
+                    {
+                        respiratoryRatemin = respiratoryRate
+                    }
+                    if (diastolic > diastolicmax)
+                    {
+                        diastolicmax = diastolic
+                    }
+                    else if (diastolic < diastolicmin)
+                    {
+                        diastolicmin = diastolic
+                    }
+                    if (systolic > systolicmax)
+                    {
+                        systolicmax = systolic
+                    }
+                    else if (systolic < systolicmin)
+                    {
+                        systolicmin = systolic
+                    }
+                    if (temperature > temperaturemax)
+                    {
+                        temperaturemax = temperature
+                    }
+                    else if (temperature < temperaturemin)
+                    {
+                        temperaturemin = temperature
+                    }
+                    
+                    heartratetotal += heartrate
+                    heartratevariabilitytotal += heartratevariability
+                    respiratoryRatetotal += respiratoryRate
+                    diastolictotal += diastolic
+                    systolictotal += systolic
+                    temperaturetotal += temperature 
+    
+                }
+                heartrateavg = heartratetotal / result.length
+                heartratevariabilityavg = heartratevariabilitytotal / result.length
+                respiratoryRateavg = respiratoryRatetotal / result.length
+                diastolicavg = diastolictotal / result.length
+                systolicavg = systolictotal / result.length
+                temperatureavg = temperaturetotal / result.length
+    
+    
+                averages = [{ heartratemin: heartratemin, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
+    
+                response.render("doctorUserDashboard.ejs", { data: data, averages: averages, date1: date1, userdetails: userdetails})
+                }
+    
+                connection.close();
+            });
+         
+            connection.execSql(request);
+    
+        });
+    
+        connection.connect();
+        
+    }
+    else
+    {
+        response.redirect("/")
+    }	
+   
+
+})
+app.post('/doctorUserDetails', function (req, response) 
+{
+    if (req.session.role == 'doctor' && req.session.loggedin)
+    {
+        var email = (req.body).email
+        var deviceid = (req.body).deviceid
+
+        var connection = new Connection(config);
+            connection.on('connect', function (err) 
+            {
+                // If no error, then good to proceed.  
+        
+                var Request = require('tedious').Request;
+                var TYPES = require('tedious').TYPES;
+        
+        
+                var request = new Request("SELECT * FROM [dbo].[users] WHERE email = @email", function (err) 
+                {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+    
+                request.addParameter('email', TYPES.VarChar, email);
+
+                var request2 = new Request("SELECT (SELECT TOP (1) enqueuedTime FROM [dbo].[t1] WHERE deviceId = @deviceid1 ORDER BY enqueuedTime) AS earliest, (SELECT TOP (1) enqueuedTime FROM [dbo].[t1] WHERE deviceId =  @deviceid ORDER BY enqueuedTime DESC) AS latest", function (err) 
+                {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+    
+                request2.addParameter('deviceid', TYPES.VarChar, deviceid);
+                request2.addParameter('deviceid1', TYPES.VarChar, deviceid);
+
+                var result = [];
+                var row = []
+                var columnnumber = 1
+        
+                request.on('row', function (columns) 
+                {
+                    columns.forEach(function (column) {
+        
+                        if (column.value === null) {
+                            console.log('NULL');
+                        } else {
+        
+                            if (columnnumber == 6) {
+                                row.push(column.value);
+                                result.push(row)
+                                row = []
+                                columnnumber = 0
+        
+                            }
+                            else {
+                                row.push(column.value);
+                            }
+                            columnnumber++
+        
+                        }
+                    });
+        
+                });
+                var dates = []
+                var date = []
+        
+                var columnnumber2 = 1
+                request2.on('row', function (columns) 
+                {
+                    columns.forEach(function (column) {
+        
+                        if (column.value === null) {
+                            console.log('NULL');
+                        } else {
+                            if (columnnumber2 == 2)
+                            {
+                                date.push(column.value)
+                                dates.push({start: date[0], end: date[1]})
+
+                            }      
+                            else
+                            {
+                                date.push(column.value)
+                                columnnumber2++
+                            }                     
+                            
+        
+                        }
+                    });
+        
+                });
+                
+        
+                
+                request2.on("requestCompleted", function (rowCount, more) 
+                {
+                    
+
+                    response.render("doctorUserDetails.ejs", {userdetails: userdetails, dates: dates})
+                            
+                    
+                    connection.close();
+                });
+                
+        
+                var userdetails = []
+
+                request.on("requestCompleted", function (rowCount, more) 
+                {
+                    for (let index = 0; index < result.length; index++)
+                    {
+                        let row = result[index];
+
+                        userdetails.push({firstname: row[5], deviceid: row[0], age: row[3], email: row[1]})
+                        
+                    }
+                            
+                    connection.execSql(request2);
+                });
+
+
+
+             
+                connection.execSql(request);
+
+        
+            });
+        
+            connection.connect();
+    }
+    else
+    {
+        response.render('/')
+    }
+    
+    
+    
+    
 })
 var port = process.env.PORT || 3000;
 app.listen(port)  
