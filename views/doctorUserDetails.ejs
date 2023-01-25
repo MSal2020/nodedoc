@@ -1,0 +1,301 @@
+<title>Data Visualisation</title>
+
+<head>
+  <!-- loading billboard.js styles from the cdn -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
+
+  <!--Loading D3.js -->
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+
+  <!-- Loading billboard.js scripts from the cdn -->
+  <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
+  <style>
+    
+
+    table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .tbl-header {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .tbl-content {
+      height: 300px;
+      overflow-x: auto;
+      margin-top: 0px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    th {
+      padding: 20px 15px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 15px;
+      text-align: left;
+      vertical-align: middle;
+      font-weight: 300;
+      font-size: 12px;
+      color: #fff;
+      border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+    }
+
+    p 
+    {
+      margin-top: 10px;
+    }
+    h1 {
+      font-size: 30px;
+      color: #00b5ad;
+      text-align: center;
+      margin-bottom: 15px;
+      font-weight: 500;
+
+    }
+    h3
+    {
+      margin-top: 50px;
+    }
+    h4
+    {
+      margin-top: 25px;
+    }
+    /* demo styles */
+
+    @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+
+    body {
+      background-color: #DADADA;
+      font-family: Lato,system-ui,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";    
+    }
+
+    /* for custom scrollbar for webkit browser*/
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+    /* Removes the clear button from date inputs */
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+/* Removes the spin button */
+input[type="date"]::-webkit-inner-spin-button { 
+    display: none;
+}
+
+/* Always display the drop down caret */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: #2c3e50;
+}
+
+/* A few custom styles for date inputs */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 13px;
+    border:1px solid #ecf0f1;
+    border-radius: 15px;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+input[type="date"], focus {
+    color: #95a5a6;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+
+input {    
+    appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 13px;
+    border:1px solid #ecf0f1;
+    border-radius: 15px;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+  }
+
+  .dropdown {
+            display: inline-block;
+            position: relative;
+        }
+
+        button {
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #fff;
+
+        }
+
+        button:hover{
+            background-color: #ddd;
+        }
+
+        .dropdown-options {
+            display: none;
+            position: absolute;
+            overflow: auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        .dropdown:hover .dropdown-options {
+            display: block;
+        }
+
+        .dropdown-options a {
+            display: block;
+            color: #000000;
+            padding: 5px;
+            text-decoration: none;
+            padding: 20px 40px;
+        }
+
+        .dropdown-options a:hover {
+            color: #0a0a23;
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+        .topnav {
+            overflow: hidden;
+            background-color: #00b5ad;
+        }
+
+        .topnav a {
+            float: right;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+  </style>
+</head>
+<div class="topnav">
+    <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
+"></span>
+
+    <a href="/logout" id="">Logout</a>
+    <a href="">Profile</a>
+    <a href=""> Appointments</a>
+    <a href="/userdashboard"> Home </a>
+</div>
+<body style="text-align: center; height: 2200px;">
+
+ <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">User Details</h1> </div>
+ 
+ <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid ;height: 550px ">
+    <h2>User Details</h2>
+      
+
+    <div style="text-align: left; padding-top: 10px; width: 600px;">
+      <% userdetails.forEach(function(user){%>
+
+
+        <p style="text-align:left; margin-top: 30px;">
+          First Name:
+          <span style="float:right;">
+            <%= user.firstname %> 
+          </span>
+        </p>
+
+        <p style="text-align:left; margin-top: 30px;">
+            Device Id:
+            <span style="float:right;">
+              <%= user.deviceid %> 
+            </span>
+          </p>
+
+          <p style="text-align:left; margin-top: 30px;">
+            Age:
+            <span style="float:right;">
+              <%= user.age %> 
+            </span>
+          </p>
+
+          <p style="text-align:left; margin-top: 30px;">
+            Email:
+            <span style="float:right;">
+              <%= user.email %> 
+            </span>
+          </p>
+
+          <p style="text-align:left; margin-top: 30px;">
+            Data Date range:
+            <% dates.forEach(function(date){%>
+
+            <span style="float:right; margin-top: 20px;">
+              <%= date.start %>  
+              to 
+              <br>
+              <%= date.end %>
+            </span>
+            <% }); %>
+
+          </p>
+
+        <% }); %>
+
+        
+
+    </div>
+ </div>
+ <% userdetails.forEach(function(user){%>
+
+  <form action="/usersdashboard" style="padding: 50px;" method="post">
+    <label for="date">Select date to show data of user:</label>
+    <input type="date" id="date" name="date">
+    <input type="hidden" id="deviceid" name="deviceid" value=<%=user.deviceid %> >
+    <input type="hidden" id="deviceid" name="firstname" value=<%=user.firstname %> >
+    <input type="submit">
+  </form>
+
+  <% }); %>
+
+</body>
+</html>

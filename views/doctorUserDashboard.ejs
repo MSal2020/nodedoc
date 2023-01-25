@@ -1,0 +1,644 @@
+<title>Data Visualisation</title>
+
+<head>
+  <!-- loading billboard.js styles from the cdn -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
+
+  <!--Loading D3.js -->
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+
+  <!-- Loading billboard.js scripts from the cdn -->
+  <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
+  
+  <style>
+    
+    .tbl-header {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .tbl-content {
+      height: 300px;
+      overflow-x: auto;
+      margin-top: 0px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    th {
+      padding: 20px 15px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      color: rgb(0, 0, 0);
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 15px;
+      text-align: left;
+      vertical-align: middle;
+      font-weight: 300;
+      font-size: 12px;
+      color: rgb(0, 0, 0);
+      border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+    }
+
+    p 
+    {
+      margin-top: 10px;
+    }
+    h1 {
+      font-size: 30px;
+      color: #00b5ad;
+      text-align: center;
+      font-weight: 500;
+      margin-bottom: 15px;
+
+    }
+    h2 {
+      font-size: 30px;
+      color: #00b5ad;
+      text-align: center;
+      font-weight: 500;
+
+    }
+    h3
+    {
+      margin-top: 50px;
+      font-size: 30px;
+      color: #00b5ad;
+      text-align: center;
+      font-weight: 500;
+    }
+    h4
+    {
+      margin-top: 25px;
+      font-size: 30px;
+      color: #00b5ad;
+      text-align: center;
+      font-weight: 500;
+    }
+    /* demo styles */
+
+    @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+
+    body {
+      background-color: #DADADA;
+      font-family: Lato,system-ui,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";    
+    }
+
+    /* for custom scrollbar for webkit browser*/
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+    /* Removes the clear button from date inputs */
+input[type="date"]::-webkit-clear-button {
+    display: none;
+}
+
+/* Removes the spin button */
+input[type="date"]::-webkit-inner-spin-button { 
+    display: none;
+}
+
+/* Always display the drop down caret */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: #2c3e50;
+}
+
+/* A few custom styles for date inputs */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 13px;
+    border:1px solid #ecf0f1;
+    border-radius: 15px;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+}
+
+input[type="date"], focus {
+    color: #95a5a6;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+
+input {    
+    appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 13px;
+    border:1px solid #ecf0f1;
+    border-radius: 15px;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+  }
+
+  .dropdown {
+            display: inline-block;
+            position: relative;
+        }
+
+        button {
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #fff;
+
+        }
+
+        button:hover{
+            background-color: #ddd;
+        }
+
+        .dropdown-options {
+            display: none;
+            position: absolute;
+            overflow: auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.4);
+        }
+
+        .dropdown:hover .dropdown-options {
+            display: block;
+        }
+
+        .dropdown-options a {
+            display: block;
+            color: #000000;
+            padding: 5px;
+            text-decoration: none;
+            padding: 20px 40px;
+        }
+
+        .dropdown-options a:hover {
+            color: #0a0a23;
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+        .topnav {
+            overflow: hidden;
+            background-color: #00b5ad;
+        }
+
+        .topnav a {
+            float: right;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+  </style>
+</head>
+
+<body style="text-align: center; height: 2200px;">
+    <div class="topnav">
+        <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
+ "></span>
+
+        <a href="/logout" id="">Logout</a>
+        <a href="">Profile</a>
+        <a href=""> Appointments</a>
+        <a href="/userdashboard"> Home </a>
+    </div>
+  <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">Data Dashboard of User</h1> </div>
+  <h3><%=userdetails.firstname %></h3>
+
+
+    <form action="/usersdashboard" style="padding: 50px;" method="post">
+      <label for="date">Select date to show data of user:</label>
+      <input type="date" id="date" name="date">
+      <input type="hidden" id="deviceid" name="deviceid" value=<%=userdetails.deviceid %> >
+      <input type="hidden" id="deviceid" name="firstname" value=<%=userdetails.firstname %> >
+      <input type="submit">
+    </form>
+  
+  <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid">
+    <h2>Summary  </h2>
+
+       <h2><%= date1.date %> </h2>
+      
+
+    <div style="text-align: left; padding-top: 10px; width: 600px;">
+      <% averages.forEach(function(average){%>
+
+        <h3>Heart</h3>
+        <h4>Heart Rate (Beats per minute)</h4>
+        Heart rate is the number of times your heart beats per minute
+        <p style="text-align:left; margin-top: 30px;">
+          Heart Rate Max:
+          <span style="float:right;">
+            <%= average.heartratemax %> BPM
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Heart Rate Min:
+          <span style="float:right;">
+            <%= average.heartratemin %> BPM
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Heart Rate Average:
+          <span style="float:right;">
+            <%= average.heartrateavg %> BPM
+          </span>
+        </p>
+
+        <h4>Heart Rate Variability (miliseconds)</h4>
+        Heart rate variability is the difference in time between the beats of your heart, measured in milliseconds (ms).       
+        <p style="text-align:left; margin-top: 30px;">
+          Heart Rate Variability Max:
+          <span style="float:right;">
+            <%= average.heartratevariabilitymax %> ms
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Heart Rate Variability Min:
+          <span style="float:right;">
+            <%= average.heartratevariabilitymin %> ms
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Heart Rate Variability Average:
+          <span style="float:right;">
+            <%= average.heartratevariabilityavg %> ms
+          </span>
+        </p>
+
+        <h3>Respiratory Rate (Breaths Per Minute)</h3>
+        Respiratory rate is the number of breaths you take per minute
+        <p style="text-align:left; margin-top: 30px;">
+          Respiratory Rate Max:
+          <span style="float:right;">
+            <%= average.respiratoryRatemax %> BPM
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Respiratory Rate Min:
+          <span style="float:right;">
+            <%= average.respiratoryRatemin %> BPM
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Respiratory Rate Average:
+          <span style="float:right;">
+            <%= average.respiratoryRateavg %> BPM
+          </span>
+        </p>
+
+        <h3>Blood Pressure</h3>
+        <h4>Diastolic (millimeters of mercury)</h4>
+        The pressure in your arteries when your heart beats.
+        <p style="text-align:left; margin-top: 30px;">
+          Diastolic Max:
+          <span style="float:right;">
+            <%= average.diastolicmax %> mmHg
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Diastolic Min:
+          <span style="float:right;">
+            <%= average.diastolicmin %> mmHg
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Diastolic Average:
+          <span style="float:right;">
+            <%= average.diastolicavg %> mmHg
+          </span>
+        </p>
+
+        <h4>Systolic (millimeters of mercury)</h4>
+        The pressure in your arteries when your heart rests between beats.
+        <p style="text-align:left; margin-top: 30px;">
+          Systolic Max:
+          <span style="float:right;">
+            <%= average.systolicmax %> mmHg
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Systolic Min:
+          <span style="float:right;">
+            <%= average.systolicmin %> mmHg
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Systolic Average:
+          <span style="float:right;">
+            <%= average.systolicavg %> mmHg
+          </span>
+        </p>
+
+        <h3>Body Temperature</h3>
+        Your body temperature
+        <p style="text-align:left; margin-top: 30px;">
+          Temperature Max:
+          <span style="float:right;">
+            <%= average.temperaturemax %> °C
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Temperature Min:
+          <span style="float:right;">
+            <%= average.temperaturemin %> °C
+          </span>
+        </p>
+        <p style="text-align:left;">
+          Temperature Average:
+          <span style="float:right;">
+            <%= average.temperatureavg %> °C
+          </span>
+        </p>
+
+
+
+
+        <% }); %>
+    </div>
+
+  </div>
+
+  <div style="padding-top: 150px; padding-bottom: 40px;">
+    <h2>Graph</h2>
+  </div>
+  <h3>Heart</h3>
+  <div id="charting1" style="height: 450px; "></div>
+  <h3>Blood Pressure</h3>
+  <div id="charting2" style="height: 450px; "></div>
+  <h3>Temperature</h3>
+  <div id="charting3" style="height: 450px; "></div>
+
+
+  <h1 style="margin-top: 100px;">All data readings</h1>
+  <div class="tbl-header">
+    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; table-layout: fixed;">
+      <thead>
+        <tr>
+          <th>Reading No.</th>
+          <th>Heart rate (BPM)</th>
+          <th>Heart Rate Variability (ms)</th>
+          <th>Respiratory Rate (BPM)</th>
+          <th>Diastolic Blood Pressure (mmHg)</th>
+          <th>Systolic Blood Pressure (mmHg) </th>
+          <th>Body Temperature (°C)</th>
+
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <div class="tbl-content">
+    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; table-layout: fixed;">
+      <tbody>
+        <% 
+        var number=0 
+        var heartrate=["HeartRate"] 
+        var heartratevariability=["HeartRateVariability"] 
+        var respiratoryRate=["RespiratoryRate"] 
+        var diastolic=["Diastolic"] 
+        var systolic=["Systolic"] 
+        var temperature=["Temperature"] 
+        var numberOfReadings=data.length 
+        data.forEach(function(reading)
+        {
+          heartrate.push(reading.heartrate) 
+          heartratevariability.push(reading.heartratevariability)
+          respiratoryRate.push(reading.respiratoryRate) 
+          diastolic.push(reading.diastolic)
+          systolic.push(reading.systolic) 
+          temperature.push(reading.temperature) 
+          number++ 
+          
+          %>
+
+
+          <tr>
+            <td>
+              <%= number %>
+            </td>
+            <td>
+              <%= reading.heartrate %>
+            </td>
+            <td>
+              <%= reading.heartratevariability %>
+            </td>
+            <td>
+              <%= reading.respiratoryRate %>
+            </td>
+            <td>
+              <%= reading.diastolic %>
+            </td>
+            <td>
+              <%= reading.systolic %>
+            </td>
+            <td>
+              <%= reading.temperature %>
+            </td>
+
+          </tr>
+
+          <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <div id="heartratediv" data-heartrate=<%=heartrate %>></div>
+  <div id="heartratevariabilitydiv" data-heartratevariability=<%=heartratevariability %>></div>
+  <div id="respiratoryRatediv" data-respiratoryrate=<%=respiratoryRate %>></div>
+  <div id="diastolicdiv" data-diastolic=<%=diastolic %>></div>
+  <div id="systolicdiv" data-systolic=<%=systolic %>></div>
+  <div id="temperaturediv" data-temperature=<%=temperature %>></div>
+  <div id="numberofreadingsdiv" data-numberofreadings=<%=numberOfReadings %>></div>
+
+
+
+
+</body>
+
+
+<script>
+
+  var existCondition = setInterval(function () {
+
+    if (document.getElementById('temperaturediv') && document.getElementById('heartratediv') && document.getElementById('systolicdiv') && document.getElementById('diastolicdiv') && document.getElementById('systolicdiv') && document.getElementById('respiratoryRatediv') && document.getElementById('heartratevariabilitydiv')) {
+      console.log("Exists!");
+      clearInterval(existCondition);
+
+      var heartratedata = document.getElementById('heartratediv').dataset.heartrate
+      var heartratecolumn = heartratedata.split(',')
+
+      var heartratevariabilitydata = document.getElementById('heartratevariabilitydiv').dataset.heartratevariability
+      var heartratevariabilitycolumn = heartratevariabilitydata.split(',')
+
+      var respiratoryRatedata = document.getElementById('respiratoryRatediv').dataset.respiratoryrate
+      var respiratoryRatecolumn = respiratoryRatedata.split(',')
+
+      var diastolicdata = document.getElementById('diastolicdiv').dataset.diastolic
+      var diastoliccolumn = diastolicdata.split(',')
+
+      var systolicdata = document.getElementById('systolicdiv').dataset.systolic
+      var systoliccolumn = systolicdata.split(',')
+
+      var temperaturedata = document.getElementById('temperaturediv').dataset.temperature
+      var temperaturecolumn = temperaturedata.split(',')
+
+      var numberOfReadings = document.getElementById('numberofreadingsdiv').dataset.numberofreadings
+      var width = numberOfReadings * 5
+
+
+      bb.generate({
+        bindto: "#charting1",
+        data: {
+          columns: [
+            heartratecolumn,
+            heartratevariabilitycolumn,
+            respiratoryRatecolumn,
+
+          ],
+          types: {
+            HeartRate: "spline",
+            HeartRateVariability: "spline",
+            RespiratoryRate: "spline"
+          },
+          colors: {
+            HeartRate: "red",
+            BloodPressure: "blue",
+            RespiratoryRate: "green"
+
+          }
+        },
+        
+        axis:
+        {
+          y: {
+
+
+            tick: {
+              stepSize: 5
+            }
+          }
+        },
+          
+        size:
+        {
+          width: width
+        }
+    
+
+      });
+
+      bb.generate({
+        bindto: "#charting2",
+        data: {
+          columns: [
+            diastoliccolumn,
+            systoliccolumn,
+            ,
+
+          ],
+          types: {
+            Diastolic: "spline",
+            Systolic: "spline",
+          },
+          colors: {
+            Diastolic: "red",
+            Systolic: "blue",
+
+          }
+        },
+        axis:
+        {
+          y: {
+            min: 0,
+
+
+            tick: {
+              stepSize: 5
+            }
+          }
+        },
+        size:
+        {
+          width: width
+        }
+
+
+      });
+
+      bb.generate({
+        bindto: "#charting3",
+        data: {
+          columns: [
+            temperaturecolumn,
+
+          ],
+          types: {
+            Temperature: "area-spline",
+          },
+          colors: {
+            Temperature: "green",
+
+          }
+        },
+        axis:
+        {
+          y: {
+            min: 35,
+            max: 40,
+            tick: {
+              stepSize: 0.5
+            }
+          }
+        },
+        size:
+        {
+          width: width
+        }
+      });
+
+    }
+
+
+
+
+  }, 100);
+
+
+
+</script>
+
+</html>
