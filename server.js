@@ -444,7 +444,7 @@ app.get('/userdashboard', function (req, response)
     
             var id = req.session.deviceID;
     
-            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role == 'user'", function (err) 
+            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role = 'user'", function (err) 
             {
                 if (err) {
                     console.log(err);
@@ -522,9 +522,6 @@ app.post('/userdashboard', function (req, response)
 {
     if(req.session.loggedin)
     {
-
-    
-    
         var date = (req.body).date
         if (!date)
         {
