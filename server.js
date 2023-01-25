@@ -3,18 +3,16 @@ const express = require('express')
 const session = require('express-session');
 const app = express()
 const path = require('path')
-const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 var { randomBytes } = require('crypto');
-/*const connection = mysql.createConnection({ //TODO: env vars OR store credentials within Azure Key Vault
-    host: '20.198.203.106',
-    user: 'MPadmin1',
-    database: 'testdb',
-    password: '$$admin1',
-    ssl:{
-        ca: fs.readFileSync(__dirname + '/certificates/DigiCertGlobalRootCA.crt.pem')
-    }
-});*/
+const {verify} = require('hcaptcha');
+const cheerio = require("cheerio");
+const OTPAuth = require('otpauth')
+var QRCode = require('qrcode')
+var parser = require('ua-parser-js');
+var _ = require('lodash');
+
+
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
     server: 'mpserver2.database.windows.net', 
@@ -30,16 +28,27 @@ var config = {
         database: 'testdb' 
     }
 };
-//var connection = new Connection(config);
-const getDBConnection = async () => {
-    if(connection) return connection;
-       connection = new Connection(config);
-};
 
 
+//hcaptcha secret TODO: Azure Key Vault
+const hcaptchaSecret = '0x76433E082876747e710Af00aa1FB8a8685a81e4e';
 
 //NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
 const expiryMSec = 60 * 60 * 1000
+function iniSession(){
+    app.use(session({ //TODO: Azure Key Vault
+        secret: 'd20A(WUI#@DM^129uid^J',
+        name: 'id1',
+        resave: false,
+        saveUninitialized: false,
+        cookie: { //TODO: Implement https
+            //secure: true
+            httpOnly: true,
+            maxAge: expiryMSec,
+            sameSite: 'lax'
+        }
+    }));
+}
 app.use(session({ //TODO: Azure Key Vault
 	secret: 'd20A(WUI#@DM^129uid^J',
 	name: 'id1',
@@ -56,182 +65,375 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
 
+
+
+function totpSecretGenerate(){
+    var secretSeed = new OTPAuth.Secret({
+        size: 10
+    })
+    return secretSeed.base32
+}
+function totpURIGenerate(){
+    var secretSeed = totpSecretGenerate()
+    var totp = new OTPAuth.TOTP({
+        issuer: "TP Health Website",
+        label: "TP",
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: secretSeed
+    });
+    return [totp.toString(), secretSeed]
+}
+function totpSeedtoGenerateToken(arg1){
+    var totp = new OTPAuth.TOTP({
+        issuer: "TP Health Website",
+        label: "TP",
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: arg1
+    });
+    return totp.generate()
+}
+function totpURItoQRCode(){
+    var [totpURI, secretSeed] = totpURIGenerate()
+    return [QRCode.toString(totpURI,{type: 'svg'},  function (err, string) {
+        if (err) throw err
+        return(string)
+    }), secretSeed]
+}
+app.use(function (request,response,next){
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})
+app.post('/checkTOTP', function(request,response){
+    var secretSeed = request.body.seed
+    var totp = new OTPAuth.TOTP({
+        issuer: "TP Health Website",
+        label: "TP",
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: secretSeed
+    });
+    response.json({'bean': totp.generate()})
+})
+
+
+function regexTest(arg1, arg2){
+    var pattern = arg1
+    return pattern.test(arg2)
+}
+//redos-safe regex, checked by https://devina.io/redos-checker
+//also, password policy: at least 1 uppercase, 1 lowercase, 1 number and 1 symbol, between 8 to 50 chars
+const reEmail = /^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i;
+const reEmail2 = /^.{1,50}$/
+const rePassword = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$/
+const reCsrf = /^[a-z0-9+/=]{136,136}$/i
+const reCaptcha = /^[a-z0-9-_.]{1,5000}$/i
+const reTFAToken = /^[0-9]{6,6}$/i
+const reDeviceID = /^[0-9a-z]{11,11}$/i
+const reFirstName = /^[a-z]{1,100}$/i
+const reAge = /^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$/i
+const reTFASeed = /^[A-Z0-9]{16,16}$/
+
+
+
 app.get('/', function (request, response) {
-	response.sendFile(path.join(__dirname + '/welcome.html'));
-	response.cookie("id1", "", { expires: new Date() });
-	if (request.session.csrf === undefined) {
-		request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
-	}
-	//response.render('index', { title: 'Express', token: request.session.csrf });
+    if(request.session.loggedin == true){
+        response.redirect('./userdashboard')
+    }
+    else{
+        if (request.session.csrf === undefined) {
+            request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
+            fs.readFile('welcome.html', "utf8", function(err, data) {
+                if (err) throw err;
+            
+                var $ = cheerio.load(data);
+            
+                $(".csrftoken").attr('value', request.session.csrf)
+                response.send($.html());
+            });
+        }
+        else {
+            fs.readFile('welcome.html', "utf8", function(err, data) {
+                if (err) throw err;
+            
+                var $ = cheerio.load(data);
+            
+                $(".csrftoken").attr('value', request.session.csrf)
+                response.send($.html());
+            });
+        }
+    }
+    
 })
 
 app.get('/signup', function (request, response) {
-	response.sendFile(path.join(__dirname + '/signup.html'));
-	response.cookie("id1", "", { expires: new Date() });
 	if (request.session.csrf === undefined) {
 		request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
+        fs.readFile('signup.html', "utf8", async function(err, data) {
+            if (err) throw err;
+        
+            var $ = cheerio.load(data);
+            $(".csrftoken").attr('value', request.session.csrf)
+
+            var [totpQRsvg, secretSeed] = totpURItoQRCode()
+            await $(".2fa-qr").html(totpQRsvg)
+            await $(".2fa-secret").html(secretSeed)
+            await $(".2fa-hidden-Id").attr('value', secretSeed)
+        
+            
+            await response.send($.html());
+        });
 	}
+	else {
+        fs.readFile('signup.html', "utf8", async function(err, data) {
+            if (err) throw err;
+        
+            var $ = cheerio.load(data);
+            $(".csrftoken").attr('value', request.session.csrf)
+
+            var [totpQRsvg, secretSeed] = totpURItoQRCode()
+            await $(".2fa-qr").html(totpQRsvg)
+            await $(".2fa-secret").html(secretSeed)
+            await $(".2fa-hidden-Id").attr('value', secretSeed)
+
+            await response.send($.html());
+        });
+    }
 })
 app.post('/auth', function(request, response) {
   	let email = request.body.email;
 	let password = request.body.password;
-	//TODO: regex
-	if (email && password) {
-		var connection = new Connection(config);
-		connection.on('connect', function (err) 
-		{var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
-			var sql = 'select * from dbo.users where email = @email';
-			var dbrequest = new Request(sql, function (err,rowCount) 
-			{
-				if (err) {console.log(err);} 
-				else {
-					if (rowCount == 0) {
-						response.send('Incorrect email and/or Password!');
-					}
-				}
-			});
-			var resultArray = []
-			dbrequest.on('row', function(columns) {
-				columns.forEach(function(column){
-					if (column.value === null) {response.send('Incorrect email and/or Password!');}
-					else{
-						resultArray.push(column.value);
-					}
-				})
-			});
+    let csrf = request.body.csrf;
+    let captchaToken = request['body']['h-captcha-response'];
+    let tfaTokenInput = request['body']['2faOTP']
+    
 
-			dbrequest.addParameter('email', TYPES.VarChar, email);
-
-			dbrequest.on("requestCompleted", function (rowCount, more) {
-				if (bcrypt.compareSync(password, resultArray[2]))
-				{
-					request.session.loggedin = true;
-					request.session.email = resultArray[1];
-					request.session.deviceID = resultArray[0];
-					request.session.age = resultArray[3]
-					response.redirect('/userdashboard');
-				}
-				else{
-					response.send('Incorrect email and/or Password!');
-				}
-		connection.close();
-			});
-			connection.execSql(dbrequest);
-		});
-		connection.connect();
-
-	} else {
-		response.send('Please enter Email and Password!');
-		response.end();
-	}
+    if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
+        response.send('Unrecognized Email Format')
+    }
+    else if(!(regexTest(rePassword,password))){
+        response.send('Invalid Password Format')
+    }
+    else if(!(regexTest(reCsrf,csrf))){
+        response.send('Invalid CSRF Token')
+    }
+    else if(!(regexTest(reCaptcha,captchaToken))){
+        response.send('Invalid Captcha')
+    }
+    else if(!(regexTest(reTFAToken,tfaTokenInput))){
+        response.send('OTP Code must be in 6 digit numbers')
+    }
+    else{
+        verify(hcaptchaSecret, captchaToken)
+        .then((data) => {
+        if (data.success === true) {
+            if (email && password && csrf && tfaTokenInput) {
+                if (csrf != request.session.csrf){
+                    response.send('Token validation failed!');
+                    response.end();
+                }
+                else{
+                    var connection = new Connection(config);
+                    connection.on('connect', function (err) 
+                    {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
+                        var sql = 'select * from dbo.users where email = @email';
+                        var dbrequest = new Request(sql, function (err,rowCount) 
+                        {
+                            if (err) {console.log(err);} 
+                        });
+                        var resultArray = []
+                        dbrequest.on('row', function(columns) {
+                            columns.forEach(function(column){
+                                if (column.value === null) {response.send('Incorrect email and/or Password!');}
+                                else{
+                                    resultArray.push(column.value);
+                                }
+                            })
+                        });
+        
+                        dbrequest.addParameter('email', TYPES.VarChar, email);
+        
+                        dbrequest.on("requestCompleted", function (rowCount, more) {
+                            if(resultArray[2] == undefined){
+                                response.send('Incorrect email and/or Password!');
+                            }
+                            else if(tfaTokenInput != totpSeedtoGenerateToken(resultArray[4])){
+                                response.send('Wrong OTP Code')
+                            }
+                            else{
+                                if (bcrypt.compareSync(password, resultArray[2]))
+                                {
+                                    var ua = parser(request.headers['user-agent']);
+                                    delete ua.device
+                                    request.session.fingerprint = ua
+                                    request.session.loggedin = true;
+                                    request.session.email = resultArray[1];
+                                    request.session.deviceID = resultArray[0];
+                                    request.session.age = resultArray[3];
+                                    request.session.firstName = resultArray[5];
+                                    response.redirect('/userdashboard');
+                                }
+                                else{
+                                    response.send('Incorrect email and/or Password!');
+                                }
+                            }
+                            
+                    connection.close();
+                        });
+                        connection.execSql(dbrequest);
+                    });
+                    connection.connect();
+                }
+            } 
+            else{
+                response.send('Please enter Email and Password!');
+                response.end();
+            }
+        } else {
+            response.send('Token validation failed!')
+            response.end()
+        }
+        })
+        .catch(console.error);
+    }
+	
 });
 app.post('/createUser', function(request, response){
-	let email = request.body.email;
+    let userdeviceid = request.body.userdeviceid
+    let firstName = request.body.firstName
+    let email = request.body.email;
 	let password = request.body.password;
 	let age = request.body.age;
-	//TODO: regex
+    let csrf = request.body.csrf;
+    let captchaToken = request['body']['h-captcha-response'];
+    let tfaSeed = request['body']['2faSeed']
 
-	if (email && password && age){
-		var connection = new Connection(config);
-		connection.on('connect', function (err) 
-		{var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
-			var sql = 'select email from dbo.users where email = @email';
-			var dbrequest = new Request(sql, function (err,rowCount) 
-			{
-				if (err) {console.log(err);} 
-				else {
-					if (rowCount > 0) {
-						response.send('Email already exists!');
-					}
-					else{
-						const hashedPassword = bcrypt.hashSync(password, 10);
+    if(!(regexTest(reEmail,email))  || !(regexTest(reEmail2,email))){
+        response.send('Unrecognized Email Format')
+    }
+    else if(!(regexTest(reDeviceID,userdeviceid))){
+        response.send('Unrecognized Device ID Format')
+    }
+    else if(!(regexTest(reFirstName,firstName))){
+        response.send('First Name is not recognized')
+    }
+    else if(!(regexTest(rePassword,password))){
+        response.send('Password does not meet Password Policy')
+    }
+    else if(!(regexTest(reAge,age))){
+        response.send('Invalid Age')
+    }
+    else if(!(regexTest(reCsrf,csrf))){
+        response.send('Invalid CSRF Token')
+    }
+    else if(!(regexTest(reCaptcha,captchaToken))){
+        response.send('Invalid Captcha')
+    }
+    else if(!(regexTest(reTFASeed,tfaSeed))){
+        response.send('Invalid TFA Seed')
+    }
+    else{
+        verify(hcaptchaSecret, captchaToken)
+        .then((data) => {
+            if (data.success === true) {
+                if (userdeviceid && firstName && email && password && age && csrf && tfaSeed){
+                    if (csrf != request.session.csrf){
+                        response.send('Token validation failed!');
+                        response.end();
+                    }
+                    else{
+                        var connection = new Connection(config);
+                        connection.on('connect', function (err) 
+                        {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
+                            var sql = 'select email from dbo.users where email = @email';
+                            var dbrequest = new Request(sql, function (err,rowCount) 
+                            {
+                                if (err) {console.log(err);} 
+                                else {
+                                    if (rowCount > 0) {
+                                        response.send('Email already exists!');
+                                    }
+                                    else{
+                                        const hashedPassword = bcrypt.hashSync(password, 10);
+        
+                                        var connection2 = new Connection(config);
+                                        connection2.on('connect', function (err) 
+                                        {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
+                                            var sql2 = 'INSERT INTO dbo.users (userdeviceid, firstName, email, password, age, tfaSeed) VALUES (@userdeviceidparam, @firstNameparam, @emailparam,@passwordparam,@ageparam,@tfaparam);';
+                                            var dbrequest2 = new Request (sql2, function (err,rowCount){
+                                                if (err) {console.log(err);} 
+                                            });
+                                            dbrequest2.addParameter('userdeviceidparam', TYPES.VarChar, userdeviceid)
+                                            dbrequest2.addParameter('firstNameparam', TYPES.VarChar, firstName);
+                                            dbrequest2.addParameter('emailparam', TYPES.VarChar, email);
+                                            dbrequest2.addParameter('passwordparam', TYPES.VarChar, hashedPassword);
+                                            dbrequest2.addParameter('ageparam', TYPES.Int, age);
+                                            dbrequest2.addParameter('tfaparam', TYPES.VarChar, tfaSeed)
+        
+                                            dbrequest2.on("requestCompleted", function (rowCount, more) {
+                                                connection2.close();
+                                                var ua = parser(request.headers['user-agent']);
+                                                delete ua.device
+                                                request.session.fingerprint = ua
+                                                request.session.loggedin = true;
+                                                request.session.firstName = firstName;
+                                                request.session.email = email;
+                                                request.session.age = age
+                                                response.redirect('/userdashboard');	
+                                                response.end();
+                                            });
+                                            connection2.execSql(dbrequest2);
+                                        });
+                                        connection2.connect();
+                                    }
+                                }
+                            });
+        
+                            dbrequest.addParameter('email', TYPES.VarChar, email);
+        
+                            dbrequest.on("requestCompleted", function (rowCount, more) {
+                                //console.log(rowCount)
+                                
+                                connection.close();
+                            });
+                            connection.execSql(dbrequest);
+                        });
+                        connection.connect();
+                    }
+                }
+            } else {
+                response.send('Captcha Failed')
+                response.end()
+            }
+        })
+        .catch(console.error);
 
-						var connection2 = new Connection(config);
-						connection2.on('connect', function (err) 
-						{var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
-							var sql2 = 'INSERT INTO dbo.users (email, password, age) VALUES (@emailparam,@passwordparam,@ageparam);';
-							var dbrequest2 = new Request (sql2, function (err,rowCount){
-								if (err) {console.log(err);} 
-							});
-							dbrequest2.addParameter('emailparam', TYPES.VarChar, email);
-							dbrequest2.addParameter('passwordparam', TYPES.VarChar, hashedPassword);
-							dbrequest2.addParameter('ageparam', TYPES.Int, age);
-
-							dbrequest2.on("requestCompleted", function (rowCount, more) {
-								connection2.close();
-								request.session.loggedin = true;
-								request.session.email = email;
-								request.session.age = age
-								response.redirect('/userdashboard');	
-								response.end();
-							});
-    						connection2.execSql(dbrequest2);
-						});
-						connection2.connect();
-					}
-				}
-			});
-
-			dbrequest.addParameter('email', TYPES.VarChar, email);
-
-			dbrequest.on("requestCompleted", function (rowCount, more) {
-				console.log(rowCount)
-				
-				connection.close();
-			});
-			connection.execSql(dbrequest);
-		});
-		connection.connect();
-		
-		
-		/*connection.execute('SELECT * FROM `testdb`.`users` WHERE email=?', [email], function(error, results){
-			if (error) throw error;
-			if (results.length > 0) {
-				response.send('Email already exists!');
-			}
-			else{
-				const hashedPassword = bcrypt.hashSync(password, 10);
-				connection.execute('INSERT INTO `testdb`.`users` (`email`,`password`,`age`) VALUES (?,?,?);', [email, hashedPassword, age], function(error, results) {
-					// If there is an issue with the query, output the error
-					if (error) throw error;
-					request.session.loggedin = true;
-					request.session.email = email;
-					response.redirect('/home');	
-					response.end();
-				});
-			}
-		})*/
-	}
+    }    
 })
-/*
-app.get('/home', function(request, response) {
-	if (request.session.loggedin) {
-		//regen sid
-
-		
-		response.send('Welcome back, ' + request.session.email + '!');
-	} else {
-		response.send('Please login to view this page!');
-	}
-	response.end();
-});
-*/
 
 
 //Straight after logging in, ask user to select date
 app.get('/userdashboard', function (request, response) 
 {
-    response.render("afterLogin.ejs")
-    if (request.session.loggedin) {
-		console.log(request.session)
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
 	}
-    else{
-        response.send('please login to view dashboard')
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
         response.end()
     }
-
+    else{
+        response.render("afterLogin.ejs")
+    }
 })
-
 //After selecting date
 app.post('/userdashboard', function (req, response) 
 {
@@ -255,13 +457,12 @@ app.post('/userdashboard', function (req, response)
         var TYPES = require('tedious').TYPES;
 
      
-        var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN @startDate AND @endDate AND deviceId = @id ORDER BY enqueuedTime;", function (err) 
+        var request = new Request("SELECT * FROM [dbo].[t1] WHERE enqueuedTime BETWEEN @startDate AND @endDate AND deviceId = @id ORDER BY enqueuedTime;", function (err)
         {
             if (err) {
                 console.log(err);
             }
         });
-    
         request.addParameter('startDate', TYPES.VarChar, startDate);
         request.addParameter('endDate', TYPES.VarChar, endDate);
         request.addParameter('id', TYPES.VarChar, id);
