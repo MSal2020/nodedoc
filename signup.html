@@ -4,9 +4,60 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js" integrity="sha512-9uCjPZs30uENi8K34nm/jrFW9aw7Euk3SCdJYugmjNEgJQuzBhE0WDO9xVxbNdWQC5lWG4M/nFxOTkgTqEKdlA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.css" integrity="sha512-MCgTNsKwC2c/PSk77N5kuTXtsyD8tkpYMh7GnFfzTpOeNAKxuri9YuYswSiAkwPC3fBpIIMs9udL/hJIIapVHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script>
+        const pageAccessedByReload = (
+        (window.performance.navigation && window.performance.navigation.type === 1) ||
+            window.performance
+            .getEntriesByType('navigation')
+            .map((nav) => nav.type)
+            .includes('reload')
+        );
+        if(pageAccessedByReload == true){
+            window.location.href = window.location.href
+        }
+        function show2FAModal(){
+            $('.fullscreen.modal')
+            .modal({
+                closable  : false,
+                onApprove : function() {
+                    document.getElementById("formToRegister").submit();
+                }
+            })
+                .modal('show')
+            ;
+        }
+        async function checkTOTP(){
+            var secretSeed = await document.getElementById('2fa-secret-id').innerText
+            var otpInput = await document.getElementById('otp-input').value
+            var totpCheck = async arg1 => {
+                const response = await fetch('http://localhost:3000/checkTOTP', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        seed: secretSeed
+                    }),
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                var myJson = await response.json(); //extract JSON from the http response
+                return myJson
+            }
+            var totpCode = await totpCheck(secretSeed);
+            if(otpInput == totpCode.bean){
+                document.getElementById('continue-button').classList.replace('disabled','active')
+                document.getElementById('div-input').classList.remove('error')
+            }
+            else{
+                document.getElementById('div-input').classList.add('error')
+                document.getElementById('continue-button').classList.replace('active','disabled')
+            }
+
+        }
+    </script>
     <style type="text/css">
         body {
           background-color: #DADADA;
@@ -14,48 +65,195 @@
         body > .grid {
           height: 100%;
         }
-        .image {
-          margin-top: -100px;
-        }
         .column {
           max-width: 450px;
         }
-      </style>
+        .storeLink {
+            position: relative;
+            display: inline-block;
+            width: 150px;
+            height: 50px;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: black;
+        }
+        .storeLink > img {
+            --width: 100%;
+            position: absolute;
+            width: var(--width);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .storeLink-fdroid-badge {
+            position: relative;
+            display: inline-block;
+            width: 150px;
+            height: 50px;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: black;
+        }
+        .storeLink-fdroid-badge > img {
+            --width: 117%;
+            position: absolute;
+            width: var(--width);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+    </style>
 </head>
 <body>
     <div class="ui middle aligned center aligned grid">
         <div class="column">
           <h2 class="ui teal image header">
-            <img src="heartbeat.png" class="image">
+            <img src="./heartbeat.png" class="image">
             <div class="content">
               Sign Up
             </div>
           </h2>
-          <form class="ui large form" action="/createUser" method="post">
+          <form id='formToRegister' class="ui large form" action="/createUser" method="post">
             <div class="ui stacked segment">
               <div class="field">
                 <div class="ui left icon input">
+                  <i class="id badge icon"></i>
+                  <input type="text" name="userdeviceid" placeholder="Device ID" id="userdeviceid" pattern="^[0-9a-z]{11,11}$" title="Device ID contains 11 lower-case alphanumeric values" required>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left icon input">
                   <i class="user icon"></i>
-                  <input type="text" name="email" placeholder="Email" id="email" required>
+                  <input type="text" name="firstName" placeholder="First Name" id="firstName" pattern="^[a-zA-Z]{1,100}$" title="First Name may only contain at maxium 100 alphabets" required>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="inbox icon"></i>
+                  <input type="text" name="email" placeholder="Email" id="email" pattern='^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$' title="Email Format at most 50 characters" required>
                 </div>
               </div>
               <div class="field">
                 <div class="ui left icon input">
                   <i class="lock icon"></i>
-                  <input type="password" name="password" placeholder="Password" id="password" required>
+                  <input type="password" name="password" placeholder="Password" id="password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$" title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters" required>
                 </div>
               </div>
               <div class="field">
                 <div class="ui left icon input">
                   <i class="baby icon"></i>
-                  <input type="number" name="age" placeholder="Age" id="age" required>
+                  <input type="text" name="age" placeholder="Age" id="age" pattern="^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$" title="Age between 1 to 200" required>
                 </div>
               </div>
-              <input class="ui fluid large teal submit button" type="submit" value="Sign Up">
+              <input type='hidden' name='csrf' class='csrftoken' value='token'>
+              
+              <div class="h-captcha" data-sitekey="b0d2857e-cddc-4eb1-bc5b-b6f707fac0cc"></div>
+              <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
+
+
+              <!-- 2fa -->
+              <button type='button' onclick='show2FAModal()' class="ui teal large fluid button">Continue</button>
+              <input type='hidden' name='2faSeed' class='2fa-hidden-Id' value=''>
+              <div class="ui fullscreen modal">
+                <i class="close icon"></i>
+                <div class="header">
+                  2-Factor Authentication Registration
+                </div>
+                <div class="image content">
+                  <div class="ui large image">
+                    <div class="2fa-qr">
+                      <div class="ui segment">
+                        <div class="ui active loader"></div>
+                        <p></p>
+                      </div>
+                    </div>
+                    <div class="ui center aligned message">
+                      <div class="content">
+                        <p><span id="2fa-secret-id" class="2fa-secret ui medium grey text"></span></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="description">
+                      <div class="ui header">Register for 2FA to better secure your account!</div>
+                      <div class="ui steps">
+                          <div class="active step">
+                              <i class="qrcode icon"></i>
+                              <div class="content">
+                                  <div class="title">Add Authenticator via QR Code</div>
+                                  <div class="description">or via secret key</div>
+                              </div>
+                          </div>
+                          <div class="active step">
+                              <i class="keyboard icon"></i>
+                              <div class="content">
+                                  <div class="title">Check 2FA</div>
+                                  <div class="description">Input the OTP code generated from your authenticator app</div>
+                              </div>
+                          </div>
+                          <div class="disabled step">
+                              <i class="check circle icon"></i>
+                              <div class="content">
+                                  <div class="title">Registration Successful</div>
+                              </div>
+                          </div>
+                      </div>
+                      <p>Scan this QR code with your prefered authenticator app to generate One-Time Passwords(OTPs) to login in the future.</p>
+                      <p><b><span class="ui big text">Google Authenticator:</span></b></p>
+                      <a class='storeLink' href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                          <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="--width: 128%"/>
+                      </a>
+                      <a class='storeLink' href="https://apps.apple.com/us/app/google-authenticator/id388497605?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 150px; height: 50px;">
+                          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1284940800" alt="Download on the App Store" style="border-radius: 13px; width: 150px; height: 50px;">
+                      </a>
+                      <br>
+                      <br>
+                      <p><b><span class="ui big text">Aegis Authenticator:</span></b></p>
+                      <a class='storeLink' href='https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                          <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="--width: 128%"/>
+                      </a>
+                      <a class='storeLink-fdroid-badge' href="https://f-droid.org/packages/com.beemdevelopment.aegis/">
+                          <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+                          alt="Get it on F-Droid"
+                          height="75">
+                      </a>
+                      <br>
+                      <br>
+                      <br>
+                      <h2>Verify Authentication: </h2>
+                      <div id='div-input' class="ui input">
+                          <br>
+                          <style>
+                          [type='number'] {
+                              -moz-appearance:textfield;
+                          }
+                          
+                          input::-webkit-outer-spin-button,
+                          input::-webkit-inner-spin-button {
+                              -webkit-appearance: none;
+                          }
+                          </style>
+                          <input type="number" id='otp-input' placeholder="Input OTP here...">
+                          <button onclick='checkTOTP()' class="ui primary button">
+                              Verify
+                          </button>
+                      </div>
+                  </div>
+                </div>
+                <div class="actions">
+                  <div class="ui black deny button">
+                    Back
+                  </div>
+                  <div id='continue-button' class="ui approve positive right disabled labeled icon button">
+                    Register
+                    <i class="checkmark icon"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- end of 2fa -->
             </div>
             
-            
-      
           </form>
       
           <div class="ui message">

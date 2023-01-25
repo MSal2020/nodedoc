@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js" integrity="sha512-9uCjPZs30uENi8K34nm/jrFW9aw7Euk3SCdJYugmjNEgJQuzBhE0WDO9xVxbNdWQC5lWG4M/nFxOTkgTqEKdlA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.css" integrity="sha512-MCgTNsKwC2c/PSk77N5kuTXtsyD8tkpYMh7GnFfzTpOeNAKxuri9YuYswSiAkwPC3fBpIIMs9udL/hJIIapVHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style type="text/css">
@@ -21,6 +22,18 @@
           max-width: 450px;
         }
       </style>
+      <script>
+        const pageAccessedByReload = (
+        (window.performance.navigation && window.performance.navigation.type === 1) ||
+            window.performance
+            .getEntriesByType('navigation')
+            .map((nav) => nav.type)
+            .includes('reload')
+        );
+        if(pageAccessedByReload == true){
+            window.location.href = window.location.href
+        }
+      </script>
 </head>
 <body>
     <div class="ui middle aligned center aligned grid">
@@ -35,17 +48,35 @@
             <div class="ui stacked segment">
               <div class="field">
                 <div class="ui left icon input">
-                  <i class="user icon"></i>
-                  <input type="text" name="email" placeholder="Email" id="email" required>
+                  <i class="inbox icon"></i>
+                  <input pattern='^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$' title="Email Format at most 50 characters" type="text" name="email" placeholder="Email" id="email" required>
                 </div>
               </div>
               <div class="field">
                 <div class="ui left icon input">
                   <i class="lock icon"></i>
-                  <input type="password" name="password" placeholder="Password" id="password" required>
+                  <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$" title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters" type="password" name="password" placeholder="Password" id="password" required>
                 </div>
               </div>
-              <input type='hidden' name='csrf' value='token'>
+              <div class="field">
+                <div class="ui left icon input">
+                  <i class="lock icon"></i>
+                  <style>
+                  [type='number'] {
+                      -moz-appearance:textfield;
+                  }
+                  
+                  input::-webkit-outer-spin-button,
+                  input::-webkit-inner-spin-button {
+                      -webkit-appearance: none;
+                  }
+                  </style>
+                  <input pattern="^[0-9]{6,6}$" title="6 Digit Code" type="text" name="2faOTP" placeholder="6 Digit OTP Code" id="2faOTP" required>
+                </div>
+              </div>
+              <input type='hidden' name='csrf' class='csrftoken' value='token'>
+              <div class="h-captcha" data-sitekey="b0d2857e-cddc-4eb1-bc5b-b6f707fac0cc"></div>
+              <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
               <input class="ui fluid large teal submit button" type="submit" value="Login">
             </div>
       
