@@ -11,10 +11,6 @@
   <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
   
   <style>
-    table {
-      width: 100%;
-      table-layout: fixed;
-    }
 
     .tbl-header {
       background-color: rgba(255, 255, 255, 0.3);
@@ -153,9 +149,46 @@ input {
     display: inline-block !important;
     visibility: visible !important;
   }
+  .topnav {
+            overflow: hidden;
+            background-color: #00b5ad;
+        }
+
+        .topnav a {
+            float: right;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
   </style>
 </head>
+<div class="topnav">
+  <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
+"></span>
 
+  <a href="/logout" id="">Logout</a>
+  <a href="">Profile</a>
+  <a href=""> ChatBot </a>
+  <a href="/userdashboard"> Home </a>
+</div>
 <body style="text-align: center; height: 2200px;">
 
   <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">Data Dashboard</h1> </div>
@@ -166,13 +199,13 @@ input {
     <input type="submit">
   </form>
   
-  <div style="padding: 50px;margin:0 auto; width: 500px; border-radius: 15px; border: 2px solid">
+  <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid">
     <h2>Summary</h2>
 
        <h2><%= date1.date %> </h2>
       
 
-    <div style="text-align: left; padding-top: 10px; width: 500px;">
+    <div style="text-align: left; padding-top: 10px; width: 600px;">
       <% averages.forEach(function(average){%>
 
         <h3>Heart</h3>
@@ -198,7 +231,7 @@ input {
         </p>
 
         <h4>Heart Rate Variability (miliseconds)</h4>
-        Heart rate variability is literally the variance in time between the beats of your hear       
+        Heart rate variability is the difference in time between the beats of your heart, measured in milliseconds (ms).       
         <p style="text-align:left; margin-top: 30px;">
           Heart Rate Variability Max:
           <span style="float:right;">
@@ -314,10 +347,11 @@ input {
   <div style="padding-top: 150px; padding-bottom: 40px;">
     <h2>Graph</h2>
   </div>
+  <h3>Heart</h3>
   <div id="charting1" style="height: 450px; "></div>
-
+  <h3>Blood Pressure</h3>
   <div id="charting2" style="height: 450px; "></div>
-
+  <h3>Temperature</h3>
   <div id="charting3" style="height: 450px; "></div>
 
 
@@ -457,6 +491,7 @@ input {
 
           }
         },
+        
         axis:
         {
           y: {
@@ -466,6 +501,8 @@ input {
               stepSize: 5
             }
           }
+        
+			
         },
         size:
         {
