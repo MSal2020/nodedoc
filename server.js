@@ -1166,7 +1166,7 @@ app.get('/userProfile', function (req, response)
 {
     var ua = parser(req.headers['user-agent']);
     delete ua.device
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
@@ -1197,7 +1197,7 @@ app.post('/userProfile', function (req, response)
 {
     var ua = parser(req.headers['user-agent']);
     delete ua.device
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
@@ -1309,7 +1309,7 @@ app.get('/doctorProfile', function (req, response)
 {
     var ua = parser(req.headers['user-agent']);
     delete ua.device
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
@@ -1339,7 +1339,7 @@ app.post('/doctorProfile', function (req, response)
 {
     var ua = parser(req.headers['user-agent']);
     delete ua.device
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
