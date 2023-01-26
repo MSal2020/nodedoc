@@ -19,7 +19,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 async function runCompletion () {
-const completion = await openai.createCompletion({
+completion = await openai.createCompletion({
   model: "text-davinci-003",
   prompt: "How are you today?",
 });
@@ -359,7 +359,7 @@ input {
         <h3>Recommendations</h3>
         
         <p style="text-align:left;">
-            <%= completion.data.choices[0].text %> °C
+          <%= completion.data.choices[0].tex %>
           
         </p>
 
