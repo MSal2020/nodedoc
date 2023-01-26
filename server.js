@@ -430,7 +430,8 @@ app.get('/logout', function (req, response)
 app.get('/userdashboard', function (req, response) 
 {
 
-
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
     if (!req.session.loggedin) {
         response.send('please login to view dashboard')
         response.end()
@@ -440,14 +441,12 @@ app.get('/userdashboard', function (req, response)
         response.end()
     }
     else if(req.session.role == 'user'){
-	 var ua = parser(req.headers['user-agent']);
-         delete ua.device
+
         response.render("afterLogin.ejs")
     }
     else if(req.session.role == 'doctor')
     {
-	var ua = parser(req.headers['user-agent']);
-        delete ua.device
+
         var connection = new Connection(config);
         connection.on('connect', function (err) 
         {
@@ -526,7 +525,8 @@ app.get('/userdashboard', function (req, response)
 //After selecting date (only for user acc)
 app.post('/userdashboard', function (req, response) 
 {
-    
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -536,8 +536,7 @@ app.post('/userdashboard', function (req, response)
         response.end()
     }
     else if(req.session.role == 'user'){
-	var ua = parser(req.headers['user-agent']);
-        delete ua.device
+
         var date = (req.body).date
         if (!date)
         {
@@ -726,8 +725,7 @@ app.post('/userdashboard', function (req, response)
     }
     else if(req.session.role == 'doctor')
     {
-	var ua = parser(req.headers['user-agent']);
-        delete ua.device
+
         response.redirect("/userdashboard")
     }
 
@@ -742,7 +740,8 @@ app.post('/userdashboard', function (req, response)
 
 app.get('/usersdashboard', function (req, response) 
 {
-    
+    	var ua = parser(req.headers['user-agent']);
+        delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -753,15 +752,13 @@ app.get('/usersdashboard', function (req, response)
     }
     else if(req.session.role == 'user')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         response.redirect("/userdashboard")
     }
 
@@ -770,7 +767,8 @@ app.get('/usersdashboard', function (req, response)
 })
 app.get('/doctorUserDetails', function (req, response) 
 {
-    
+    	var ua = parser(req.headers['user-agent']);
+        delete ua.device
     if (!request.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -781,15 +779,13 @@ app.get('/doctorUserDetails', function (req, response)
     }
     else if(req.session.role == 'user')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         response.redirect("/userdashboard")
     }
 
@@ -800,7 +796,8 @@ app.get('/doctorUserDetails', function (req, response)
 //user dashboard in doctors page
 app.post('/usersdashboard', function (req, response) 
 {
-    
+    	var ua = parser(req.headers['user-agent']);
+        delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -811,15 +808,13 @@ app.post('/usersdashboard', function (req, response)
     }
     else if(req.session.role == 'user')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         var date = (req.body).date
         var id = (req.body).deviceid;
         var firstname = (req.body).firstname;
@@ -1166,6 +1161,288 @@ app.post('/doctorUserDetails', function (req, response)
     }
     
     
+})
+
+app.get('/userProfile', function (req, response) 
+{
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+
+        var success = {success : "no"}
+        response.render("userProfile.ejs",{success: success})
+
+    }
+    else if(req.session.role == 'doctor')
+    {
+
+        response.render("/")
+    }
+
+
+
+
+   
+})
+
+app.post('/userProfile', function (req, response) 
+{
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+
+        var password = (req.body).password
+        var success = {success : "yes"}
+    
+        var connection = new Connection(config);
+        connection.on('connect', function (err) 
+        {
+            // If no error, then good to proceed.  
+        
+            var Request = require('tedious').Request;
+            var TYPES = require('tedious').TYPES;
+        
+        
+            var request = new Request("SELECT * FROM [dbo].[users] WHERE email = @email", function (err) 
+            {
+                if (err) {
+                    console.log(err);
+                }
+            });
+            var email = req.session.email
+            request.addParameter('email', TYPES.VarChar, email);
+        
+            var result = [];
+            var row = []
+            var columnnumber = 1
+        
+            request.on('row', function (columns) 
+            {
+                columns.forEach(function (column) {
+        
+                    if (column.value === null) {
+                        console.log('NULL');
+                    } else {
+        
+                        if (columnnumber == 7) {
+                            row.push(column.value);
+                            result.push(row)
+                            row = []
+                            columnnumber = 0
+        
+                        }
+                        else {
+                            row.push(column.value);
+                        }
+                        columnnumber++
+        
+                    }
+                });
+        
+            });
+        
+           
+            var userdetails = []
+        
+            request.on("requestCompleted", function (rowCount, more) 
+            {
+                for (let index = 0; index < result.length; index++)
+                {
+                    let row = result[index];
+        
+                    userdetails.push({firstname: row[5], deviceid: row[0], age: row[3], email: row[1], seed: row[4]})
+                    
+                }
+    
+                if (bcrypt.compareSync(password, result[0][2]))
+                {
+                    response.render("userProfile.ejs",{success: success, userdetails, userdetails})
+    
+                }
+                else
+                {
+                    response.send("Wrong password")
+                }
+    
+    
+                        
+            });
+        
+         
+            connection.execSql(request);
+        
+        
+        });
+        
+        connection.connect();
+
+    }
+    else if(req.session.role == 'doctor')
+    {
+
+        response.redirect("/")
+
+    }
+
+   
+   
+})
+
+app.get('/doctorProfile', function (req, response) 
+{
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+
+        response.redirect("/")
+
+    }
+    else if(req.session.role == 'doctor')
+    {
+
+        var success = {success : "no"}
+        response.render("doctorProfile.ejs",{success: success})
+    }
+
+
+
+   
+})
+
+app.post('/doctorProfile', function (req, response) 
+{
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+
+        response.redirect("/")
+
+    }
+    else if(req.session.role == 'doctor')
+    {
+    var password = (req.body).password
+    var success = {success : "yes"}
+
+    var connection = new Connection(config);
+    connection.on('connect', function (err) 
+    {
+        // If no error, then good to proceed.  
+    
+        var Request = require('tedious').Request;
+        var TYPES = require('tedious').TYPES;
+    
+    
+        var request = new Request("SELECT * FROM [dbo].[users] WHERE email = @email", function (err) 
+        {
+            if (err) {
+                console.log(err);
+            }
+        });
+        var email = req.session.email
+        request.addParameter('email', TYPES.VarChar, email);
+    
+        var result = [];
+        var row = []
+        var columnnumber = 1
+    
+        request.on('row', function (columns) 
+        {
+            columns.forEach(function (column) {
+    
+                if (column.value === null) {
+                    console.log('NULL');
+                } else {
+    
+                    if (columnnumber == 7) {
+                        row.push(column.value);
+                        result.push(row)
+                        row = []
+                        columnnumber = 0
+    
+                    }
+                    else {
+                        row.push(column.value);
+                    }
+                    columnnumber++
+    
+                }
+            });
+    
+        });
+    
+       
+        var userdetails = []
+    
+        request.on("requestCompleted", function (rowCount, more) 
+        {
+            for (let index = 0; index < result.length; index++)
+            {
+                let row = result[index];
+    
+                userdetails.push({firstname: row[5], deviceid: row[0], age: row[3], email: row[1], seed: row[4]})
+                
+            }
+            
+            if (bcrypt.compareSync(password, result[0][2]))
+            {
+                response.render("doctorProfile.ejs",{success: success, userdetails, userdetails})
+
+            }
+            else
+            {
+                response.send("Wrong password")
+            }
+
+            
+                    
+        });
+    
+     
+        connection.execSql(request);
+    
+    
+    });
+    
+    connection.connect();
+    }
+    
+   
 })
 var port = process.env.PORT || 3000;
 app.listen(port)  
