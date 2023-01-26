@@ -430,10 +430,9 @@ app.get('/logout', function (req, response)
 app.get('/userdashboard', function (req, response) 
 {
 
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
+
     if (!request.session.loggedin) {
-		response.send('please login to view dashboard')
+        response.send('please login to view dashboard')
         response.end()
 	}
     else if(!(_.isEqual(ua, request.session.fingerprint))){
@@ -441,10 +440,14 @@ app.get('/userdashboard', function (req, response)
         response.end()
     }
     else if(req.session.role == 'user'){
+	 var ua = parser(req.headers['user-agent']);
+         delete ua.device
         response.render("afterLogin.ejs")
     }
     else if(req.session.role == 'doctor')
     {
+	var ua = parser(req.headers['user-agent']);
+        delete ua.device
         var connection = new Connection(config);
         connection.on('connect', function (err) 
         {
@@ -523,8 +526,7 @@ app.get('/userdashboard', function (req, response)
 //After selecting date (only for user acc)
 app.post('/userdashboard', function (req, response) 
 {
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
+    
     if (!request.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -534,6 +536,8 @@ app.post('/userdashboard', function (req, response)
         response.end()
     }
     else if(req.session.role == 'user'){
+	var ua = parser(req.headers['user-agent']);
+        delete ua.device
         var date = (req.body).date
         if (!date)
         {
@@ -722,6 +726,8 @@ app.post('/userdashboard', function (req, response)
     }
     else if(req.session.role == 'doctor')
     {
+	var ua = parser(req.headers['user-agent']);
+        delete ua.device
         response.redirect("/userdashboard")
     }
 
@@ -736,8 +742,7 @@ app.post('/userdashboard', function (req, response)
 
 app.get('/usersdashboard', function (req, response) 
 {
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
+    
     if (!request.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -748,11 +753,15 @@ app.get('/usersdashboard', function (req, response)
     }
     else if(req.session.role == 'user')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         response.redirect("/userdashboard")
     }
 
@@ -761,8 +770,7 @@ app.get('/usersdashboard', function (req, response)
 })
 app.get('/doctorUserDetails', function (req, response) 
 {
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
+    
     if (!request.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -773,11 +781,15 @@ app.get('/doctorUserDetails', function (req, response)
     }
     else if(req.session.role == 'user')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         response.redirect("/userdashboard")
     }
 
@@ -788,8 +800,7 @@ app.get('/doctorUserDetails', function (req, response)
 //user dashboard in doctors page
 app.post('/usersdashboard', function (req, response) 
 {
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
+    
     if (!request.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -800,11 +811,15 @@ app.post('/usersdashboard', function (req, response)
     }
     else if(req.session.role == 'user')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         var date = (req.body).date
         var id = (req.body).deviceid;
         var firstname = (req.body).firstname;
