@@ -26,7 +26,8 @@
     "otpauth": "^9.0.2",
     "qrcode": "^1.5.1",
     "tedious": "^15.1.2",
-    "ua-parser-js": "^1.0.33"
+    "ua-parser-js": "^1.0.33",
+    "print-js": "^1.6.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
