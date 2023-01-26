@@ -431,11 +431,11 @@ app.get('/userdashboard', function (req, response)
 {
 
 
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
         response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
@@ -527,11 +527,11 @@ app.get('/userdashboard', function (req, response)
 app.post('/userdashboard', function (req, response) 
 {
     
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
@@ -743,11 +743,11 @@ app.post('/userdashboard', function (req, response)
 app.get('/usersdashboard', function (req, response) 
 {
     
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
@@ -801,11 +801,11 @@ app.get('/doctorUserDetails', function (req, response)
 app.post('/usersdashboard', function (req, response) 
 {
     
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
@@ -1017,23 +1017,27 @@ app.post('/usersdashboard', function (req, response)
 })
 app.post('/doctorUserDetails', function (req, response) 
 {
-    var ua = parser(request.headers['user-agent']);
-    delete ua.device
-    if (!request.session.loggedin) {
+    
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
     else if(req.session.role == 'user')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
+	    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+	    
         var email = (req.body).email
         var deviceid = (req.body).deviceid
 
