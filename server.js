@@ -1012,7 +1012,8 @@ app.post('/usersdashboard', function (req, response)
 })
 app.post('/doctorUserDetails', function (req, response) 
 {
-    
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -1023,15 +1024,13 @@ app.post('/doctorUserDetails', function (req, response)
     }
     else if(req.session.role == 'user')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
         response.redirect("/")
 
     }
     else if(req.session.role == 'doctor')
     {
-	    var ua = parser(req.headers['user-agent']);
-    delete ua.device
+
 	    
         var email = (req.body).email
         var deviceid = (req.body).deviceid
