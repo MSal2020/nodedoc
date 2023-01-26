@@ -9,6 +9,26 @@
 
   <!-- Loading billboard.js scripts from the cdn -->
   <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
+  <script>
+const { Configuration, OpenAIApi } = require("openai");
+require('dotenv').config()
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+async function runCompletion () {
+const completion = await openai.createCompletion({
+  model: "text-davinci-003",
+  prompt: "How are you today?",
+});
+
+}
+
+runCompletion();
+
+  </script>
   
   <style>
 
@@ -336,6 +356,12 @@ input {
           </span>
         </p>
 
+        <h3>Recommendations</h3>
+        
+        <p style="text-align:left;">
+            <%= completion.data.choices[0].text %> °C
+          
+        </p>
 
 
 
