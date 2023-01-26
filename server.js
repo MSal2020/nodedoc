@@ -427,12 +427,23 @@ app.get('/logout', function (req, response)
     response.redirect("/")
 })
 
-//Straight after logging in, ask user to select date
 app.get('/userdashboard', function (req, response) 
 {
 
-	//if doctor acc show doctor home page
-    if (req.session.role == 'doctor' && req.session.loggedin)
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user'){
+        response.render("afterLogin.ejs")
+    }
+    else if(req.session.role == 'doctor')
     {
         var connection = new Connection(config);
         connection.on('connect', function (err) 
@@ -504,15 +515,7 @@ app.get('/userdashboard', function (req, response)
     
         connection.connect();
     }
-    else if(req.session.loggedin)
-    {
-        response.render("afterLogin.ejs")
-
-    }
-    else
-    {
-        response.redirect("/")
-    }
+	
 
 
 })
@@ -520,8 +523,17 @@ app.get('/userdashboard', function (req, response)
 //After selecting date (only for user acc)
 app.post('/userdashboard', function (req, response) 
 {
-    if(req.session.loggedin)
-    {
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user'){
         var date = (req.body).date
         if (!date)
         {
@@ -707,12 +719,16 @@ app.post('/userdashboard', function (req, response)
         });
     
         connection.connect();
-        
     }
-    else
+    else if(req.session.role == 'doctor')
     {
-        response.redirect("/")
+        response.redirect("/userdashboard")
     }
+
+    
+
+        
+    
 	
    
 
@@ -720,37 +736,75 @@ app.post('/userdashboard', function (req, response)
 
 app.get('/usersdashboard', function (req, response) 
 {
-    if (req.session.role == 'doctor' && req.session.loggedin)
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+        response.redirect("/")
+
+    }
+    else if(req.session.role == 'doctor')
     {
         response.redirect("/userdashboard")
     }
-    else
-    {
-        response.redirect("/")
-    }
+
+   
 
 })
 app.get('/doctorUserDetails', function (req, response) 
 {
-    if (req.session.role == 'doctor' && req.session.loggedin)
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+        response.redirect("/")
+
+    }
+    else if(req.session.role == 'doctor')
     {
         response.redirect("/userdashboard")
     }
-    else
-    {
-        response.redirect("/")
-    }
+
+
 })
 
 
 //user dashboard in doctors page
 app.post('/usersdashboard', function (req, response) 
 {
-    if (req.session.role == 'doctor' && req.session.loggedin)
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
     {
+        response.redirect("/")
 
-    
-		//regen sid
+    }
+    else if(req.session.role == 'doctor')
+    {
         var date = (req.body).date
         var id = (req.body).deviceid;
         var firstname = (req.body).firstname;
@@ -939,18 +993,31 @@ app.post('/usersdashboard', function (req, response)
         });
     
         connection.connect();
-        
-    }
-    else
-    {
-        response.redirect("/")
-    }	
+
+        }
+
+
    
 
 })
 app.post('/doctorUserDetails', function (req, response) 
 {
-    if (req.session.role == 'doctor' && req.session.loggedin)
+    var ua = parser(request.headers['user-agent']);
+    delete ua.device
+    if (!request.session.loggedin) {
+		response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, request.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+        response.redirect("/")
+
+    }
+    else if(req.session.role == 'doctor')
     {
         var email = (req.body).email
         var deviceid = (req.body).deviceid
@@ -1078,12 +1145,6 @@ app.post('/doctorUserDetails', function (req, response)
         
             connection.connect();
     }
-    else
-    {
-        response.render('/')
-    }
-    
-    
     
     
 })
