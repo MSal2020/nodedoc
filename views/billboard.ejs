@@ -3,7 +3,8 @@
 <head>
   <!-- loading billboard.js styles from the cdn -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
-
+  <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+  <link rel="stylesheet" href="https://printjs4de6.kxcdn.com/print.min.css" />
   <!--Loading D3.js -->
   <script src="https://d3js.org/d3.v6.min.js"></script>
 
@@ -78,6 +79,21 @@
       text-align: center;
       font-weight: 500;
     }
+    
+    button
+{
+  appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 13px;
+    border:1px solid #ecf0f1;
+    border-radius: 15px;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+}
     /* demo styles */
 
     @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
@@ -200,7 +216,10 @@ input {
     <input type="submit">
   </form>
   
-  <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid">
+      <button onclick="printJS('summaryreport', 'html')" style="margin-bottom: 30px;">Print Report</button>
+
+  
+  <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid" id="summaryreport">
     <h2>Summary</h2>
 
        <h2><%= date1.date %> </h2>
