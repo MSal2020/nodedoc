@@ -423,7 +423,7 @@ app.post('/createUser', function(request, response){
 
 app.get('/logout', function (req, response) 
 {
-    //logout
+    response.cookie("id1", "", { expires: new Date() });
     response.redirect("/")
 })
 
