@@ -1075,7 +1075,7 @@ app.post('/doctorUserDetails', function (req, response)
                             console.log('NULL');
                         } else {
         
-                            if (columnnumber == 6) {
+                            if (columnnumber == 7) {
                                 row.push(column.value);
                                 result.push(row)
                                 row = []
