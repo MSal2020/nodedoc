@@ -10,8 +10,11 @@
 
   <!-- Loading billboard.js scripts from the cdn -->
   <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
-  
-  
+  <!-- Printing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/printing.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
   <style>
 
     .tbl-header {
@@ -195,6 +198,32 @@ input {
             padding: 0;
             box-sizing: border-box;
         }
+        .box {
+  
+          height: 10px;
+          width: 10px;
+          margin-bottom: 15px;
+          border: 1px solid black;
+          clear: both;
+          margin: auto;
+          display: inline-block
+        }
+
+        .red {
+          background-color: red;
+        }
+
+        .green {
+          background-color: green;
+        }
+
+        .blue {
+          background-color: blue;
+        }
+        .otherblue{
+          background-color: #2596be
+        }
+
   </style>
 </head>
 <div class="topnav">
@@ -217,13 +246,16 @@ input {
   </form>
   
       <button onclick="printJS('summaryreport', 'html')" style="margin-bottom: 30px;">Print Report</button>
+      <button onclick="generatePDF()">Download Summary</button>
+      <button onclick="generatePDF2()">Download Graphs</button>
+      <button onclick="generatePDF3()">Download Full Report</button>
 
-  
+<div id="all">
   <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid" id="summaryreport">
     <h2>Summary</h2>
 
        <h2><%= date1.date %> </h2>
-      
+       <div id="date-container" data-date="<%= date1.date %>" hidden></div>
 
     <div style="text-align: left; padding-top: 10px; width: 600px;">
       <% averages.forEach(function(average){%>
@@ -365,6 +397,27 @@ input {
         <% }); %>
     </div>
 
+  </div>
+
+  <!-- So tables can "fit" in pdf -->
+  <div id="hide" style="display: none;">
+    <div style="padding-top: 150px; padding-bottom: 40px;">
+      <h2>Graph</h2>
+    </div>
+    <h3>Blood Pressure</h3>
+    <div id="hiddencharting4" style="height: 450px;"></div>
+    <div><div class='box red'></div>Heartrate</div>
+    <div><div class='box otherblue'></div>Heartrate Variability</div>
+    <div><div class='box green'></div>Respiratory Rate</div>
+    <h3>Blood Pressure</h3>
+    <div id="hiddencharting5" style="height: 450px;"></div>
+    <div><div class='box red'></div>Diastolic</div>
+    <div><div class='box blue'></div>Systolic</div>
+    <h3>Blood Pressure</h3>
+    <div id="hiddencharting6" style="height: 450px;"></div>
+    <div><div class='box green'></div>Temperature</div>
+  
+    </div>
   </div>
 
   <div style="padding-top: 150px; padding-bottom: 40px;">
@@ -602,8 +655,129 @@ input {
         {
           width: width
         }
+        
       });
 
+      //Graphs for PDF
+      bb.generate({
+        bindto: "#hiddencharting4",
+        data: {
+          columns: [
+            heartratecolumn,
+            heartratevariabilitycolumn,
+            respiratoryRatecolumn,
+
+          ],
+          
+          types: {
+            HeartRate: "spline",
+            HeartRateVariability: "spline",
+            RespiratoryRate: "spline"
+          },
+          colors: {
+            HeartRate: "red",
+            BloodPressure: "blue",
+            RespiratoryRate: "green"
+
+          }
+        },
+        legend: {
+        show: false
+        },
+        axis:
+        {
+          y: {
+
+
+            tick: {
+              stepSize: 5
+            }
+          }
+        },
+        size:
+        {
+          width: 800
+        }
+        
+
+
+      });
+
+      bb.generate({
+        bindto: "#hiddencharting5",
+        data: {
+          columns: [
+            diastoliccolumn,
+            systoliccolumn,
+            ,
+
+          ],
+          types: {
+            Diastolic: "spline",
+            Systolic: "spline",
+          },
+          colors: {
+            Diastolic: "red",
+            Systolic: "blue",
+
+          }
+        },
+        legend: {
+        show: false
+        },
+        axis:
+        {
+          y: {
+            min: 0,
+
+
+            tick: {
+              stepSize: 5
+            }
+          }
+        },
+        size:
+        {
+          width: 800
+        }
+
+
+      });
+
+      bb.generate({
+        bindto: "#hiddencharting6",
+        data: {
+          columns: [
+            temperaturecolumn,
+
+          ],
+          types: {
+            Temperature: "area-spline",
+          },
+          colors: {
+            Temperature: "green",
+
+          }
+        },
+        legend: {
+        show: false
+        },
+        axis:
+        {
+          y: {
+            min: 35,
+            max: 40,
+            tick: {
+              stepSize: 0.5
+            }
+          }
+        },
+        size:
+        {
+          width: 800
+        }
+        
+      });
     }
 
 
