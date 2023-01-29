@@ -11,13 +11,28 @@ const OTPAuth = require('otpauth')
 var QRCode = require('qrcode')
 var parser = require('ua-parser-js');
 var _ = require('lodash');
+const { SecretClient } = require("@azure/keyvault-secrets");
+const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 
+//OpenAI
 const { Configuration, OpenAIApi } = require("openai");
 require('dotenv').config()
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
   const openai = new OpenAIApi(configuration);
+
+//Azure Key Vault
+async function KVRetrieve(secretName) {
+    const credential = new DefaultAzureCredential();
+  
+    const keyVaultName = process.env["KEY_VAULT_NAME"];
+    const url = "https://" + keyVaultName + ".vault.azure.net";
+  
+    const client = new SecretClient(url, credential);
+    const secret = await client.getSecret(secretName);
+    return secret.value
+}
 
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
