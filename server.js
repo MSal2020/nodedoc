@@ -12,6 +12,12 @@ var QRCode = require('qrcode')
 var parser = require('ua-parser-js');
 var _ = require('lodash');
 
+const { Configuration, OpenAIApi } = require("openai");
+require('dotenv').config()
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
 
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
@@ -706,11 +712,30 @@ app.post('/userdashboard', function (req, response)
                     diastolicavg = diastolictotal / result.length
                     systolicavg = systolictotal / result.length
                     temperatureavg = temperaturetotal / result.length
+                    let outp;
+
+                    async function runCompletion () {
+                        const completion = await openai.createCompletion({
+                        model: "text-davinci-003",
+                        prompt: "Pretend you are doctor. Based on the following information, you will give medical advice to the patient. You will give recommended treatments as well. If heart rate is over 90 beats per minute, it is too high. If heart rate variability is over 50 milliseconds, it is too high. If respiratory rate is over 13 breaths per minute, it is too high. If diastolic pressure is below 60mmHg, it is too low. If systolic pressure is below 90mmHg, it is too low.\nPatient details:\nHeart rate is " + heartrateavg + " beats per minute.\nBody temperature is " + temperatureavg + " degrees celsius.\nHeart rate variability is  " + heartratevariabilityavg + " milliseconds.\nRespiratory rate is  " + heartratevariabilityavg + " breaths per minute.\nDiastolic pressure is  " + diastolicavg + "mmHg.\nSystolic pressure is  " + systolicavg + "mmHg.\nDoctor:",
+                        max_tokens: 1024,
+                        temperature: 0.9,
+                        });
+                        
+                        outp =  completion.data.choices[0].text;
+                        
+                        
+                    }
+
+                    runCompletion().then(() => {
+    
+    
+                        averages = [{ heartratemin: heartratemin, outp: outp, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
+                       
+                        response.render("billboard.ejs", { data: data, averages: averages, date1: date1 })
+                    })
         
-        
-                    averages = [{ heartratemin: heartratemin, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
-        
-                    response.render("billboard.ejs", { data: data, averages: averages, date1: date1 })
+                    
                 }
                 
     
