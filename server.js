@@ -10,7 +10,6 @@ const cheerio = require("cheerio");
 const OTPAuth = require('otpauth')
 var QRCode = require('qrcode')
 var parser = require('ua-parser-js');
-app.use(express.static("public"));
 var _ = require('lodash');
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
