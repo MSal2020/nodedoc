@@ -11,6 +11,9 @@ const OTPAuth = require('otpauth')
 var QRCode = require('qrcode')
 var parser = require('ua-parser-js');
 var _ = require('lodash');
+let server = require( 'http' ).Server( app );
+let io = require( 'socket.io' )( server );
+let stream = require( './ws/stream' );
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 
@@ -777,6 +780,15 @@ app.post('/userdashboard', function (req, response)
    
 
 })
+//video call
+app.use( '/assets', express.static( path.join( __dirname, 'assets' ) ) );
+
+app.get( '/call', ( req, res ) => {
+    res.sendFile( __dirname + '/call.html' );
+} );
+
+
+io.of( '/stream' ).on( 'connection', stream );
 
 //chatbot
 app.get('/bot', (req, res) => {
