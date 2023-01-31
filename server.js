@@ -258,9 +258,9 @@ app.post('/auth', function(request, response) {
         .then((data) => {
         if (data.success === true) {
             if (email && password && csrf && tfaTokenInput) {
+                console.log('session csrf',request.session.csrf)
+                console.log('body csrf',csrf)
                 if (csrf != request.session.csrf){
-                    console.log(request.session.csrf)
-                    console.log(csrf)
                     response.send('Token validation failed!');
                     response.end();
                 }
