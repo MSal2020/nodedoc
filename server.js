@@ -456,7 +456,7 @@ app.get('/logout', function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
-    await sleep(500)
+    await sleep(2500)
     console.log(req.session.loggedin)
 
     var ua = parser(req.headers['user-agent']);
