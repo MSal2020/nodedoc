@@ -25,7 +25,7 @@ window.addEventListener( 'load', () => {
 
         var pc = [];
 
-        let socket = io( '/stream' );
+        var socket = io.connect("/stream", {transports: ['websocket']});
 
         var socketId = '';
         var randomNumber = `__${h.generateRandomString()}__${h.generateRandomString()}__`;
