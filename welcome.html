@@ -22,18 +22,6 @@
           max-width: 450px;
         }
       </style>
-      <script>
-        const pageAccessedByReload = (
-        (window.performance.navigation && window.performance.navigation.type === 1) ||
-            window.performance
-            .getEntriesByType('navigation')
-            .map((nav) => nav.type)
-            .includes('reload')
-        );
-        if(pageAccessedByReload == true){
-            window.location.href = window.location.href
-        }
-      </script>
 </head>
 <body>
     <div class="ui middle aligned center aligned grid">

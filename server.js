@@ -259,6 +259,8 @@ app.post('/auth', function(request, response) {
         if (data.success === true) {
             if (email && password && csrf && tfaTokenInput) {
                 if (csrf != request.session.csrf){
+                    console.log(request.session.csrf)
+                    console.log(csrf)
                     response.send('Token validation failed!');
                     response.end();
                 }
@@ -301,7 +303,7 @@ app.post('/auth', function(request, response) {
                                     request.session.deviceID = resultArray[0];
                                     request.session.age = resultArray[3];
                                     request.session.firstName = resultArray[5];
-				    request.session.role = resultArray[6];
+				                    request.session.role = resultArray[6];
                                     response.redirect('/userdashboard');
                                 }
                                 else{
