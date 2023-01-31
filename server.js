@@ -16,6 +16,7 @@ let io = require( 'socket.io' )( server );
 let stream = require( './ws/stream' );
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
+const sleep = require('util').promisify(setTimeout)
 
 //OpenAI
 const { Configuration, OpenAIApi } = require("openai");
@@ -451,8 +452,9 @@ app.get('/logout', function (req, response)
     response.redirect("/")
 })
 
-app.get('/userdashboard', function (req, response) 
+app.get('/userdashboard', async function (req, response) 
 {
+    await sleep(500)
     console.log(req.session.loggedin)
 
     var ua = parser(req.headers['user-agent']);
