@@ -230,7 +230,8 @@ app.get('/signup', function (request, response) {
         });
     }
 })
-app.post('/auth', function(request, response) {
+app.post('/auth', async function(request, response) {
+    await sleep(2500)
   	let email = request.body.email;
 	let password = request.body.password;
     let csrf = request.body.csrf;
