@@ -453,6 +453,7 @@ app.get('/logout', function (req, response)
 
 app.get('/userdashboard', function (req, response) 
 {
+    console.log(req.session.loggedin)
 
     var ua = parser(req.headers['user-agent']);
     delete ua.device
@@ -549,6 +550,8 @@ app.get('/userdashboard', function (req, response)
 //After selecting date (only for user acc)
 app.post('/userdashboard', function (req, response) 
 {
+    console.log(req.session.loggedin)
+
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
@@ -828,6 +831,7 @@ app.get('/chatbot', async (req, res) => {
 
 app.get('/usersdashboard', function (req, response) 
 {
+	console.log(req.session.loggedin)
     	var ua = parser(req.headers['user-agent']);
         delete ua.device
     if (!req.session.loggedin) {
@@ -857,11 +861,11 @@ app.get('/doctorUserDetails', function (req, response)
 {
     	var ua = parser(req.headers['user-agent']);
         delete ua.device
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
@@ -1252,6 +1256,8 @@ app.post('/doctorUserDetails', function (req, response)
 
 app.get('/userProfile', function (req, response) 
 {
+    console.log(req.session.loggedin)
+
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
@@ -1283,6 +1289,8 @@ app.get('/userProfile', function (req, response)
 
 app.post('/userProfile', function (req, response) 
 {
+    console.log(req.session.loggedin)
+
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
