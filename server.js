@@ -18,7 +18,7 @@ const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 const sleep = require('util').promisify(setTimeout)
 
-//OpenAI
+//OpenAI azure key vault
 const { Configuration, OpenAIApi } = require("openai");
 require('dotenv').config()
 const configuration = new Configuration({
@@ -162,6 +162,7 @@ const waitForSession = (sessionArray, timeout = 5000) => {
   
       const intervalId = setInterval(() => {
         if (Object.keys(sessionArray).length > 0) {
+            console.log(sessionArray)
           clearTimeout(timer);
           clearInterval(intervalId);
           resolve(sessionArray);
