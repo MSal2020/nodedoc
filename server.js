@@ -71,9 +71,9 @@ app.use(session({ //TODO: Azure Key Vault
 	secret: 'd20A(WUI#@DM^129uid^J',
 	name: 'id1',
 	resave: false,
-	saveUninitialized: false,
-	cookie: { //TODO: Implement https
-		//secure: true,
+	saveUninitialized: true,
+	cookie: {
+		secure: true,
 		httpOnly: true,
 		maxAge: expiryMSec,
 		sameSite: 'lax'
