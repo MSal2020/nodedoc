@@ -154,13 +154,14 @@ const reTFASeed = /^[A-Z0-9]{16,16}$/
 
 
 app.get('/', function (request, response) {
+	console.log(session)
     if(request.session.loggedin == true){
         response.redirect('./userdashboard')
     }
     else{
         if (request.session.csrf === undefined) {
             request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
-		console.log(request.session.csrf)
+		console.log("Create new csrf: " + request.session.csrf)
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
@@ -171,7 +172,7 @@ app.get('/', function (request, response) {
             });
         }
         else {
-		console.log(request.session.csrf)
+		console.log("Already Exists: " + request.session.csrf)
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
