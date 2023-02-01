@@ -237,105 +237,113 @@ app.get('/signup', function (request, response) {
     }
 })
 app.post('/auth', async function(request, response) {
-  	let email = request.body.email;
-	let password = request.body.password;
-    let csrf = request.body.csrf;
-    let captchaToken = request['body']['h-captcha-response'];
-    let tfaTokenInput = request['body']['2faOTP']
+    waitForSession(request.session, 5000)
+    .then((sessionArray) => {
+        let email = request.body.email;
+        let password = request.body.password;
+        let csrf = request.body.csrf;
+        let captchaToken = request['body']['h-captcha-response'];
+        let tfaTokenInput = request['body']['2faOTP']
+        
     
-
-    if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
-        response.send('Unrecognized Email Format')
-    }
-    else if(!(regexTest(rePassword,password))){
-        response.send('Invalid Password Format')
-    }
-    else if(!(regexTest(reCsrf,csrf))){
-        response.send('Invalid CSRF Token')
-    }
-    else if(!(regexTest(reCaptcha,captchaToken))){
-        response.send('Invalid Captcha')
-    }
-    else if(!(regexTest(reTFAToken,tfaTokenInput))){
-        response.send('OTP Code must be in 6 digit numbers')
-    }
-    else{
-        verify(hcaptchaSecret, captchaToken)
-        .then((data) => {
-        if (data.success === true) {
-            if (email && password && csrf && tfaTokenInput) {
-                console.log('session csrf',request.session.csrf)
-                console.log('body csrf',csrf)
-                if (csrf != request.session.csrf){
-                    response.send('Token validation failed!');
-                    response.end();
-                }
-                else{
-                    var connection = new Connection(config);
-                    connection.on('connect', function (err) 
-                    {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
-                        var sql = 'select * from dbo.users where email = @email';
-                        var dbrequest = new Request(sql, function (err,rowCount) 
-                        {
-                            if (err) {console.log(err);} 
-                        });
-                        var resultArray = []
-                        dbrequest.on('row', function(columns) {
-                            columns.forEach(function(column){
-                                if (column.value === null) {response.send('Incorrect email and/or Password!');}
-                                else{
-                                    resultArray.push(column.value);
-                                }
-                            })
-                        });
-        
-                        dbrequest.addParameter('email', TYPES.VarChar, email);
-        
-                        dbrequest.on("requestCompleted", function (rowCount, more) {
-                            if(resultArray[2] == undefined){
-                                response.send('Incorrect email and/or Password!');
-                            }
-                            else if(tfaTokenInput != totpSeedtoGenerateToken(resultArray[4])){
-                                response.send('Wrong OTP Code')
-                            }
-                            else{
-                                if (bcrypt.compareSync(password, resultArray[2]))
-                                {
-                                    var ua = parser(request.headers['user-agent']);
-                                    delete ua.device
-                                    console.log(email, ' logged in')
-                                    request.session.fingerprint = ua
-                                    request.session.loggedin = true;
-                                    request.session.email = resultArray[1];
-                                    request.session.deviceID = resultArray[0];
-                                    request.session.age = resultArray[3];
-                                    request.session.firstName = resultArray[5];
-				                    request.session.role = resultArray[6];
-                                    response.redirect('/userdashboard');
-                                }
-                                else{
+        if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
+            response.send('Unrecognized Email Format')
+        }
+        else if(!(regexTest(rePassword,password))){
+            response.send('Invalid Password Format')
+        }
+        else if(!(regexTest(reCsrf,csrf))){
+            response.send('Invalid CSRF Token')
+        }
+        else if(!(regexTest(reCaptcha,captchaToken))){
+            response.send('Invalid Captcha')
+        }
+        else if(!(regexTest(reTFAToken,tfaTokenInput))){
+            response.send('OTP Code must be in 6 digit numbers')
+        }
+        else{
+            verify(hcaptchaSecret, captchaToken)
+            .then((data) => {
+            if (data.success === true) {
+                if (email && password && csrf && tfaTokenInput) {
+                    console.log('session csrf',request.session.csrf)
+                    console.log('body csrf',csrf)
+                    if (csrf != request.session.csrf){
+                        response.send('Token validation failed!');
+                        response.end();
+                    }
+                    else{
+                        var connection = new Connection(config);
+                        connection.on('connect', function (err) 
+                        {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
+                            var sql = 'select * from dbo.users where email = @email';
+                            var dbrequest = new Request(sql, function (err,rowCount) 
+                            {
+                                if (err) {console.log(err);} 
+                            });
+                            var resultArray = []
+                            dbrequest.on('row', function(columns) {
+                                columns.forEach(function(column){
+                                    if (column.value === null) {response.send('Incorrect email and/or Password!');}
+                                    else{
+                                        resultArray.push(column.value);
+                                    }
+                                })
+                            });
+            
+                            dbrequest.addParameter('email', TYPES.VarChar, email);
+            
+                            dbrequest.on("requestCompleted", function (rowCount, more) {
+                                if(resultArray[2] == undefined){
                                     response.send('Incorrect email and/or Password!');
                                 }
-                            }
-                            
-                    connection.close();
+                                else if(tfaTokenInput != totpSeedtoGenerateToken(resultArray[4])){
+                                    response.send('Wrong OTP Code')
+                                }
+                                else{
+                                    if (bcrypt.compareSync(password, resultArray[2]))
+                                    {
+                                        var ua = parser(request.headers['user-agent']);
+                                        delete ua.device
+                                        console.log(email, ' logged in')
+                                        request.session.fingerprint = ua
+                                        request.session.loggedin = true;
+                                        request.session.email = resultArray[1];
+                                        request.session.deviceID = resultArray[0];
+                                        request.session.age = resultArray[3];
+                                        request.session.firstName = resultArray[5];
+                                        request.session.role = resultArray[6];
+                                        response.redirect('/userdashboard');
+                                    }
+                                    else{
+                                        response.send('Incorrect email and/or Password!');
+                                    }
+                                }
+                                
+                        connection.close();
+                            });
+                            connection.execSql(dbrequest);
                         });
-                        connection.execSql(dbrequest);
-                    });
-                    connection.connect();
+                        connection.connect();
+                    }
+                } 
+                else{
+                    response.send('Please enter Email and Password!');
+                    response.end();
                 }
-            } 
-            else{
-                response.send('Please enter Email and Password!');
-                response.end();
+            } else {
+                response.send('Token validation failed!')
+                response.end()
             }
-        } else {
-            response.send('Token validation failed!')
-            response.end()
+            })
+            .catch(console.error);
         }
-        })
-        .catch(console.error);
-    }
+    })
+    .catch((error) => {
+        console.log(error)
+        response.send('sorry session timed out')
+        response.end()
+    });
 	
 });
 app.post('/createUser', function(request, response){
@@ -464,7 +472,6 @@ app.get('/logout', function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
-    //session array promise here
     waitForSession(req.session, 10000)
         .then((sessionArray) => {
             var ua = parser(req.headers['user-agent']);
