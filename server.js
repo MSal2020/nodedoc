@@ -160,6 +160,7 @@ app.get('/', function (request, response) {
     else{
         if (request.session.csrf === undefined) {
             request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
+		console.log(request.session.csrf)
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
@@ -170,6 +171,7 @@ app.get('/', function (request, response) {
             });
         }
         else {
+		console.log(request.session.csrf)
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
@@ -218,6 +220,8 @@ app.get('/signup', function (request, response) {
     }
 })
 app.post('/auth', async function(request, response) {
+
+	await new Promise(resolve => setTimeout(resolve, 5000));
 
   	let email = request.body.email;
 	let password = request.body.password;
