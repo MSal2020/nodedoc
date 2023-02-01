@@ -162,7 +162,7 @@ const waitForSession = (sessionCheck, timeout = 5000) => {
       }, timeout);
   
       const intervalId = setInterval(() => {
-        if (sessionCheck == True) {
+        if (sessionCheck == true) {
           clearTimeout(timer);
           clearInterval(intervalId);
           resolve(sessionCheck);
@@ -179,7 +179,7 @@ app.get('/', function (request, response) {
     }
     else{
         if (request.session.csrf === undefined) {
-            request.session.sessionCheck = True
+            request.session.sessionCheck = true
             request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
@@ -206,7 +206,7 @@ app.get('/', function (request, response) {
 
 app.get('/signup', function (request, response) {
 	if (request.session.csrf === undefined) {
-        request.session.sessionCheck = True
+        request.session.sessionCheck = true
 		request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
         fs.readFile('signup.html', "utf8", async function(err, data) {
             if (err) throw err;
