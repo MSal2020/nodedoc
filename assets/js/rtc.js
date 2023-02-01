@@ -33,6 +33,7 @@ window.addEventListener( 'load', () => {
         var screen = '';
         var recordedStream = [];
         var mediaRecorder = '';
+        
 
         //Get user video by default
         getAndSetUserStream();
