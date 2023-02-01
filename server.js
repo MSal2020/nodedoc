@@ -69,7 +69,7 @@ app.use(session({ //TODO: Azure Key Vault
 		//secure: true,
 		httpOnly: true,
 		maxAge: expiryMSec,
-		sameSite: 'none'
+		sameSite: 'lax'
 	}
 }));
 app.use(express.json());
