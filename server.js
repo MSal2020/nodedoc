@@ -38,6 +38,7 @@ async function KVRetrieve(secretName) {
     return secret.value
 }
 
+//Database
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
     server: 'mpserver2.database.windows.net', 
@@ -78,7 +79,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
 
 
-
+//2fa
 function totpSecretGenerate(){
     var secretSeed = new OTPAuth.Secret({
         size: 10
@@ -150,6 +151,24 @@ const reDeviceID = /^[0-9a-z]{11,11}$/i
 const reFirstName = /^[a-z]{1,100}$/i
 const reAge = /^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$/i
 const reTFASeed = /^[A-Z0-9]{16,16}$/
+
+//SessionArray Promise
+const waitForSession = (sessionArray, timeout = 5000) => {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        clearInterval(intervalId);
+        reject(new Error('Timeout reached without session array being populated'));
+      }, timeout);
+  
+      const intervalId = setInterval(() => {
+        if (sessionArray.length > 0) {
+          clearTimeout(timer);
+          clearInterval(intervalId);
+          resolve(sessionArray);
+        }
+      }, 100);
+    });
+};
 
 
 
@@ -444,97 +463,104 @@ app.get('/logout', function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
-    //promise here
+    //session array promise here
+    waitForSession(req.session, 10000)
+        .then((sessionArray) => {
+            console.log(req.session)
 
-    console.log(req.session)
+            var ua = parser(req.headers['user-agent']);
+            delete ua.device
+            if (!req.session.loggedin) {
+                response.send('please login to view dashboard')
+                response.end()
+            }
+            else if(!(_.isEqual(ua, req.session.fingerprint))){
+                response.send('fingerprint change detected')
+                response.end()
+            }
+            else if(req.session.role == 'user'){
 
-    var ua = parser(req.headers['user-agent']);
-    delete ua.device
-    if (!req.session.loggedin) {
-        response.send('please login to view dashboard')
-        response.end()
-	}
-    else if(!(_.isEqual(ua, req.session.fingerprint))){
-        response.send('fingerprint change detected')
-        response.end()
-    }
-    else if(req.session.role == 'user'){
-
-        response.render("afterLogin.ejs")
-    }
-    else if(req.session.role == 'doctor')
-    {
-
-        var connection = new Connection(config);
-        connection.on('connect', function (err) 
-        {
-            // If no error, then good to proceed.  
-    
-            var Request = require('tedious').Request;
-            var TYPES = require('tedious').TYPES;
-    
-            var id = req.session.deviceID;
-    
-            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role = 'user'", function (err) 
+                response.render("afterLogin.ejs")
+            }
+            else if(req.session.role == 'doctor')
             {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        
 
-            var result = [];
-            var row = []
-            var columnnumber = 1
-    
-            request.on('row', function (columns) 
-            {
-                columns.forEach(function (column) {
-    
-                    if (column.value === null) {
-                        console.log('NULL');
-                    } else {
-    
-                        if (columnnumber == 2) {
-                            row.push(column.value);
-                            result.push(row)
-                            row = []
-                            columnnumber = 0
-    
-                        }
-                        else {
-                            row.push(column.value);
-                        }
-                        columnnumber++
-    
-                    }
-                });
-    
-            });
-            
-    
-            
-            request.on("requestCompleted", function (rowCount, more) 
-            {
-                var userdetails = []
-                for (let index = 0; index < result.length; index++)
+                var connection = new Connection(config);
+                connection.on('connect', function (err) 
                 {
-                    let row = result[index];
-                    userdetails.push({email: row[0], deviceid: row[1]})
-                    
-                }
-                    response.render("doctorPage.ejs", {userdetails: userdetails})
-                        
+                    // If no error, then good to proceed.  
+            
+                    var Request = require('tedious').Request;
+                    var TYPES = require('tedious').TYPES;
+            
+                    var id = req.session.deviceID;
+            
+                    var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role = 'user'", function (err) 
+                    {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
                 
-                connection.close();
-            });
-         
-            connection.execSql(request);
-    
+
+                    var result = [];
+                    var row = []
+                    var columnnumber = 1
+            
+                    request.on('row', function (columns) 
+                    {
+                        columns.forEach(function (column) {
+            
+                            if (column.value === null) {
+                                console.log('NULL');
+                            } else {
+            
+                                if (columnnumber == 2) {
+                                    row.push(column.value);
+                                    result.push(row)
+                                    row = []
+                                    columnnumber = 0
+            
+                                }
+                                else {
+                                    row.push(column.value);
+                                }
+                                columnnumber++
+            
+                            }
+                        });
+            
+                    });
+                    
+            
+                    
+                    request.on("requestCompleted", function (rowCount, more) 
+                    {
+                        var userdetails = []
+                        for (let index = 0; index < result.length; index++)
+                        {
+                            let row = result[index];
+                            userdetails.push({email: row[0], deviceid: row[1]})
+                            
+                        }
+                            response.render("doctorPage.ejs", {userdetails: userdetails})
+                                
+                        
+                        connection.close();
+                    });
+                
+                    connection.execSql(request);
+            
+                });
+            
+                connection.connect();
+            }
+
+        })
+        .catch((error) => {
+            console.log(error)
         });
-    
-        connection.connect();
-    }
+
 	
 
 
