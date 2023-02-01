@@ -62,6 +62,7 @@ const hcaptchaSecret = '0x76433E082876747e710Af00aa1FB8a8685a81e4e';
 
 //Session Management
 //NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
+app.set('trust proxy', 1)
 const expiryMSec = 60 * 60 * 1000
 app.use(session({ //TODO: Azure Key Vault
 	secret: 'd20A(WUI#@DM^129uid^J',
