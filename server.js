@@ -446,7 +446,7 @@ app.get('/userdashboard', async function (req, response)
 {
     //promise here
 
-    console.log(req.session.loggedin)
+    console.log(req.session)
 
     var ua = parser(req.headers['user-agent']);
     delete ua.device
