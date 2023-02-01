@@ -17,10 +17,11 @@ let stream = require( './ws/stream' );
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 const sleep = require('util').promisify(setTimeout)
+require('dotenv').config()
 
 //OpenAI azure key vault
 const { Configuration, OpenAIApi } = require("openai");
-require('dotenv').config()
+
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
@@ -41,7 +42,7 @@ async function KVRetrieve(secretName) {
 //Database
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
-    server: 'mpserver2.database.windows.net', 
+    server: process.env.DB_URL, 
     authentication: {
         type: 'default',
         options: {
@@ -153,7 +154,7 @@ const reAge = /^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$/i
 const reTFASeed = /^[A-Z0-9]{16,16}$/
 
 //SessionArray Promise
-const waitForSession = (sessionArray, timeout = 5000) => {
+const waitForSession = (sessionCheck, timeout = 5000) => {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         clearInterval(intervalId);
@@ -161,11 +162,10 @@ const waitForSession = (sessionArray, timeout = 5000) => {
       }, timeout);
   
       const intervalId = setInterval(() => {
-        if (Object.keys(sessionArray).length > 0) {
-            console.log(sessionArray)
+        if (sessionCheck == True) {
           clearTimeout(timer);
           clearInterval(intervalId);
-          resolve(sessionArray);
+          resolve(sessionCheck);
         }
       }, 100);
     });
@@ -179,6 +179,7 @@ app.get('/', function (request, response) {
     }
     else{
         if (request.session.csrf === undefined) {
+            request.session.sessionCheck = True
             request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
@@ -205,6 +206,7 @@ app.get('/', function (request, response) {
 
 app.get('/signup', function (request, response) {
 	if (request.session.csrf === undefined) {
+        request.session.sessionCheck = True
 		request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
         fs.readFile('signup.html', "utf8", async function(err, data) {
             if (err) throw err;
@@ -238,8 +240,8 @@ app.get('/signup', function (request, response) {
     }
 })
 app.post('/auth', async function(request, response) {
-    waitForSession(request.session, 5000)
-    .then((sessionArray) => {
+    waitForSession(request.session.sessionCheck, 5000)
+    .then((sessionCheck) => {
         let email = request.body.email;
         let password = request.body.password;
         let csrf = request.body.csrf;
@@ -473,8 +475,8 @@ app.get('/logout', function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
-    waitForSession(req.session, 10000)
-        .then((sessionArray) => {
+    waitForSession(req.session.sessionCheck, 10000)
+        .then((sessionCheck) => {
             var ua = parser(req.headers['user-agent']);
             delete ua.device
             if (!req.session.loggedin) {
