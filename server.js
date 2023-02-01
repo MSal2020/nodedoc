@@ -161,7 +161,7 @@ const waitForSession = (sessionArray, timeout = 5000) => {
       }, timeout);
   
       const intervalId = setInterval(() => {
-        if (sessionArray.length > 0) {
+        if (Object.keys(sessionArray).length > 0) {
           clearTimeout(timer);
           clearInterval(intervalId);
           resolve(sessionArray);
@@ -303,6 +303,7 @@ app.post('/auth', async function(request, response) {
                                 {
                                     var ua = parser(request.headers['user-agent']);
                                     delete ua.device
+                                    console.log(email, ' logged in')
                                     request.session.fingerprint = ua
                                     request.session.loggedin = true;
                                     request.session.email = resultArray[1];
@@ -414,6 +415,7 @@ app.post('/createUser', function(request, response){
                                                 connection2.close();
                                                 var ua = parser(request.headers['user-agent']);
                                                 delete ua.device
+                                                console.log(email, ' logged in')
                                                 request.session.fingerprint = ua
                                                 request.session.loggedin = true;
                                                 request.session.firstName = firstName;
@@ -465,8 +467,6 @@ app.get('/userdashboard', async function (req, response)
     //session array promise here
     waitForSession(req.session, 10000)
         .then((sessionArray) => {
-            console.log(req.session)
-
             var ua = parser(req.headers['user-agent']);
             delete ua.device
             if (!req.session.loggedin) {
@@ -558,6 +558,8 @@ app.get('/userdashboard', async function (req, response)
         })
         .catch((error) => {
             console.log(error)
+            response.send('sorry session timed out')
+            response.end()
         });
 
 	
