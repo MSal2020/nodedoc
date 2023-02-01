@@ -16,6 +16,7 @@ let io = require( 'socket.io' )( server );
 let stream = require( './ws/stream' );
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
+const sleep = require('util').promisify(setTimeout)
 
 //OpenAI
 const { Configuration, OpenAIApi } = require("openai");
@@ -59,27 +60,13 @@ const hcaptchaSecret = '0x76433E082876747e710Af00aa1FB8a8685a81e4e';
 
 //NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
 const expiryMSec = 60 * 60 * 1000
-function iniSession(){
-    app.use(session({ //TODO: Azure Key Vault
-        secret: 'd20A(WUI#@DM^129uid^J',
-        name: 'id1',
-        resave: false,
-        saveUninitialized: false,
-        cookie: { //TODO: Implement https
-            //secure: true
-            httpOnly: true,
-            maxAge: expiryMSec,
-            sameSite: 'lax'
-        }
-    }));
-}
 app.use(session({ //TODO: Azure Key Vault
 	secret: 'd20A(WUI#@DM^129uid^J',
 	name: 'id1',
 	resave: false,
 	saveUninitialized: false,
 	cookie: { //TODO: Implement https
-		//secure: true
+		//secure: true,
 		httpOnly: true,
 		maxAge: expiryMSec,
 		sameSite: 'lax'
@@ -229,7 +216,8 @@ app.get('/signup', function (request, response) {
         });
     }
 })
-app.post('/auth', function(request, response) {
+app.post('/auth', async function(request, response) {
+    await sleep(2500)
   	let email = request.body.email;
 	let password = request.body.password;
     let csrf = request.body.csrf;
@@ -257,6 +245,8 @@ app.post('/auth', function(request, response) {
         .then((data) => {
         if (data.success === true) {
             if (email && password && csrf && tfaTokenInput) {
+                console.log('session csrf',request.session.csrf)
+                console.log('body csrf',csrf)
                 if (csrf != request.session.csrf){
                     response.send('Token validation failed!');
                     response.end();
@@ -300,7 +290,7 @@ app.post('/auth', function(request, response) {
                                     request.session.deviceID = resultArray[0];
                                     request.session.age = resultArray[3];
                                     request.session.firstName = resultArray[5];
-				    request.session.role = resultArray[6];
+				                    request.session.role = resultArray[6];
                                     response.redirect('/userdashboard');
                                 }
                                 else{
@@ -451,8 +441,10 @@ app.get('/logout', function (req, response)
     response.redirect("/")
 })
 
-app.get('/userdashboard', function (req, response) 
+app.get('/userdashboard', async function (req, response) 
 {
+    await sleep(2500)
+    console.log(req.session.loggedin)
 
     var ua = parser(req.headers['user-agent']);
     delete ua.device
@@ -549,6 +541,8 @@ app.get('/userdashboard', function (req, response)
 //After selecting date (only for user acc)
 app.post('/userdashboard', function (req, response) 
 {
+    console.log(req.session.loggedin)
+
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
@@ -828,6 +822,7 @@ app.get('/chatbot', async (req, res) => {
 
 app.get('/usersdashboard', function (req, response) 
 {
+	console.log(req.session.loggedin)
     	var ua = parser(req.headers['user-agent']);
         delete ua.device
     if (!req.session.loggedin) {
@@ -857,11 +852,11 @@ app.get('/doctorUserDetails', function (req, response)
 {
     	var ua = parser(req.headers['user-agent']);
         delete ua.device
-    if (!request.session.loggedin) {
+    if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
 	}
-    else if(!(_.isEqual(ua, request.session.fingerprint))){
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
         response.send('fingerprint change detected')
         response.end()
     }
@@ -1252,6 +1247,8 @@ app.post('/doctorUserDetails', function (req, response)
 
 app.get('/userProfile', function (req, response) 
 {
+    console.log(req.session.loggedin)
+
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
@@ -1283,6 +1280,8 @@ app.get('/userProfile', function (req, response)
 
 app.post('/userProfile', function (req, response) 
 {
+    console.log(req.session.loggedin)
+
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
