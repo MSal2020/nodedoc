@@ -830,7 +830,7 @@ app.post('/userdashboard', function (req, response)
 })
 //video call
 app.use( '/assets', express.static( path.join( __dirname, 'assets' ) ) );
-
+app.use( '/public', express.static( path.join( __dirname, 'public' ) ) );
 app.get( '/call', ( req, res ) => {
     res.sendFile( __dirname + '/call.html' );
 } );
@@ -849,25 +849,28 @@ app.get('/chatbot', async (req, res) => {
       message: 'Hello from DocAI !!'
     })
   })
-
+var convo = ("Pretend you are doctor named DocAI. You are helpful, creative, clever, and very friendly. You are talking to a patient. Answer with medical advice.\nThis is an example of how you should respond as DocAI.\nDocAI: How can I help you today?\nPatient: I’m having a fever\nDocAI: Could you please take a reading of your temperature and tell me?\nPatient: My temperature is 37 degrees celsius\nDocAI: It's possible that you have a fever if your temperature is above 37.5 degrees Celsius. Are you experiencing any other symptoms?\nPatient: Yes, I feel a bit cold when I sit under a fan\nDocAI:  I recommend that you take some over-the-counter medication to reduce your fever and drink plenty of fluids. If your symptoms persist, please make an appointment with your doctor.\nThis is the real conversation.\nDocAI: Hi there, how can I help you today?\n");
   app.post('/chatbot', async (req, res) => {
     try {
-      const prompt = req.body.prompt;
+
+      
+      const userinput = req.body.prompt;
+        convo +="Patient:" + userinput;
   
       const response = await openai.createCompletion({
         model: "text-davinci-003",
-        prompt: `${prompt}`, // The prompt is the text that the model will use to generate a response.
+        prompt: `${convo}`, // The prompt is the text that the model will use to generate a response.
         temperature: 0, // Higher values means the model will take more risks.
         max_tokens: 1024, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
         top_p: 1, // alternative to sampling with temperature, called nucleus sampling
         frequency_penalty: 0.5, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
         presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
       });
-  
+      convo +=response.data.choices[0].text + "\n";
+      
       res.status(200).send({
         bot: response.data.choices[0].text
       });
-  
     } catch (error) {
       console.error(error)
       res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
