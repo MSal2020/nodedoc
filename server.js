@@ -18,10 +18,24 @@ let stream = require( './ws/stream' );
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 const sleep = require('util').promisify(setTimeout)
+const cors = require('cors');
 require('dotenv').config()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
+
+//CORS
+app.use(
+    cors({
+      origin: ["https://aidochealth.azurewebsites.net"],
+      methods: ["GET", "POST"],
+      credentials: true,
+    })
+);
+app.use(function (request,response,next){
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})
 
 //Session Management
 //NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
@@ -36,8 +50,9 @@ app.use(session({ //TODO: Azure Key Vault
 	resave: false,
 	saveUninitialized: false,
 	cookie: {
+        domain: 'aidochealth.azurewebsites.net',
 		secure: true,
-		//httpOnly: true,
+		httpOnly: true,
 		maxAge: expiryMSec,
 		sameSite: 'lax'
 	},
@@ -50,7 +65,7 @@ const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
-  const openai = new OpenAIApi(configuration);
+const openai = new OpenAIApi(configuration);
 
 //Azure Key Vault
 async function KVRetrieve(secretName) {
@@ -67,7 +82,7 @@ async function KVRetrieve(secretName) {
 //Database
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
-    server: process.env.DB_URL, 
+    server: 'mpserver2.database.windows.net', 
     authentication: {
         type: 'default',
         options: {
@@ -122,11 +137,6 @@ function totpURItoQRCode(){
         return(string)
     }), secretSeed]
 }
-app.use(function (request,response,next){
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-})
 app.post('/checkTOTP', function(request,response){
     var secretSeed = request.body.seed
     var totp = new OTPAuth.TOTP({
@@ -177,7 +187,6 @@ const waitForSession = (sessionCheck, timeout = 5000) => {
 };
 
 
-
 app.get('/', function (request, response) {
     if(request.session.loggedin == true){
         response.redirect('./userdashboard')
@@ -207,7 +216,6 @@ app.get('/', function (request, response) {
             });
         }
     }
-    
 })
 
 app.get('/signup', function (request, response) {
@@ -316,6 +324,7 @@ app.post('/auth', async function(request, response) {
                                         var ua = parser(request.headers['user-agent']);
                                         delete ua.device
                                         console.log(email, ' logged in')
+                                        request.session.sessionCheck = true
                                         request.session.fingerprint = ua
                                         request.session.loggedin = true;
                                         request.session.email = resultArray[1];
@@ -354,8 +363,8 @@ app.post('/auth', async function(request, response) {
         response.send('sorry session timed out')
         response.end()
     });
-	
 });
+
 app.post('/createUser', function(request, response){
     let userdeviceid = request.body.userdeviceid
     let firstName = request.body.firstName
@@ -434,12 +443,13 @@ app.post('/createUser', function(request, response){
                                                 var ua = parser(request.headers['user-agent']);
                                                 delete ua.device
                                                 console.log(email, ' logged in')
+                                                request.session.sessionCheck = true
                                                 request.session.fingerprint = ua
                                                 request.session.loggedin = true;
                                                 request.session.firstName = firstName;
                                                 request.session.email = email;
                                                 request.session.age = age
-						request.session.firstName = "user";
+					                        	request.session.firstName = "user";
 
                                                 response.redirect('/userdashboard');	
                                                 response.end();
@@ -469,7 +479,6 @@ app.post('/createUser', function(request, response){
             }
         })
         .catch(console.error);
-
     }    
 })
 
@@ -549,7 +558,6 @@ app.get('/userdashboard', async function (req, response)
                     });
                     
             
-                    
                     request.on("requestCompleted", function (rowCount, more) 
                     {
                         var userdetails = []
@@ -865,6 +873,7 @@ app.get('/chatbot', async (req, res) => {
       res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
     }
   })
+//end of chatbot
 
 app.get('/usersdashboard', function (req, response) 
 {
