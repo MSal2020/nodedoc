@@ -160,7 +160,7 @@ const reAge = /^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$/i
 const reTFASeed = /^[A-Z0-9]{16,16}$/
 
 //SessionArray Promise
-const waitForSession = (sessionCheck, timeout = 5000) => {
+const waitForSession = (sessionCheck, timeout = 10000) => {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         clearInterval(intervalId);
@@ -197,6 +197,7 @@ app.get('/', function (request, response) {
             });
         }
         else {
+            request.session.sessionCheck = true
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
@@ -230,6 +231,7 @@ app.get('/signup', function (request, response) {
         });
 	}
 	else {
+        request.session.sessionCheck = true
         fs.readFile('signup.html', "utf8", async function(err, data) {
             if (err) throw err;
         
