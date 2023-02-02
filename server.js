@@ -1,6 +1,7 @@
 const fs = require('fs');
 const express = require('express')
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session)
 const app = express()
 const path = require('path')
 const bcrypt = require('bcrypt');
@@ -17,14 +18,54 @@ let stream = require( './ws/stream' );
 const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 const sleep = require('util').promisify(setTimeout)
-
-//OpenAI
-const { Configuration, OpenAIApi } = require("openai");
+const cors = require('cors');
 require('dotenv').config()
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('views'))
+
+//CORS
+app.use(
+    cors({
+      origin: ["https://aidochealth.azurewebsites.net"],
+      methods: ["GET", "POST"],
+      credentials: true,
+    })
+);
+app.use(function (request,response,next){
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})
+
+//Session Management
+//NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
+app.set('trust proxy', true)
+const expiryMSec = 60 * 60 * 1000 * 3
+app.use(session({ //TODO: Azure Key Vault
+	secret: 'd20A(WUI#@DM^129uid^J',
+    store: new MemoryStore({
+        checkPeriod: 86400000 // prune expired entries every 24h
+    }),
+	name: 'id1',
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+        domain: 'aidochealth.azurewebsites.net',
+		secure: true,
+		httpOnly: true,
+		maxAge: expiryMSec,
+		sameSite: 'lax'
+	},
+    proxy:true
+}));
+
+//OpenAI azure key vault
+const { Configuration, OpenAIApi } = require("openai");
+
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   });
-  const openai = new OpenAIApi(configuration);
+const openai = new OpenAIApi(configuration);
 
 //Azure Key Vault
 async function KVRetrieve(secretName) {
@@ -38,6 +79,7 @@ async function KVRetrieve(secretName) {
     return secret.value
 }
 
+//Database
 var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
 var config = {
     server: 'mpserver2.database.windows.net', 
@@ -58,26 +100,7 @@ var config = {
 //hcaptcha secret TODO: Azure Key Vault
 const hcaptchaSecret = '0x76433E082876747e710Af00aa1FB8a8685a81e4e';
 
-//NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
-const expiryMSec = 60 * 60 * 1000
-app.use(session({ //TODO: Azure Key Vault
-	secret: 'd20A(WUI#@DM^129uid^J',
-	name: 'id1',
-	resave: false,
-	saveUninitialized: false,
-	cookie: { //TODO: Implement https
-		//secure: true,
-		httpOnly: true,
-		maxAge: expiryMSec,
-		sameSite: 'lax'
-	}
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('views'))
-
-
-
+//2fa
 function totpSecretGenerate(){
     var secretSeed = new OTPAuth.Secret({
         size: 10
@@ -114,11 +137,6 @@ function totpURItoQRCode(){
         return(string)
     }), secretSeed]
 }
-app.use(function (request,response,next){
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-})
 app.post('/checkTOTP', function(request,response){
     var secretSeed = request.body.seed
     var totp = new OTPAuth.TOTP({
@@ -150,6 +168,23 @@ const reFirstName = /^[a-z]{1,100}$/i
 const reAge = /^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$/i
 const reTFASeed = /^[A-Z0-9]{16,16}$/
 
+//SessionArray Promise
+const waitForSession = (sessionCheck, timeout = 5000) => {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        clearInterval(intervalId);
+        reject(new Error('Timeout reached without session array being populated'));
+      }, timeout);
+  
+      const intervalId = setInterval(() => {
+        if (sessionCheck == true) {
+          clearTimeout(timer);
+          clearInterval(intervalId);
+          resolve(sessionCheck);
+        }
+      }, 100);
+    });
+};
 
 
 app.get('/', function (request, response) {
@@ -158,6 +193,7 @@ app.get('/', function (request, response) {
     }
     else{
         if (request.session.csrf === undefined) {
+            request.session.sessionCheck = true
             request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
@@ -169,6 +205,7 @@ app.get('/', function (request, response) {
             });
         }
         else {
+            request.session.sessionCheck = true
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
@@ -179,11 +216,11 @@ app.get('/', function (request, response) {
             });
         }
     }
-    
 })
 
 app.get('/signup', function (request, response) {
 	if (request.session.csrf === undefined) {
+        request.session.sessionCheck = true
 		request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
         fs.readFile('signup.html', "utf8", async function(err, data) {
             if (err) throw err;
@@ -201,6 +238,7 @@ app.get('/signup', function (request, response) {
         });
 	}
 	else {
+        request.session.sessionCheck = true
         fs.readFile('signup.html', "utf8", async function(err, data) {
             if (err) throw err;
         
@@ -217,107 +255,116 @@ app.get('/signup', function (request, response) {
     }
 })
 app.post('/auth', async function(request, response) {
-    await sleep(2500)
-  	let email = request.body.email;
-	let password = request.body.password;
-    let csrf = request.body.csrf;
-    let captchaToken = request['body']['h-captcha-response'];
-    let tfaTokenInput = request['body']['2faOTP']
+    waitForSession(request.session.sessionCheck, 5000)
+    .then((sessionCheck) => {
+        let email = request.body.email;
+        let password = request.body.password;
+        let csrf = request.body.csrf;
+        let captchaToken = request['body']['h-captcha-response'];
+        let tfaTokenInput = request['body']['2faOTP']
+        
     
-
-    if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
-        response.send('Unrecognized Email Format')
-    }
-    else if(!(regexTest(rePassword,password))){
-        response.send('Invalid Password Format')
-    }
-    else if(!(regexTest(reCsrf,csrf))){
-        response.send('Invalid CSRF Token')
-    }
-    else if(!(regexTest(reCaptcha,captchaToken))){
-        response.send('Invalid Captcha')
-    }
-    else if(!(regexTest(reTFAToken,tfaTokenInput))){
-        response.send('OTP Code must be in 6 digit numbers')
-    }
-    else{
-        verify(hcaptchaSecret, captchaToken)
-        .then((data) => {
-        if (data.success === true) {
-            if (email && password && csrf && tfaTokenInput) {
-                console.log('session csrf',request.session.csrf)
-                console.log('body csrf',csrf)
-                if (csrf != request.session.csrf){
-                    response.send('Token validation failed!');
-                    response.end();
-                }
-                else{
-                    var connection = new Connection(config);
-                    connection.on('connect', function (err) 
-                    {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
-                        var sql = 'select * from dbo.users where email = @email';
-                        var dbrequest = new Request(sql, function (err,rowCount) 
-                        {
-                            if (err) {console.log(err);} 
-                        });
-                        var resultArray = []
-                        dbrequest.on('row', function(columns) {
-                            columns.forEach(function(column){
-                                if (column.value === null) {response.send('Incorrect email and/or Password!');}
-                                else{
-                                    resultArray.push(column.value);
-                                }
-                            })
-                        });
-        
-                        dbrequest.addParameter('email', TYPES.VarChar, email);
-        
-                        dbrequest.on("requestCompleted", function (rowCount, more) {
-                            if(resultArray[2] == undefined){
-                                response.send('Incorrect email and/or Password!');
-                            }
-                            else if(tfaTokenInput != totpSeedtoGenerateToken(resultArray[4])){
-                                response.send('Wrong OTP Code')
-                            }
-                            else{
-                                if (bcrypt.compareSync(password, resultArray[2]))
-                                {
-                                    var ua = parser(request.headers['user-agent']);
-                                    delete ua.device
-                                    request.session.fingerprint = ua
-                                    request.session.loggedin = true;
-                                    request.session.email = resultArray[1];
-                                    request.session.deviceID = resultArray[0];
-                                    request.session.age = resultArray[3];
-                                    request.session.firstName = resultArray[5];
-				                    request.session.role = resultArray[6];
-                                    response.redirect('/userdashboard');
-                                }
-                                else{
+        if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
+            response.send('Unrecognized Email Format')
+        }
+        else if(!(regexTest(rePassword,password))){
+            response.send('Invalid Password Format')
+        }
+        else if(!(regexTest(reCsrf,csrf))){
+            response.send('Invalid CSRF Token')
+        }
+        else if(!(regexTest(reCaptcha,captchaToken))){
+            response.send('Invalid Captcha')
+        }
+        else if(!(regexTest(reTFAToken,tfaTokenInput))){
+            response.send('OTP Code must be in 6 digit numbers')
+        }
+        else{
+            verify(hcaptchaSecret, captchaToken)
+            .then((data) => {
+            if (data.success === true) {
+                if (email && password && csrf && tfaTokenInput) {
+                    console.log('session csrf',request.session.csrf)
+                    console.log('body csrf',csrf)
+                    if (csrf != request.session.csrf){
+                        response.send('Token validation failed!');
+                        response.end();
+                    }
+                    else{
+                        var connection = new Connection(config);
+                        connection.on('connect', function (err) 
+                        {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
+                            var sql = 'select * from dbo.users where email = @email';
+                            var dbrequest = new Request(sql, function (err,rowCount) 
+                            {
+                                if (err) {console.log(err);} 
+                            });
+                            var resultArray = []
+                            dbrequest.on('row', function(columns) {
+                                columns.forEach(function(column){
+                                    if (column.value === null) {response.send('Incorrect email and/or Password!');}
+                                    else{
+                                        resultArray.push(column.value);
+                                    }
+                                })
+                            });
+            
+                            dbrequest.addParameter('email', TYPES.VarChar, email);
+            
+                            dbrequest.on("requestCompleted", function (rowCount, more) {
+                                if(resultArray[2] == undefined){
                                     response.send('Incorrect email and/or Password!');
                                 }
-                            }
-                            
-                    connection.close();
+                                else if(tfaTokenInput != totpSeedtoGenerateToken(resultArray[4])){
+                                    response.send('Wrong OTP Code')
+                                }
+                                else{
+                                    if (bcrypt.compareSync(password, resultArray[2]))
+                                    {
+                                        var ua = parser(request.headers['user-agent']);
+                                        delete ua.device
+                                        console.log(email, ' logged in')
+                                        request.session.sessionCheck = true
+                                        request.session.fingerprint = ua
+                                        request.session.loggedin = true;
+                                        request.session.email = resultArray[1];
+                                        request.session.deviceID = resultArray[0];
+                                        request.session.age = resultArray[3];
+                                        request.session.firstName = resultArray[5];
+                                        request.session.role = resultArray[6];
+                                        response.redirect('/userdashboard');
+                                    }
+                                    else{
+                                        response.send('Incorrect email and/or Password!');
+                                    }
+                                }
+                                
+                        connection.close();
+                            });
+                            connection.execSql(dbrequest);
                         });
-                        connection.execSql(dbrequest);
-                    });
-                    connection.connect();
+                        connection.connect();
+                    }
+                } 
+                else{
+                    response.send('Please enter Email and Password!');
+                    response.end();
                 }
-            } 
-            else{
-                response.send('Please enter Email and Password!');
-                response.end();
+            } else {
+                response.send('Token validation failed!')
+                response.end()
             }
-        } else {
-            response.send('Token validation failed!')
-            response.end()
+            })
+            .catch(console.error);
         }
-        })
-        .catch(console.error);
-    }
-	
+    })
+    .catch((error) => {
+        console.log(error)
+        response.send('sorry session timed out')
+        response.end()
+    });
 });
+
 app.post('/createUser', function(request, response){
     let userdeviceid = request.body.userdeviceid
     let firstName = request.body.firstName
@@ -395,12 +442,14 @@ app.post('/createUser', function(request, response){
                                                 connection2.close();
                                                 var ua = parser(request.headers['user-agent']);
                                                 delete ua.device
+                                                console.log(email, ' logged in')
+                                                request.session.sessionCheck = true
                                                 request.session.fingerprint = ua
                                                 request.session.loggedin = true;
                                                 request.session.firstName = firstName;
                                                 request.session.email = email;
                                                 request.session.age = age
-						request.session.firstName = "user";
+					                        	request.session.firstName = "user";
 
                                                 response.redirect('/userdashboard');	
                                                 response.end();
@@ -430,7 +479,6 @@ app.post('/createUser', function(request, response){
             }
         })
         .catch(console.error);
-
     }    
 })
 
@@ -443,96 +491,102 @@ app.get('/logout', function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
-    await sleep(2500)
-    console.log(req.session.loggedin)
+    waitForSession(req.session.sessionCheck, 10000)
+        .then((sessionCheck) => {
+            var ua = parser(req.headers['user-agent']);
+            delete ua.device
+            if (!req.session.loggedin) {
+                response.send('please login to view dashboard')
+                response.end()
+            }
+            else if(!(_.isEqual(ua, req.session.fingerprint))){
+                response.send('fingerprint change detected')
+                response.end()
+            }
+            else if(req.session.role == 'user'){
 
-    var ua = parser(req.headers['user-agent']);
-    delete ua.device
-    if (!req.session.loggedin) {
-        response.send('please login to view dashboard')
-        response.end()
-	}
-    else if(!(_.isEqual(ua, req.session.fingerprint))){
-        response.send('fingerprint change detected')
-        response.end()
-    }
-    else if(req.session.role == 'user'){
-
-        response.render("afterLogin.ejs")
-    }
-    else if(req.session.role == 'doctor')
-    {
-
-        var connection = new Connection(config);
-        connection.on('connect', function (err) 
-        {
-            // If no error, then good to proceed.  
-    
-            var Request = require('tedious').Request;
-            var TYPES = require('tedious').TYPES;
-    
-            var id = req.session.deviceID;
-    
-            var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role = 'user'", function (err) 
+                response.render("afterLogin.ejs")
+            }
+            else if(req.session.role == 'doctor')
             {
-                if (err) {
-                    console.log(err);
-                }
-            });
-        
 
-            var result = [];
-            var row = []
-            var columnnumber = 1
-    
-            request.on('row', function (columns) 
-            {
-                columns.forEach(function (column) {
-    
-                    if (column.value === null) {
-                        console.log('NULL');
-                    } else {
-    
-                        if (columnnumber == 2) {
-                            row.push(column.value);
-                            result.push(row)
-                            row = []
-                            columnnumber = 0
-    
-                        }
-                        else {
-                            row.push(column.value);
-                        }
-                        columnnumber++
-    
-                    }
-                });
-    
-            });
-            
-    
-            
-            request.on("requestCompleted", function (rowCount, more) 
-            {
-                var userdetails = []
-                for (let index = 0; index < result.length; index++)
+                var connection = new Connection(config);
+                connection.on('connect', function (err) 
                 {
-                    let row = result[index];
-                    userdetails.push({email: row[0], deviceid: row[1]})
-                    
-                }
-                    response.render("doctorPage.ejs", {userdetails: userdetails})
-                        
+                    // If no error, then good to proceed.  
+            
+                    var Request = require('tedious').Request;
+                    var TYPES = require('tedious').TYPES;
+            
+                    var id = req.session.deviceID;
+            
+                    var request = new Request("SELECT email, userdeviceid FROM [dbo].[users] WHERE role = 'user'", function (err) 
+                    {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
                 
-                connection.close();
-            });
-         
-            connection.execSql(request);
-    
+
+                    var result = [];
+                    var row = []
+                    var columnnumber = 1
+            
+                    request.on('row', function (columns) 
+                    {
+                        columns.forEach(function (column) {
+            
+                            if (column.value === null) {
+                                console.log('NULL');
+                            } else {
+            
+                                if (columnnumber == 2) {
+                                    row.push(column.value);
+                                    result.push(row)
+                                    row = []
+                                    columnnumber = 0
+            
+                                }
+                                else {
+                                    row.push(column.value);
+                                }
+                                columnnumber++
+            
+                            }
+                        });
+            
+                    });
+                    
+            
+                    request.on("requestCompleted", function (rowCount, more) 
+                    {
+                        var userdetails = []
+                        for (let index = 0; index < result.length; index++)
+                        {
+                            let row = result[index];
+                            userdetails.push({email: row[0], deviceid: row[1]})
+                            
+                        }
+                            response.render("doctorPage.ejs", {userdetails: userdetails})
+                                
+                        
+                        connection.close();
+                    });
+                
+                    connection.execSql(request);
+            
+                });
+            
+                connection.connect();
+            }
+
+        })
+        .catch((error) => {
+            console.log(error)
+            response.send('sorry session timed out')
+            response.end()
         });
-    
-        connection.connect();
-    }
+
 	
 
 
@@ -819,6 +873,7 @@ app.get('/chatbot', async (req, res) => {
       res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
     }
   })
+//end of chatbot
 
 app.get('/usersdashboard', function (req, response) 
 {
