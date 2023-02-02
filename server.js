@@ -77,7 +77,7 @@ app.use(session({ //TODO: Azure Key Vault
 	resave: false,
 	saveUninitialized: false,
 	cookie: {
-		//secure: true,
+		secure: true,
 		httpOnly: true,
 		maxAge: expiryMSec,
 		sameSite: 'lax'
