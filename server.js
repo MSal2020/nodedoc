@@ -59,7 +59,7 @@ app.use(session({ //TODO: Azure Key Vault
     proxy:true
 }));
 
-//OpenAI azure key vault
+//OpenAI Configuration
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
@@ -71,7 +71,7 @@ const openai = new OpenAIApi(configuration);
 async function KVRetrieve(secretName) {
     const credential = new DefaultAzureCredential();
   
-    const keyVaultName = process.env["KEY_VAULT_NAME"];
+    const keyVaultName = process.env.KEY_VAULT_NAME;
     const url = "https://" + keyVaultName + ".vault.azure.net";
   
     const client = new SecretClient(url, credential);
@@ -79,10 +79,11 @@ async function KVRetrieve(secretName) {
     return secret.value
 }
 
-//Database
-var Connection = require('tedious').Connection;	//TODO: Azure Key Vault
+//Database Connection
+var Connection = require('tedious').Connection;	
+const dbserverURL= process.env.DB_URL
 var config = {
-    server: 'mpserver2.database.windows.net', 
+    server: dbserverURL, 
     authentication: {
         type: 'default',
         options: {
@@ -187,7 +188,9 @@ const waitForSession = (sessionCheck, timeout = 5000) => {
 };
 
 
-app.get('/', function (request, response) {
+app.get('/', async function (request, response) {
+    var secret = await KVRetrieve('hCaptchaAPI')
+    console.log(secret);
     if(request.session.loggedin == true){
         response.redirect('./userdashboard')
     }
@@ -284,8 +287,6 @@ app.post('/auth', async function(request, response) {
             .then((data) => {
             if (data.success === true) {
                 if (email && password && csrf && tfaTokenInput) {
-                    console.log('session csrf',request.session.csrf)
-                    console.log('body csrf',csrf)
                     if (csrf != request.session.csrf){
                         response.send('Token validation failed!');
                         response.end();
@@ -295,14 +296,15 @@ app.post('/auth', async function(request, response) {
                         connection.on('connect', function (err) 
                         {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
                             var sql = 'select * from dbo.users where email = @email';
+                            var aFlag
                             var dbrequest = new Request(sql, function (err,rowCount) 
                             {
-                                if (err) {console.log(err);} 
+                                if (err) {console.log(err);console.log('Database Unreachable!'); aFlag = 'Unreachable'} 
                             });
                             var resultArray = []
                             dbrequest.on('row', function(columns) {
                                 columns.forEach(function(column){
-                                    if (column.value === null) {response.send('Incorrect email and/or Password!');}
+                                    if (column.value === null) {console.log('Incorrect email and/or Password!');}
                                     else{
                                         resultArray.push(column.value);
                                     }
@@ -312,7 +314,10 @@ app.post('/auth', async function(request, response) {
                             dbrequest.addParameter('email', TYPES.VarChar, email);
             
                             dbrequest.on("requestCompleted", function (rowCount, more) {
-                                if(resultArray[2] == undefined){
+                                if(aFlag == 'Unreachable'){
+                                    response.status(400).send('Database Unreachable')
+                                }
+                                else if(resultArray[2] == undefined){
                                     response.send('Incorrect email and/or Password!');
                                 }
                                 else if(tfaTokenInput != totpSeedtoGenerateToken(resultArray[4])){
@@ -323,7 +328,6 @@ app.post('/auth', async function(request, response) {
                                     {
                                         var ua = parser(request.headers['user-agent']);
                                         delete ua.device
-                                        console.log(email, ' logged in')
                                         request.session.sessionCheck = true
                                         request.session.fingerprint = ua
                                         request.session.loggedin = true;
@@ -415,7 +419,7 @@ app.post('/createUser', function(request, response){
                             var sql = 'select email from dbo.users where email = @email';
                             var dbrequest = new Request(sql, function (err,rowCount) 
                             {
-                                if (err) {console.log(err);} 
+                                if (err) {console.log(err); console.log('Database Unreachable!'); response.status(400).send('Database Unreachable')} 
                                 else {
                                     if (rowCount > 0) {
                                         response.send('Email already exists!');
@@ -428,7 +432,7 @@ app.post('/createUser', function(request, response){
                                         {var Request = require('tedious').Request;var TYPES = require('tedious').TYPES;    
                                             var sql2 = 'INSERT INTO dbo.users (userdeviceid, firstName, email, password, age, tfaSeed, role) VALUES (@userdeviceidparam, @firstNameparam, @emailparam,@passwordparam,@ageparam,@tfaparam, @roleparam);';
                                             var dbrequest2 = new Request (sql2, function (err,rowCount){
-                                                if (err) {console.log(err);} 
+                                                if (err) {console.log(err); console.log('Database Unreachable!');} 
                                             });
                                             dbrequest2.addParameter('userdeviceidparam', TYPES.VarChar, userdeviceid)
                                             dbrequest2.addParameter('firstNameparam', TYPES.VarChar, firstName);
@@ -442,7 +446,6 @@ app.post('/createUser', function(request, response){
                                                 connection2.close();
                                                 var ua = parser(request.headers['user-agent']);
                                                 delete ua.device
-                                                console.log(email, ' logged in')
                                                 request.session.sessionCheck = true
                                                 request.session.fingerprint = ua
                                                 request.session.loggedin = true;
@@ -483,10 +486,22 @@ app.post('/createUser', function(request, response){
 })
 
 
-app.get('/logout', function (req, response) 
+app.get('/logout', async function (req, response) 
 {
-    response.cookie("id1", "", { expires: new Date() });
-    response.redirect("/")
+    if (req.session) {
+        req.session.destroy(err => {
+                if (err) {
+                    response.status(400).send('Unable to log out')
+                } else {
+                    response.cookie("id1", "", { expires: new Date() });
+                    response.redirect("/")
+                }
+            }
+        );
+    }
+    else {
+        response.end()
+    }
 })
 
 app.get('/userdashboard', async function (req, response) 
