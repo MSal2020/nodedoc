@@ -1,3 +1,4 @@
+(async function() {
 const fs = require('fs');
 const express = require('express')
 const session = require('express-session');
@@ -24,6 +25,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
 
+
+//Azure Key Vault
+async function KVRetrieve(secretName) {
+    const credential = new DefaultAzureCredential();
+  
+    const keyVaultName = process.env.KEY_VAULT_NAME;
+    const url = "https://" + keyVaultName + ".vault.azure.net";
+  
+    const client = new SecretClient(url, credential);
+    const secret = await client.getSecret(secretName);
+    return secret.value
+}
+
 //CORS
 app.use(
     cors({
@@ -40,55 +54,46 @@ app.use(function (request,response,next){
 //Session Management
 //NIST SP 800-63B Session Management https://pages.nist.gov/800-63-3/sp800-63b.html
 app.set('trust proxy', true)
-const expiryMSec = 60 * 60 * 1000 * 3
-app.use(session({ //TODO: Azure Key Vault
-	secret: 'd20A(WUI#@DM^129uid^J',
+const expiryMSec = 60 * 60 * 1000 * 3;
+const sessionKVSecret = await KVRetrieve('sessionSecret')
+app.use(session({
+    secret: sessionKVSecret,
     store: new MemoryStore({
         checkPeriod: 86400000 // prune expired entries every 24h
     }),
-	name: 'id1',
-	resave: false,
-	saveUninitialized: false,
-	cookie: {
+    name: 'id1',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
         domain: 'aidochealth.azurewebsites.net',
-		secure: true,
-		httpOnly: true,
-		maxAge: expiryMSec,
-		sameSite: 'lax'
-	},
+        secure: true,
+        httpOnly: true,
+        maxAge: expiryMSec,
+        sameSite: 'lax'
+    },
     proxy:true
 }));
 
 //OpenAI Configuration
 const { Configuration, OpenAIApi } = require("openai");
-
+const openAPIKEYKVSecret = await KVRetrieve('OPENAI-API-KEY');
 const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+    apiKey: openAPIKEYKVSecret,
+});
 const openai = new OpenAIApi(configuration);
-
-//Azure Key Vault
-async function KVRetrieve(secretName) {
-    const credential = new DefaultAzureCredential();
-  
-    const keyVaultName = process.env.KEY_VAULT_NAME;
-    const url = "https://" + keyVaultName + ".vault.azure.net";
-  
-    const client = new SecretClient(url, credential);
-    const secret = await client.getSecret(secretName);
-    return secret.value
-}
 
 //Database Connection
 var Connection = require('tedious').Connection;	
-const dbserverURL= process.env.DB_URL
+const dbserverURL= process.env.DB_URL;
+const dbUsernameKVSecret = await KVRetrieve('SQLdbUsername');
+const dbPasswordKVSecret = await KVRetrieve('SQLdbPassword');
 var config = {
     server: dbserverURL, 
     authentication: {
         type: 'default',
         options: {
-            userName: 'mplogin123', 
-            password: 'majorp123#' 
+            userName: dbUsernameKVSecret, 
+            password: dbPasswordKVSecret 
         }
     },
     options: {
@@ -97,11 +102,10 @@ var config = {
     }
 };
 
+//HCaptcha Secret
+const hcaptchaSecret = await KVRetrieve('hCaptchaAPI');
 
-//hcaptcha secret TODO: Azure Key Vault
-const hcaptchaSecret = '0x76433E082876747e710Af00aa1FB8a8685a81e4e';
-
-//2fa
+//2FA
 function totpSecretGenerate(){
     var secretSeed = new OTPAuth.Secret({
         size: 10
@@ -151,11 +155,6 @@ app.post('/checkTOTP', function(request,response){
     response.json({'bean': totp.generate()})
 })
 
-
-function regexTest(arg1, arg2){
-    var pattern = arg1
-    return pattern.test(arg2)
-}
 //redos-safe regex, checked by https://devina.io/redos-checker
 //also, password policy: at least 1 uppercase, 1 lowercase, 1 number and 1 symbol, between 8 to 50 chars
 const reEmail = /^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i;
@@ -168,6 +167,10 @@ const reDeviceID = /^[0-9a-z]{11,11}$/i
 const reFirstName = /^[a-z]{1,100}$/i
 const reAge = /^([1-9]|[1-9][0-9]|[1][0-9][0-9]|20[0-0])$/i
 const reTFASeed = /^[A-Z0-9]{16,16}$/
+function regexTest(arg1, arg2){
+    var pattern = arg1
+    return pattern.test(arg2)
+}
 
 //SessionArray Promise
 const waitForSession = (sessionCheck, timeout = 5000) => {
@@ -187,10 +190,8 @@ const waitForSession = (sessionCheck, timeout = 5000) => {
     });
 };
 
-
+//Routes
 app.get('/', async function (request, response) {
-    var secret = await KVRetrieve('hCaptchaAPI')
-    console.log(secret);
     if(request.session.loggedin == true){
         response.redirect('./userdashboard')
     }
@@ -1605,3 +1606,4 @@ app.post('/doctorProfile', function (req, response)
 })
 var port = process.env.PORT || 3000;
 server.listen(port)  
+})()
