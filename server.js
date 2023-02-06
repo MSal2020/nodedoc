@@ -1619,19 +1619,23 @@ app.post('/doctorProfile', function (req, response)
    
 })
 	
-function editDetails(field1, field2, type, req, response) {
+function editDetails(field1, field2, req, response) {
 
     
             
         if (field1 && field2) {
             if (field1 == field2) {
-
-                if (type == "password") {
-
-                    field1 = bcrypt.hashSync(field2, 10);
+		if(!(regexTest(rePassword,field1)))
+		{
+                       response.send('Invalid Password Format')
                 }
+		else
+		{
+			
+                    field1 = bcrypt.hashSync(field2, 10);
+                
             
-                console.log("Changing " + type)
+                console.log("Changing password")
                 var connection = new Connection(config);
                 connection.on('connect', function (err) {
                     // If no error, then good to proceed.  
@@ -1639,7 +1643,7 @@ function editDetails(field1, field2, type, req, response) {
                     var Request = require('tedious').Request;
                     var TYPES = require('tedious').TYPES;
 
-                    var request = new Request(`UPDATE [dbo].[users] SET ${type} = @field1 WHERE email = @email`, function (err) {
+                    var request = new Request(`UPDATE [dbo].[users] SET password = @field1 WHERE email = @email`, function (err) {
                         if (err) {
                             console.log(err);
                         }
@@ -1653,9 +1657,7 @@ function editDetails(field1, field2, type, req, response) {
 
                     request.on("requestCompleted", function (rowCount, more) {
 
-                        if (type == "email") {
-                            req.session.email = field1
-                        }
+                       
                         response.redirect("/userProfile")
 
                     });
@@ -1667,7 +1669,7 @@ function editDetails(field1, field2, type, req, response) {
                 });
 
                 connection.connect();
-
+		}
 
 
             }
@@ -1678,11 +1680,11 @@ function editDetails(field1, field2, type, req, response) {
         else {
             response.send("Please fill up all fields")
         }
+		
+
+                
+
     
-
-
-
-
 
 
 }
@@ -1705,8 +1707,7 @@ app.post('/editUserProfile', function (req, response) {
     {
     var field1 = req.body.field1
     var field2 = req.body.field2
-    var type = req.body.type
-    editDetails(field1, field2, type, req, response)
+    editDetails(field1, field2, req, response)
     }
     else if(req.session.role == 'doctor')
     {
@@ -1735,8 +1736,7 @@ app.post('/editDoctorProfile', function (req, response) {
     {
 	var field1 = req.body.field1
     	var field2 = req.body.field2
-   	var type = req.body.type
-    	editDetails(field1, field2, type, req, response)
+    	editDetails(field1, field2, req, response)
 	    
     }
 })
