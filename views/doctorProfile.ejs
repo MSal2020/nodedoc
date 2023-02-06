@@ -273,22 +273,7 @@ input {
               </span>
             </p>
     
-            <div style="float: right; margin-top: 20px;">
-              <form id="firstNameForm" style="display: none;" action="/editDoctorProfile" method="post">
-                <input type="text" name="field1" placeholder="First Name" id="field1" required>
-                <input type="text" name="field2" placeholder="Confirm First Name" id="field2" required>
-                <input type="hidden" name="type" id="type" value="firstName">
-                <input class="ui fluid large teal submit button" type="submit" value="Submit">
-
-
-              </form>
-
-
-              <button id="firstNameToggle"
-                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
-            </div>
-
-
+           
             <p style="text-align:left; margin-top: 80px;">
               Device Id:
               <span style="float:right;">
@@ -297,19 +282,6 @@ input {
             </p>
 
 
-            <div style="float: right; margin-top: 20px;">
-              <form id="deviceIdForm" style="display: none;" action="/editDoctorProfile" method="post">
-                <input type="text" name="field1" placeholder="Device Id" id="field1" required>
-                <input type="text" name="field2" placeholder="Confirm Device Id" id="field2" required>
-                <input type="hidden" name="type" id="type" value="userdeviceid">
-                <input class="ui fluid large teal submit button" type="submit" value="Submit">
-
-              </form>
-
-              <button id="deviceIdToggle"
-                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
-            </div>
-
             <p style="text-align:left; margin-top: 80px;">
               Age:
               <span style="float:right;">
@@ -317,38 +289,13 @@ input {
               </span>
             </p>
 
-            <div style="float: right; margin-top: 20px;">
-              <form id="ageForm" style="display: none;" action="/editDoctorProfile" method="post">
-                <input type="text" name="field1" placeholder="Age" id="field1" required>
-                <input type="text" name="field2" placeholder="Confirm Age" id="field2" required>
-                <input type="hidden" name="type" id="type" value="age">
-                <input class="ui fluid large teal submit button" type="submit" value="Submit">
-
-              </form>
-
-              <button id="ageToggle"
-                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
-            </div>
-
+           
             <p style="text-align:left; margin-top: 80px;">
               Email:
               <span style="float:right;">
                 <%= user.email %>
               </span>
             </p>
-
-            <div style="float: right; margin-top: 20px;">
-              <form id="emailForm" style="display: none;" action="/editDoctorProfile" method="post">
-                <input type="text" name="field1" placeholder="Email" id="field1" required>
-                <input type="text" name="field2" placeholder="Confirm Email" id="field2" required>
-                <input type="hidden" name="type" id="type" value="email">
-                <input class="ui fluid large teal submit button" type="submit" value="Submit">
-
-              </form>
-
-              <button id="emailToggle"
-                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
-            </div>
 
             <p style="text-align:left; margin-top: 80px;">
               2FA Seed:
@@ -357,19 +304,7 @@ input {
               </span>
             </p>
 
-            <div style="float: right; margin-top: 20px;">
-              <form id="seedForm" style="display: none;" action="/editDoctorProfile" method="post">
-                <input type="text" name="field1" placeholder="Seed" id="field1" required>
-                <input type="text" name="field2" placeholder="Confirm Seed" id="field2" required>
-                <input type="hidden" name="type" id="type" value="tfaSeed">
-                <input class="ui fluid large teal submit button" type="submit" value="Submit">
-
-              </form>
-
-              <button id="seedToggle"
-                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
-            </div>
-
+           
             <div style="text-align: center; margin-top: 80px;">
               <form id="passwordForm" style="display: none;" action="/editDoctorProfile" method="post">
                 <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
@@ -378,7 +313,6 @@ input {
                 <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
                   title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
                   type="password" name="field2" placeholder="Confirm Password" id="field2" required>
-                <input type="hidden" name="type" id="type" value="password">
                 <input class="ui fluid large teal submit button" type="submit" value="Submit">
 
               </form>
@@ -399,81 +333,7 @@ input {
     <% }; %>
  
     <script>
-      const firstNameToggle = document.getElementById('firstNameToggle');
-
-      firstNameToggle.addEventListener('click', () => {
-
-        const firstNameForm = document.getElementById('firstNameForm');
-
-        if (firstNameForm.style.display === 'none') {
-          // 👇️ this SHOWS the form
-          firstNameForm.style.display = 'block';
-        } else {
-          // 👇️ this HIDES the form
-          firstNameForm.style.display = 'none';
-        }
-      });
-
-      const deviceIdToggle = document.getElementById('deviceIdToggle');
-
-      deviceIdToggle.addEventListener('click', () => {
-
-        const deviceIdForm = document.getElementById('deviceIdForm');
-
-        if (deviceIdForm.style.display === 'none') {
-          // 👇️ this SHOWS the form
-          deviceIdForm.style.display = 'block';
-        } else {
-          // 👇️ this HIDES the form
-          deviceIdForm.style.display = 'none';
-        }
-      });
-
-      const ageToggle = document.getElementById('ageToggle');
-
-      ageToggle.addEventListener('click', () => {
-
-        const ageForm = document.getElementById('ageForm');
-
-        if (ageForm.style.display === 'none') {
-          // 👇️ this SHOWS the form
-          ageForm.style.display = 'block';
-        } else {
-          // 👇️ this HIDES the form
-          ageForm.style.display = 'none';
-        }
-      });
-
-      const emailToggle = document.getElementById('emailToggle');
-
-      emailToggle.addEventListener('click', () => {
-
-        const emailForm = document.getElementById('emailForm');
-
-        if (emailForm.style.display === 'none') {
-          // 👇️ this SHOWS the form
-          emailForm.style.display = 'block';
-        } else {
-          // 👇️ this HIDES the form
-          emailForm.style.display = 'none';
-        }
-      });
-
-      const seedToggle = document.getElementById('seedToggle');
-
-      seedToggle.addEventListener('click', () => {
-
-        const seedForm = document.getElementById('seedForm');
-
-        if (seedForm.style.display === 'none') {
-          // 👇️ this SHOWS the form
-          seedForm.style.display = 'block';
-        } else {
-          // 👇️ this HIDES the form
-          seedForm.style.display = 'none';
-        }
-      });
-
+     
 
       const passwordToggle = document.getElementById('passwordToggle');
 
