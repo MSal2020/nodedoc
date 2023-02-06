@@ -1710,7 +1710,7 @@ app.post('/editUserProfile', function (req, response) {
     }
     else if(req.session.role == 'doctor')
     {
-	    response.redirect('/usersdashboard'
+	    response.redirect('/usersdashboard')
     }
     
 
@@ -1729,7 +1729,7 @@ app.post('/editDoctorProfile', function (req, response) {
     }
     else if(req.session.role == 'user')
     {
-      	response.redirect('/usersdashboard'
+      	response.redirect('/usersdashboard')
     }
     else if(req.session.role == 'doctor')
     {
