@@ -238,7 +238,7 @@ input {
     {
     %>
     <h3>Please enter password first before seeing Profile</h3>
-    <form class="ui large form" action="/doctorProfile" method="post">
+    <form class="ui large form" action="/userProfile" method="post">
   
           <div class="field">
             <div class="ui left icon input">
@@ -273,33 +273,121 @@ input {
               </span>
             </p>
     
-            <p style="text-align:left; margin-top: 30px;">
-                Device Id:
-                <span style="float:right;">
-                  <%= user.deviceid %> 
-                </span>
-              </p>
-    
-              <p style="text-align:left; margin-top: 30px;">
-                Age:
-                <span style="float:right;">
-                  <%= user.age %> 
-                </span>
-              </p>
-    
-              <p style="text-align:left; margin-top: 30px;">
-                Email:
-                <span style="float:right;">
-                  <%= user.email %> 
-                </span>
-              </p>
+            <div style="float: right; margin-top: 20px;">
+              <form id="firstNameForm" style="display: none;" action="/editDoctorProfile" method="post">
+                <input type="text" name="field1" placeholder="First Name" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm First Name" id="field2" required>
+                <input type="hidden" name="type" id="type" value="firstName">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
 
-              <p style="text-align:left; margin-top: 30px;">
-                2FA Seed:
-                <span style="float:right;">
-                  <%= user.seed %> 
-                </span>
-              </p>
+
+              </form>
+
+
+              <button id="firstNameToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+
+            <p style="text-align:left; margin-top: 80px;">
+              Device Id:
+              <span style="float:right;">
+                <%= user.deviceid %>
+              </span>
+            </p>
+
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="deviceIdForm" style="display: none;" action="/editDoctorProfile" method="post">
+                <input type="text" name="field1" placeholder="Device Id" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Device Id" id="field2" required>
+                <input type="hidden" name="type" id="type" value="userdeviceid">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="deviceIdToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <p style="text-align:left; margin-top: 80px;">
+              Age:
+              <span style="float:right;">
+                <%= user.age %>
+              </span>
+            </p>
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="ageForm" style="display: none;" action="/editDoctorProfile" method="post">
+                <input type="text" name="field1" placeholder="Age" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Age" id="field2" required>
+                <input type="hidden" name="type" id="type" value="age">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="ageToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <p style="text-align:left; margin-top: 80px;">
+              Email:
+              <span style="float:right;">
+                <%= user.email %>
+              </span>
+            </p>
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="emailForm" style="display: none;" action="/editDoctorProfile" method="post">
+                <input type="text" name="field1" placeholder="Email" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Email" id="field2" required>
+                <input type="hidden" name="type" id="type" value="email">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="emailToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <p style="text-align:left; margin-top: 80px;">
+              2FA Seed:
+              <span style="float:right;">
+                <%= user.seed %>
+              </span>
+            </p>
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="seedForm" style="display: none;" action="/editDoctorProfile" method="post">
+                <input type="text" name="field1" placeholder="Seed" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Seed" id="field2" required>
+                <input type="hidden" name="type" id="type" value="tfaSeed">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="seedToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 80px;">
+              <form id="passwordForm" style="display: none;" action="/editDoctorProfile" method="post">
+                <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
+                  title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
+                  type="password" name="field1" placeholder="Password" id="field1" required>
+                <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
+                  title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
+                  type="password" name="field2" placeholder="Confirm Password" id="field2" required>
+                <input type="hidden" name="type" id="type" value="password">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="passwordToggle"
+                style="height: 40px; width: 80px; font-size: 15px; text-align: center; padding: 0; ">Edit
+                Password</button>
+            </div>
+
     
             <% }); %>
     
