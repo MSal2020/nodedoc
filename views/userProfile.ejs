@@ -1,4 +1,4 @@
-<title>Data Visualisation</title>
+<title>User Profile</title>
 
 <head>
   <!-- loading billboard.js styles from the cdn -->
@@ -10,8 +10,6 @@
   <!-- Loading billboard.js scripts from the cdn -->
   <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
   <style>
-    
-
     table {
       width: 100%;
       table-layout: fixed;
@@ -47,10 +45,10 @@
       border-bottom: solid 1px rgba(255, 255, 255, 0.1);
     }
 
-    p 
-    {
+    p {
       margin-top: 10px;
     }
+
     h1 {
       font-size: 30px;
       color: #00b5ad;
@@ -59,24 +57,26 @@
       font-weight: 500;
 
     }
-    h3
-    {
-        font-size: 20px;
+
+    h3 {
+      font-size: 20px;
       color: #00b5ad;
       text-align: center;
       margin-bottom: 15px;
-      font-weight: 500;    }
-    h4
-    {
+      font-weight: 500;
+    }
+
+    h4 {
       margin-top: 25px;
     }
+
     /* demo styles */
 
     @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
 
     body {
       background-color: #DADADA;
-      font-family: Lato,system-ui,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";    
+      font-family: Lato, system-ui, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     }
 
     /* for custom scrollbar for webkit browser*/
@@ -92,225 +92,407 @@
     ::-webkit-scrollbar-thumb {
       -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     }
+
     /* Removes the clear button from date inputs */
-input[type="date"]::-webkit-clear-button {
-    display: none;
-}
+    input[type="date"]::-webkit-clear-button {
+      display: none;
+    }
 
-/* Removes the spin button */
-input[type="date"]::-webkit-inner-spin-button { 
-    display: none;
-}
+    /* Removes the spin button */
+    input[type="date"]::-webkit-inner-spin-button {
+      display: none;
+    }
 
-/* Always display the drop down caret */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    color: #2c3e50;
-}
+    /* Always display the drop down caret */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      color: #2c3e50;
+    }
 
-/* A few custom styles for date inputs */
-input[type="date"] {
-    appearance: none;
-    -webkit-appearance: none;
-    color: #95a5a6;
-    font-family: "Helvetica", arial, sans-serif;
-    font-size: 13px;
-    border:1px solid #ecf0f1;
-    border-radius: 15px;
-    background:#ecf0f1;
-    padding:5px;
-    display: inline-block !important;
-    visibility: visible !important;
-}
+    /* A few custom styles for date inputs */
+    input[type="date"] {
+      appearance: none;
+      -webkit-appearance: none;
+      color: #95a5a6;
+      font-family: "Helvetica", arial, sans-serif;
+      font-size: 13px;
+      border: 1px solid #ecf0f1;
+      border-radius: 15px;
+      background: #ecf0f1;
+      padding: 5px;
+      display: inline-block !important;
+      visibility: visible !important;
+    }
 
-input[type="date"], focus {
-    color: #95a5a6;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-}
+    input[type="date"],
+    focus {
+      color: #95a5a6;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+    }
 
-input {    
-    appearance: none;
-    -webkit-appearance: none;
-    color: #95a5a6;
-    font-family: "Helvetica", arial, sans-serif;
-    font-size: 13px;
-    border:1px solid #ecf0f1;
-    border-radius: 15px;
-    background:#ecf0f1;
-    padding:5px;
-    display: inline-block !important;
-    visibility: visible !important;
+    input {
+      appearance: none;
+      -webkit-appearance: none;
+      color: #95a5a6;
+      font-family: "Helvetica", arial, sans-serif;
+      font-size: 13px;
+      border: 1px solid #ecf0f1;
+      border-radius: 15px;
+      background: #ecf0f1;
+      padding: 5px;
+      display: inline-block !important;
+      visibility: visible !important;
 
-  }
+    }
 
-  .dropdown {
-            display: inline-block;
-            position: relative;
-        }
+    .dropdown {
+      display: inline-block;
+      position: relative;
+    }
 
-        button {
-            border: none;
-            border-radius: 5px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #fff;
+    button {
+      border: none;
+      border-radius: 5px;
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      background-color: #fff;
 
-        }
+    }
 
-        button:hover{
-            background-color: #ddd;
-        }
+    button:hover {
+      background-color: #ddd;
+    }
 
-        .dropdown-options {
-            display: none;
-            position: absolute;
-            overflow: auto;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.4);
-        }
+    .dropdown-options {
+      display: none;
+      position: absolute;
+      overflow: auto;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.4);
+    }
 
-        .dropdown:hover .dropdown-options {
-            display: block;
-        }
+    .dropdown:hover .dropdown-options {
+      display: block;
+    }
 
-        .dropdown-options a {
-            display: block;
-            color: #000000;
-            padding: 5px;
-            text-decoration: none;
-            padding: 20px 40px;
-        }
+    .dropdown-options a {
+      display: block;
+      color: #000000;
+      padding: 5px;
+      text-decoration: none;
+      padding: 20px 40px;
+    }
 
-        .dropdown-options a:hover {
-            color: #0a0a23;
-            background-color: #ddd;
-            border-radius: 5px;
-        }
-        .topnav {
-            overflow: hidden;
-            background-color: #00b5ad;
-        }
+    .dropdown-options a:hover {
+      color: #0a0a23;
+      background-color: #ddd;
+      border-radius: 5px;
+    }
 
-        .topnav a {
-            float: right;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 17px;
-        }
+    .topnav {
+      overflow: hidden;
+      background-color: #00b5ad;
+    }
 
-        .topnav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
+    .topnav a {
+      float: right;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
 
-        .topnav a.active {
-            background-color: #04AA6D;
-            color: white;
-        }
+    .topnav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    .topnav a.active {
+      background-color: #04AA6D;
+      color: white;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 <div class="topnav">
-    <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
+  <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
 "></span>
 
-    <a href="/logout" id="">Logout</a>
-    <a href="/userProfile">Profile</a>
-    <a href=""> Appointments</a>
-    <a href="/userdashboard"> Home </a>
+  <a href="/logout" id="">Logout</a>
+  <a href="/userProfile">Profile</a>
+  <a href="/bot"> Chatbot</a>
+  <a href="/call"> Call</a>
+  <a href="/userdashboard"> Home </a>
 </div>
+
 <body style="text-align: center; height: 2200px;">
 
- <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">User Details</h1> </div>
- 
- <% 
-    if(success.success == "no")
-    {
-    %>
+  <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;">
+    <h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">User Details</h1>
+  </div>
+
+  <% if(success.success=="no" ) { %>
     <h3>Please enter password first before seeing Profile</h3>
     <form class="ui large form" action="/userProfile" method="post">
-  
-          <div class="field">
-            <div class="ui left icon input">
-              <i class="lock icon"></i>
-              <input style="width: 200px; height: 30px;" type="password" name="password" placeholder="Password" id="password" required>
-            </div>
-          </div>
 
-          <input style="margin-top: 25px;" class="ui fluid large teal submit button" type="submit" value="Submit">
+      <div class="field">
+        <div class="ui left icon input">
+          <i class="lock icon"></i>
+          <input style="width: 200px; height: 30px;" type="password" name="password" placeholder="Password"
+            id="password" required>
         </div>
-  
-        <div class="ui error message"></div>
-  
-      </form>    <% 
-    }
-    else if(success.success == "yes")
-    {
-    %>
-    <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid ;height: 550px ">
+      </div>
+
+      <input style="margin-top: 25px;" class="ui fluid large teal submit button" type="submit" value="Submit">
+      </div>
+
+      <div class="ui error message"></div>
+
+    </form>
+    <% } else if(success.success=="yes" ) { %>
+      <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid ;height: 710px ">
         <h2>User Details</h2>
-          
-        
-    
+
+
+
         <div style="text-align: left; padding-top: 10px; width: 600px;">
           <% userdetails.forEach(function(user){%>
-    
-    
+
+
             <p style="text-align:left; margin-top: 30px;">
               First Name:
               <span style="float:right;">
-                <%= user.firstname %> 
+                <%= user.firstname %>
               </span>
             </p>
-    
-            <p style="text-align:left; margin-top: 30px;">
-                Device Id:
-                <span style="float:right;">
-                  <%= user.deviceid %> 
-                </span>
-              </p>
-    
-              <p style="text-align:left; margin-top: 30px;">
-                Age:
-                <span style="float:right;">
-                  <%= user.age %> 
-                </span>
-              </p>
-    
-              <p style="text-align:left; margin-top: 30px;">
-                Email:
-                <span style="float:right;">
-                  <%= user.email %> 
-                </span>
-              </p>
 
-              <p style="text-align:left; margin-top: 30px;">
-                2FA Seed:
-                <span style="float:right;">
-                  <%= user.seed %> 
-                </span>
-              </p>
-    
+            <div style="float: right; margin-top: 20px;">
+              <form id="firstNameForm" style="display: none;" action="/editUserProfile" method="post">
+                <input type="text" name="field1" placeholder="First Name" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm First Name" id="field2" required>
+                <input type="hidden" name="type" id="type" value="firstName">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+
+              </form>
+
+
+              <button id="firstNameToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+
+            <p style="text-align:left; margin-top: 80px;">
+              Device Id:
+              <span style="float:right;">
+                <%= user.deviceid %>
+              </span>
+            </p>
+
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="deviceIdForm" style="display: none;" action="/editUserProfile" method="post">
+                <input type="text" name="field1" placeholder="Device Id" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Device Id" id="field2" required>
+                <input type="hidden" name="type" id="type" value="userdeviceid">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="deviceIdToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <p style="text-align:left; margin-top: 80px;">
+              Age:
+              <span style="float:right;">
+                <%= user.age %>
+              </span>
+            </p>
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="ageForm" style="display: none;" action="/editUserProfile" method="post">
+                <input type="text" name="field1" placeholder="Age" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Age" id="field2" required>
+                <input type="hidden" name="type" id="type" value="age">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="ageToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <p style="text-align:left; margin-top: 80px;">
+              Email:
+              <span style="float:right;">
+                <%= user.email %>
+              </span>
+            </p>
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="emailForm" style="display: none;" action="/editUserProfile" method="post">
+                <input type="text" name="field1" placeholder="Email" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Email" id="field2" required>
+                <input type="hidden" name="type" id="type" value="email">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="emailToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <p style="text-align:left; margin-top: 80px;">
+              2FA Seed:
+              <span style="float:right;">
+                <%= user.seed %>
+              </span>
+            </p>
+
+            <div style="float: right; margin-top: 20px;">
+              <form id="seedForm" style="display: none;" action="/editUserProfile" method="post">
+                <input type="text" name="field1" placeholder="Seed" id="field1" required>
+                <input type="text" name="field2" placeholder="Confirm Seed" id="field2" required>
+                <input type="hidden" name="type" id="type" value="tfaSeed">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="seedToggle"
+                style="height: 30px; width: 60px; font-size: 12px; text-align: center; padding: 0; ">Edit</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 80px;">
+              <form id="passwordForm" style="display: none;" action="/editUserProfile" method="post">
+                <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
+                  title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
+                  type="password" name="field1" placeholder="Password" id="field1" required>
+                <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
+                  title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
+                  type="password" name="field2" placeholder="Confirm Password" id="field2" required>
+                <input type="hidden" name="type" id="type" value="password">
+                <input class="ui fluid large teal submit button" type="submit" value="Submit">
+
+              </form>
+
+              <button id="passwordToggle"
+                style="height: 40px; width: 80px; font-size: 15px; text-align: center; padding: 0; ">Edit
+                Password</button>
+            </div>
+
             <% }); %>
-    
-            
-    
+
+
+
         </div>
-     </div>
+      </div>
 
-    <% }; %>
- 
+      <% }; %>
 
 
+        <script>
+          const firstNameToggle = document.getElementById('firstNameToggle');
+
+          firstNameToggle.addEventListener('click', () => {
+
+            const firstNameForm = document.getElementById('firstNameForm');
+
+            if (firstNameForm.style.display === 'none') {
+              // 👇️ this SHOWS the form
+              firstNameForm.style.display = 'block';
+            } else {
+              // 👇️ this HIDES the form
+              firstNameForm.style.display = 'none';
+            }
+          });
+
+          const deviceIdToggle = document.getElementById('deviceIdToggle');
+
+          deviceIdToggle.addEventListener('click', () => {
+
+            const deviceIdForm = document.getElementById('deviceIdForm');
+
+            if (deviceIdForm.style.display === 'none') {
+              // 👇️ this SHOWS the form
+              deviceIdForm.style.display = 'block';
+            } else {
+              // 👇️ this HIDES the form
+              deviceIdForm.style.display = 'none';
+            }
+          });
+
+          const ageToggle = document.getElementById('ageToggle');
+
+          ageToggle.addEventListener('click', () => {
+
+            const ageForm = document.getElementById('ageForm');
+
+            if (ageForm.style.display === 'none') {
+              // 👇️ this SHOWS the form
+              ageForm.style.display = 'block';
+            } else {
+              // 👇️ this HIDES the form
+              ageForm.style.display = 'none';
+            }
+          });
+
+          const emailToggle = document.getElementById('emailToggle');
+
+          emailToggle.addEventListener('click', () => {
+
+            const emailForm = document.getElementById('emailForm');
+
+            if (emailForm.style.display === 'none') {
+              // 👇️ this SHOWS the form
+              emailForm.style.display = 'block';
+            } else {
+              // 👇️ this HIDES the form
+              emailForm.style.display = 'none';
+            }
+          });
+
+          const seedToggle = document.getElementById('seedToggle');
+
+          seedToggle.addEventListener('click', () => {
+
+            const seedForm = document.getElementById('seedForm');
+
+            if (seedForm.style.display === 'none') {
+              // 👇️ this SHOWS the form
+              seedForm.style.display = 'block';
+            } else {
+              // 👇️ this HIDES the form
+              seedForm.style.display = 'none';
+            }
+          });
+
+
+          const passwordToggle = document.getElementById('passwordToggle');
+
+          passwordToggle.addEventListener('click', () => {
+
+            const passwordForm = document.getElementById('passwordForm');
+
+            if (passwordForm.style.display === 'none') {
+              // 👇️ this SHOWS the form
+              passwordForm.style.display = 'block';
+            } else {
+              // 👇️ this HIDES the form
+              passwordForm.style.display = 'none';
+            }
+          });
+
+        </script>
 </body>
+
 </html>
