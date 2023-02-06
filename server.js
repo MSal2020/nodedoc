@@ -728,6 +728,7 @@ app.post('/userdashboard', function (req, response)
                         var diastolic = (readings.BloodPressure).Diastolic
                         var systolic = (readings.BloodPressure).Systolic
                         var temperature = (5/9) * (readings.BodyTemperature - 32)
+			temperature = Math.round(temperature * 10) / 10
                         var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
                         data.push(reading)
         
@@ -789,11 +790,17 @@ app.post('/userdashboard', function (req, response)
         
                     }
                     heartrateavg = heartratetotal / result.length
+                    heartrateavg = Math.round(heartrateavg * 10) / 10
                     heartratevariabilityavg = heartratevariabilitytotal / result.length
+                    heartratevariabilityavg = Math.round(heartratevariabilityavg * 10) / 10
                     respiratoryRateavg = respiratoryRatetotal / result.length
+                    respiratoryRateavg = Math.round(respiratoryRateavg * 10) / 10
                     diastolicavg = diastolictotal / result.length
+                    diastolicavg = Math.round(diastolicavg * 10) / 10
                     systolicavg = systolictotal / result.length
+                    systolicavg = Math.round(systolicavg * 10) / 10
                     temperatureavg = temperaturetotal / result.length
+                    temperatureavg = Math.round(temperatureavg * 10) / 10
                     let outp;
 
                     async function runCompletion () {
@@ -1079,6 +1086,7 @@ app.post('/usersdashboard', function (req, response)
                     var diastolic = (readings.BloodPressure).Diastolic
                     var systolic = (readings.BloodPressure).Systolic
                     var temperature = (5/9) * (readings.BodyTemperature - 32)
+		    temperature = Math.round(temperature * 10) / 10
                     var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
                     data.push(reading)
     
@@ -1139,12 +1147,18 @@ app.post('/usersdashboard', function (req, response)
                     temperaturetotal += temperature 
     
                 }
-                heartrateavg = heartratetotal / result.length
-                heartratevariabilityavg = heartratevariabilitytotal / result.length
-                respiratoryRateavg = respiratoryRatetotal / result.length
-                diastolicavg = diastolictotal / result.length
-                systolicavg = systolictotal / result.length
-                temperatureavg = temperaturetotal / result.length
+                    heartrateavg = heartratetotal / result.length
+                    heartrateavg = Math.round(heartrateavg * 10) / 10
+                    heartratevariabilityavg = heartratevariabilitytotal / result.length
+                    heartratevariabilityavg = Math.round(heartratevariabilityavg * 10) / 10
+                    respiratoryRateavg = respiratoryRatetotal / result.length
+                    respiratoryRateavg = Math.round(respiratoryRateavg * 10) / 10
+                    diastolicavg = diastolictotal / result.length
+                    diastolicavg = Math.round(diastolicavg * 10) / 10
+                    systolicavg = systolictotal / result.length
+                    systolicavg = Math.round(systolicavg * 10) / 10
+                    temperatureavg = temperaturetotal / result.length
+                    temperatureavg = Math.round(temperatureavg * 10) / 10
     
     
                 averages = [{ heartratemin: heartratemin, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
@@ -1604,6 +1618,129 @@ app.post('/doctorProfile', function (req, response)
     
    
 })
+	
+function editDetails(field1, field2, type, req, response) {
+
+    
+            
+        if (field1 && field2) {
+            if (field1 == field2) {
+
+                if (type == "password") {
+
+                    field1 = bcrypt.hashSync(field2, 10);
+                }
+            
+                console.log("Changing " + type)
+                var connection = new Connection(config);
+                connection.on('connect', function (err) {
+                    // If no error, then good to proceed.  
+
+                    var Request = require('tedious').Request;
+                    var TYPES = require('tedious').TYPES;
+
+                    var request = new Request(`UPDATE [dbo].[users] SET ${type} = @field1 WHERE email = @email`, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+
+                    });
+                    var email = req.session.email
+                    request.addParameter('email', TYPES.VarChar, email);
+                    request.addParameter('field1', TYPES.VarChar, field1);
+
+
+
+                    request.on("requestCompleted", function (rowCount, more) {
+
+                        if (type == "email") {
+                            req.session.email = field1
+                        }
+                        response.redirect("/userProfile")
+
+                    });
+
+
+                    connection.execSql(request);
+
+
+                });
+
+                connection.connect();
+
+
+
+            }
+            else {
+                response.send("Fields don't match")
+            }
+        }
+        else {
+            response.send("Please fill up all fields")
+        }
+    
+
+
+
+
+
+
+}
+
+
+
+
+app.post('/editUserProfile', function (req, response) {
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!req.session.loggedin) {
+	response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+    var field1 = req.body.field1
+    var field2 = req.body.field2
+    var type = req.body.type
+    editDetails(field1, field2, type, req, response)
+    }
+    else if(req.session.role == 'doctor')
+    {
+	    response.redirect('/usersdashboard'
+    }
+    
+
+})
+
+app.post('/editDoctorProfile', function (req, response) {
+ var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!req.session.loggedin) {
+	response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {
+      	response.redirect('/usersdashboard'
+    }
+    else if(req.session.role == 'doctor')
+    {
+	var field1 = req.body.field1
+    	var field2 = req.body.field2
+   	var type = req.body.type
+    	editDetails(field1, field2, type, req, response)
+	    
+    }
+})
+	
 var port = process.env.PORT || 3000;
 server.listen(port)  
 })()
