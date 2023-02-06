@@ -1,4 +1,4 @@
-<title>Data Visualisation</title>
+<title>Doctor Profile</title>
 
 <head>
   <!-- loading billboard.js styles from the cdn -->
@@ -398,7 +398,99 @@ input {
 
     <% }; %>
  
+    <script>
+      const firstNameToggle = document.getElementById('firstNameToggle');
 
+      firstNameToggle.addEventListener('click', () => {
+
+        const firstNameForm = document.getElementById('firstNameForm');
+
+        if (firstNameForm.style.display === 'none') {
+          // 👇️ this SHOWS the form
+          firstNameForm.style.display = 'block';
+        } else {
+          // 👇️ this HIDES the form
+          firstNameForm.style.display = 'none';
+        }
+      });
+
+      const deviceIdToggle = document.getElementById('deviceIdToggle');
+
+      deviceIdToggle.addEventListener('click', () => {
+
+        const deviceIdForm = document.getElementById('deviceIdForm');
+
+        if (deviceIdForm.style.display === 'none') {
+          // 👇️ this SHOWS the form
+          deviceIdForm.style.display = 'block';
+        } else {
+          // 👇️ this HIDES the form
+          deviceIdForm.style.display = 'none';
+        }
+      });
+
+      const ageToggle = document.getElementById('ageToggle');
+
+      ageToggle.addEventListener('click', () => {
+
+        const ageForm = document.getElementById('ageForm');
+
+        if (ageForm.style.display === 'none') {
+          // 👇️ this SHOWS the form
+          ageForm.style.display = 'block';
+        } else {
+          // 👇️ this HIDES the form
+          ageForm.style.display = 'none';
+        }
+      });
+
+      const emailToggle = document.getElementById('emailToggle');
+
+      emailToggle.addEventListener('click', () => {
+
+        const emailForm = document.getElementById('emailForm');
+
+        if (emailForm.style.display === 'none') {
+          // 👇️ this SHOWS the form
+          emailForm.style.display = 'block';
+        } else {
+          // 👇️ this HIDES the form
+          emailForm.style.display = 'none';
+        }
+      });
+
+      const seedToggle = document.getElementById('seedToggle');
+
+      seedToggle.addEventListener('click', () => {
+
+        const seedForm = document.getElementById('seedForm');
+
+        if (seedForm.style.display === 'none') {
+          // 👇️ this SHOWS the form
+          seedForm.style.display = 'block';
+        } else {
+          // 👇️ this HIDES the form
+          seedForm.style.display = 'none';
+        }
+      });
+
+
+      const passwordToggle = document.getElementById('passwordToggle');
+
+      passwordToggle.addEventListener('click', () => {
+
+        const passwordForm = document.getElementById('passwordForm');
+
+        if (passwordForm.style.display === 'none') {
+          // 👇️ this SHOWS the form
+          passwordForm.style.display = 'block';
+        } else {
+          // 👇️ this HIDES the form
+          passwordForm.style.display = 'none';
+        }
+      });
+
+    </script>
 
 </body>
 </html>
