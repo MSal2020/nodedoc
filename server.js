@@ -24,7 +24,7 @@ require('dotenv').config()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
-app.use(express.static('public'))
+app.use(express.static('template'))
 
 
 //Azure Key Vault
