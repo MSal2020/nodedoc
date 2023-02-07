@@ -1,14 +1,10 @@
 <title>User Profile</title>
 
 <head>
-  <!-- loading billboard.js styles from the cdn -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
 
-  <!--Loading D3.js -->
-  <script src="https://d3js.org/d3.v6.min.js"></script>
 
-  <!-- Loading billboard.js scripts from the cdn -->
-  <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+
   <style>
     table {
       width: 100%;
@@ -69,16 +65,16 @@
     h4 {
       margin-top: 25px;
     }
-
+    html,
+    body
+    {
+      height: 1500px;
+    }
     /* demo styles */
 
     @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
 
-    body {
-      background-color: #DADADA;
-      font-family: Lato, system-ui, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    }
-
+    
     /* for custom scrollbar for webkit browser*/
 
     ::-webkit-scrollbar {
@@ -192,28 +188,15 @@
       border-radius: 5px;
     }
 
-    .topnav {
-      overflow: hidden;
-      background-color: #00b5ad;
-    }
+    .profiledetails
+    {
+      border-radius: 25px;
+      background: #80F0C4;
+      padding: 20px; 
+      width: 400px;
+      height: 150px; 
+      margin: 0 auto;
 
-    .topnav a {
-      float: right;
-      color: #f2f2f2;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 17px;
-    }
-
-    .topnav a:hover {
-      background-color: #ddd;
-      color: black;
-    }
-
-    .topnav a.active {
-      background-color: #04AA6D;
-      color: white;
     }
 
     * {
@@ -223,17 +206,61 @@
     }
   </style>
 </head>
-<div class="topnav">
-  <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
-"></span>
-
-  <a href="/logout" id="">Logout</a>
-  <a href="/userProfile">Profile</a>
-  <a href="/call"> Call</a>
-  <a href="/bot"> Chatbot</a>
-  <a href="/userdashboard"> Home </a>
+<div id="preloader">
+  <div class="medilife-load"></div>
 </div>
 
+<!-- ***** Header Area Start ***** -->
+<header class="header-area">
+<!-- Top Header Area -->
+
+
+<!-- Main Header Area -->
+<div class="main-header-area" id="stickyHeader">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center">
+            <div class="col-12 h-100">
+                <div class="main-menu h-100">
+                    <nav class="navbar h-100 navbar-expand-lg">
+                        <!-- Logo Area  -->
+                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo"></a>
+
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+                        <div class="collapse navbar-collapse" id="medilifeMenu">
+                            <!-- Menu Area -->
+                            <ul class="navbar-nav ml-auto">
+                              <li class="nav-item ">
+                                  <a class="nav-link" href="/userdashboard">Home <span class="sr-only">(current)</span></a>
+                              </li>
+                              <li class="nav-item active">
+                                  <a class="nav-link" href="/userDashboardSelect">Dashboard</a>
+                              </li>
+                              <li class="nav-item">
+                                  <a class="nav-link" href="/bot">Chatbot</a>
+                              </li>
+                              <li class="nav-item">
+                                  <a class="nav-link" href="/call">Call</a>
+                              </li>
+                              <li class="nav-item">
+                                  <a class="nav-link" href="/userProfile">Profile</a>
+                              </li>
+                              <li class="nav-item">
+                                  <a class="nav-link" href="about-us.html">About Us</a>
+                              </li>
+                              <li class="nav-item">
+                                  <a class="nav-link" href="/logout">Logout</a>
+                              </li>
+                          </ul>
+                            <!-- Appointment Button -->
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</header>
 <body style="text-align: center; height: 2200px;">
 
   <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;">
@@ -242,8 +269,8 @@
 
   <% if(success.success=="no" ) { %>
     <h3>Please enter password first before seeing Profile</h3>
-    <form class="ui large form" action="/userProfile" method="post">
 
+    <form class="ui large form" action="/userProfile" method="post">
       <div class="field">
         <div class="ui left icon input">
           <i class="lock icon"></i>
@@ -251,64 +278,73 @@
             id="password" required>
         </div>
       </div>
-
       <input style="margin-top: 25px;" class="ui fluid large teal submit button" type="submit" value="Submit">
       </div>
-
       <div class="ui error message"></div>
-
     </form>
-    <% } else if(success.success=="yes" ) { %>
-      <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid ;height: 710px ">
-        <h2>User Details</h2>
-
-
-
-        <div style="text-align: left; padding-top: 10px; width: 600px;">
-          <% userdetails.forEach(function(user){%>
-
-
-            <p style="text-align:left; margin-top: 30px;">
-              First Name:
-              <span style="float:right;">
-                <%= user.firstname %>
-              </span>
-            </p>
 
     
 
-            <p style="text-align:left; margin-top: 80px;">
-              Device Id:
-              <span style="float:right;">
+    <% } else if(success.success=="yes" ) { %>
+      <div style="padding: 50px;margin:0 auto; width: 700px; height: 710px ">
+        <div style="padding-top: 10px; width: 600px;">
+          <% userdetails.forEach(function(user){%>
+
+            
+
+          
+    
+            <div class="profiledetails">
+              <img src="img/icons/firstname.png" style="width: 50px; height: 50px; float: left;">  
+              <p style="float:left;" >First Name</p>  
+              <p style="float:right;">
+                <%= user.firstname %>
+              </p>
+            </div>
+            
+            <br>
+
+            <div class="profiledetails">
+              <img src="img/icons/deviceid.png" style="width: 50px; height: 50px; float: left;">  
+              <p style="float:left;" >Device Id</p>  
+              <p style="float:right;">
                 <%= user.deviceid %>
-              </span>
-            </p>
+              </p>
+            </div>
 
+            <br>
 
-            <p style="text-align:left; margin-top: 80px;">
-              Age:
-              <span style="float:right;">
+            <div class="profiledetails">
+              <img src="img/icons/age.jpg" style="width: 50px; height: 50px; float: left;">  
+              <p style="float:left;" >Age</p>  
+              <p style="float:right;">
                 <%= user.age %>
-              </span>
-            </p>
-
+              </p>
+            </div>
          
 
-            <p style="text-align:left; margin-top: 80px;">
-              Email:
-              <span style="float:right;">
+            <br>
+
+            <div class="profiledetails">
+              <img src="img/icons/email.png" style="width: 50px; height: 50px; float: left;">  
+              <p style="float:left;" >Email</p>  
+              <p style="float:right;">
                 <%= user.email %>
-              </span>
-            </p>
+              </p>
+            </div>
 
 
-            <p style="text-align:left; margin-top: 80px;">
-              2FA Seed:
-              <span style="float:right;">
+            <br>
+
+            <div class="profiledetails">
+              <img src="img/icons/seed.png" style="width: 50px; height: 50px; float: left;">  
+              <p style="float:left;" >2FA Seed</p>  
+              <p style="float:right;">
                 <%= user.seed %>
-              </span>
-            </p>
-
+              </p>
+            </div>
+           
+           
             <div style="text-align: center; margin-top: 80px;">
               <form id="passwordForm" style="display: none;" action="/editUserProfile" method="post">
                 <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
@@ -319,33 +355,19 @@
                   type="password" name="field2" placeholder="Confirm Password" id="field2" required>
                 <input type="hidden" name="type" id="type" value="password">
                 <input class="ui fluid large teal submit button" type="submit" value="Submit">
-
               </form>
-
-              <button id="passwordToggle"
-                style="height: 40px; width: 80px; font-size: 15px; text-align: center; padding: 0; ">Edit
-                Password</button>
+              <button id="passwordToggle" class="btn medilife-btn mt-50">Edit Password</button>
             </div>
-
             <% }); %>
-
-
-
         </div>
       </div>
-
       <% }; %>
 
 
         <script>
-
-
           const passwordToggle = document.getElementById('passwordToggle');
-
           passwordToggle.addEventListener('click', () => {
-
             const passwordForm = document.getElementById('passwordForm');
-
             if (passwordForm.style.display === 'none') {
               // 👇️ this SHOWS the form
               passwordForm.style.display = 'block';
@@ -354,8 +376,18 @@
               passwordForm.style.display = 'none';
             }
           });
-
         </script>
 </body>
 
 </html>
+</script>
+<!-- jQuery (Necessary for All JavaScript Plugins) -->
+<script src="js/jquery/jquery-2.2.4.min.js"></script>
+<!-- Popper js -->
+<script src="js/popper.min.js"></script>
+<!-- Bootstrap js -->
+<script src="js/bootstrap.min.js"></script>
+<!-- Plugins js -->
+<script src="js/plugins.js"></script>
+<!-- Active js -->
+<script src="js/active.js"></script>
