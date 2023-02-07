@@ -1040,10 +1040,8 @@ app.get('/doctorUserDetails', function (req, response)
     }
     else if(req.session.role == 'doctor')
     {
-
         response.redirect("/userdashboard")
     }
-
 
 })
 
