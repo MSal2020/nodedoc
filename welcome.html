@@ -1,92 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js" integrity="sha512-9uCjPZs30uENi8K34nm/jrFW9aw7Euk3SCdJYugmjNEgJQuzBhE0WDO9xVxbNdWQC5lWG4M/nFxOTkgTqEKdlA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.css" integrity="sha512-MCgTNsKwC2c/PSk77N5kuTXtsyD8tkpYMh7GnFfzTpOeNAKxuri9YuYswSiAkwPC3fBpIIMs9udL/hJIIapVHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style type="text/css">
-        body {
-          background-color: #DADADA;
-        }
-        body > .grid {
-          height: 100%;
-        }
-        .image {
-          margin-top: -100px;
-        }
-        .column {
-          max-width: 450px;
-        }
-      </style>
-      <script>
-        const pageAccessedByReload = (
-        (window.performance.navigation && window.performance.navigation.type === 1) ||
-            window.performance
-            .getEntriesByType('navigation')
-            .map((nav) => nav.type)
-            .includes('reload')
-        );
-        if(pageAccessedByReload == true){
-            window.location.href = window.location.href
-        }
-      </script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js"
+    integrity="sha512-9uCjPZs30uENi8K34nm/jrFW9aw7Euk3SCdJYugmjNEgJQuzBhE0WDO9xVxbNdWQC5lWG4M/nFxOTkgTqEKdlA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="style.css" />
+
+  <style type="text/css">
+
+
+  </style>
+  <script>
+    const pageAccessedByReload = (
+      (window.performance.navigation && window.performance.navigation.type === 1) ||
+      window.performance
+        .getEntriesByType('navigation')
+        .map((nav) => nav.type)
+        .includes('reload')
+    );
+    if (pageAccessedByReload == true) {
+      window.location.href = window.location.href
+    }
+  </script>
 </head>
+
 <body>
-    <div class="ui middle aligned center aligned grid">
-        <div class="column">
-          <h2 class="ui teal image header">
-            <img src="heartbeat.png" class="image">
-            <div class="content">
-              Login to your account
+
+  <div id="preloader">
+    <div class="medilife-load"></div>
+  </div>
+
+<!-- ***** Header Area Start ***** -->
+<header class="header-area">
+  <!-- Top Header Area -->
+ 
+
+  <!-- Main Header Area -->
+  <div class="main-header-area" id="stickyHeader">
+      <div class="container h-100">
+          <div class="row h-100 align-items-center">
+              <div class="col-12 h-100">
+                  <div class="main-menu h-100">
+                      <nav class="navbar h-100 navbar-expand-lg">
+                          <!-- Logo Area  -->
+                          <a class="navbar-brand" href="/home_guest"><img src="img/core-img/logo.png" alt="Logo"></a>
+
+                          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+                          <div class="collapse navbar-collapse" id="medilifeMenu">
+                              <!-- Menu Area -->
+                              <ul class="navbar-nav ml-auto">
+                                  <li class="nav-item">
+                                      <a class="nav-link" href="/home_guest">Home</a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a class="nav-link" href="about-us.html">About Us</a>
+                                  </li>
+                                  <li class="nav-item active">
+                                      <a class="nav-link" href="/welcome">Login </a>
+                                  </li>
+                              </ul>
+                              <!-- Appointment Button -->
+                          </div>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</header>
+
+
+
+  <div class="medilife-book-an-appoinment-area" style="margin-top: 150px;">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="appointment-form-content">
+            <div class="row no-gutters align-items-center">
+              <div class="col-12 col-lg-9">
+                <div class="medilife-appointment-form">
+                  <form action="/auth" method="post">
+                    <div class="row align-items-end">
+
+                      <div class="col-12 col-md-4">
+                        <div class="form-group">
+                          <input class="form-control border-top-0 border-right-0 border-left-0"
+                            pattern='^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$'
+                            title="Email Format at most 50 characters" type="text" name="email" placeholder="Email"
+                            id="email" required>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-4">
+                        <div class="form-group">
+                          <input class="form-control border-top-0 border-right-0 border-left-0"
+                            pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
+                            title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
+                            type="password" name="password" placeholder="Password" id="password" required>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-4">
+                        <div class="form-group">
+                          <input class="form-control border-top-0 border-right-0 border-left-0" pattern="^[0-9]{6,6}$"
+                            title="6 Digit Code" type="text" name="2faOTP" placeholder="6 Digit OTP Code" id="2faOTP"
+                            required>
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-md-5 mb-0">
+                        <div class="form-group mb-0" style="display: flex; justify-content: space-between;">
+                          <div class="h-captcha" data-sitekey="b0d2857e-cddc-4eb1-bc5b-b6f707fac0cc"></div>
+                          <script src="https://js.hcaptcha.com/1/api.js" async defer></script> 
+                          <input style="margin-left: 70px; margin-top: 30px;"type="submit" value="Login" class="btn medilife-btn">
+                          <p style="margin-left: 30px; margin-top: 23px;">
+                            Newcomer? <a href="/signup">Sign Up</a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                </form>
+              </div>
             </div>
-          </h2>
-          <form class="ui large form" action="/auth" method="post">
-            <div class="ui stacked segment">
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="inbox icon"></i>
-                  <input pattern='^([a-zA-Z0-9\+_\-]+)(\.[a-zA-Z0-9\+_\-]+)*@([a-zA-Z0-9\-]+\.)+[a-zA-Z]{2,6}$' title="Email Format at most 50 characters" type="text" name="email" placeholder="Email" id="email" required>
-                </div>
-              </div>
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="lock icon"></i>
-                  <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$" title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters" type="password" name="password" placeholder="Password" id="password" required>
-                </div>
-              </div>
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="lock icon"></i>
-                  <style>
-                  [type='number'] {
-                      -moz-appearance:textfield;
-                  }
-                  
-                  input::-webkit-outer-spin-button,
-                  input::-webkit-inner-spin-button {
-                      -webkit-appearance: none;
-                  }
-                  </style>
-                  <input pattern="^[0-9]{6,6}$" title="6 Digit Code" type="text" name="2faOTP" placeholder="6 Digit OTP Code" id="2faOTP" required>
-                </div>
-              </div>
-              <input type='hidden' name='csrf' class='csrftoken' value='token'>
-              <div class="h-captcha" data-sitekey="b0d2857e-cddc-4eb1-bc5b-b6f707fac0cc"></div>
-              <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-              <input class="ui fluid large teal submit button" type="submit" value="Login">
-            </div>
-      
-            <div class="ui error message"></div>
-      
-          </form>
-      
-          <div class="ui message">
-            Newcomer? <a href="/signup">Sign Up</a>
+
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- jQuery (Necessary for All JavaScript Plugins) -->
+<script src="js/jquery/jquery-2.2.4.min.js"></script>
+<!-- Popper js -->
+<script src="js/popper.min.js"></script>
+<!-- Bootstrap js -->
+<script src="js/bootstrap.min.js"></script>
+<!-- Plugins js -->
+<script src="js/plugins.js"></script>
+<!-- Active js -->
+<script src="js/active.js"></script>
 </body>
+</html>
