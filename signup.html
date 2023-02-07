@@ -35,7 +35,7 @@
             var secretSeed = await document.getElementById('2fa-secret-id').innerText
             var otpInput = await document.getElementById('otp-input').value
             var totpCheck = async arg1 => {
-                const response = await fetch('http://localhost:3000/checkTOTP', {
+                const response = await fetch('https://aidochealth.azurewebsites.net/checkTOTP', {
                     method: 'POST',
                     body: JSON.stringify({
                         seed: secretSeed

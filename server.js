@@ -79,6 +79,90 @@ app.use(session({
     proxy:true
 }));
 
+
+//calendar
+const gcal = require('./Utility/gcal.js');
+
+const days = require('./ReqHandlers/GET-Handlers/days.js');
+const timeslots = require('./ReqHandlers/GET-Handlers/timeslots.js');
+const book = require('./ReqHandlers/POST-Handlers/book.js');
+
+const auth = {};
+
+// Get the OAuth2 client for making Google Calendar API requests.
+gcal.initAuthorize(setAuth);
+
+function setAuth(auth) {
+    this.auth = auth;
+
+}
+
+/**
+ * Handles 'days' GET requests.
+ * @param {object} req  The requests object provided by Express. See Express doc.
+ * @param {object} res  The results object provided by Express. See Express doc.
+ */
+function handleGetDays(req, res) {
+
+    const year = req.query.year;
+    const month = req.query.month;
+    days.getBookableDays(this.auth, year, month)
+        .then(function (data) {
+            res.send(data);
+        })
+        .catch(function (data) {
+            res.send(data);
+        });
+
+}
+
+/**
+ * Handles 'timeslots' GET requests.
+ * @param {object} req  The requests object provided by Express. See Express doc.
+ * @param {object} res  The results object provided by Express. See Express doc.
+ */
+function handleGetTimeslots(req, res) {
+
+    const year = req.query.year;
+    const month = req.query.month;
+    const day = req.query.day;
+    timeslots.getAvailTimeslots(this.auth, year, month, day)
+        .then(function (data) {
+            res.send(data);
+        })
+        .catch(function (data) {
+            res.send(data);
+        });
+
+}
+
+/**
+ * Handles 'book' POST requests.
+ * @param {object} req  The requests object provided by Express. See Express doc.
+ * @param {object} res  The results object provided by Express. See Express doc.
+ */
+function handleBookAppointment(req, res) {
+    const year = req.query.year;
+    const month = req.query.month;
+    const day = req.query.day;
+    const hour = req.query.hour;
+    const minute = req.query.minute;
+    book.bookAppointment(this.auth, year, month, day, hour, minute)
+        .then(function (data) {
+            res.send(data);
+        })
+        .catch(function (data) {
+            res.send(data);
+        });
+}
+
+// Routes.
+app.get('/days', handleGetDays);
+app.get('/timeslots', handleGetTimeslots);
+app.post('/book', handleBookAppointment);
+
+//end calendar
+
 //OpenAI Configuration
 const { Configuration, OpenAIApi } = require("openai");
 const openAPIKEYKVSecret = await KVRetrieve('OPENAI-API-KEY');
@@ -957,45 +1041,268 @@ app.get( '/call', ( req, res ) => {
 
 io.of( '/stream' ).on( 'connection', stream );
 
-//chatbot
+
 app.get('/bot', (req, res) => {
     
     res.sendFile(path.join(__dirname, '/public/index.html'));
   })
-
+//chatbot
 app.get('/chatbot', async (req, res) => {
     res.status(200).send({
-      message: 'Hello from DocAI !!'
+        message: 'Hello from DocAI !!'
     })
-  })
-var convo = ("Pretend you are doctor named DocAI. You are helpful, creative, clever, and very friendly. You are talking to a patient. Answer with medical advice.\nThis is an example of how you should respond as DocAI.\nDocAI: How can I help you today?\nPatient: I’m having a fever\nDocAI: Could you please take a reading of your temperature and tell me?\nPatient: My temperature is 37 degrees celsius\nDocAI: It's possible that you have a fever if your temperature is above 37.5 degrees Celsius. Are you experiencing any other symptoms?\nPatient: Yes, I feel a bit cold when I sit under a fan\nDocAI:  I recommend that you take some over-the-counter medication to reduce your fever and drink plenty of fluids. If your symptoms persist, please make an appointment with your doctor.\nThis is the real conversation.\nDocAI: Hi there, how can I help you today?\n");
-  app.post('/chatbot', async (req, res) => {
+})
+var convo = ('Pretend you are doctor named DocAI. You are helpful, creative, clever, and very friendly. You are talking to a patient. Answer with medical advice. If a patient asks you which day they can book an appointment, ask them what date and time they prefer for their appointment. After you book the appointment, always make sure your response includes "your appointment is booked for" and include the date in yyyy/mm/dd format and include the time in 24 hour format. It is the year 2023.\nThis is an example of how you should respond as DocAI.\nDocAI: How can I help you today?\nPatient: I am having a fever\nDocAI: Could you please take a reading of your temperature and tell me?\nPatient: My temperature is 37 degrees celsius\nDocAI: It is possible that you have a fever if your temperature is above 37.5 degrees Celsius. Are you experiencing any other symptoms?\nPatient: Yes, I feel a bit cold when I sit under a fan\nDocAI: I recommend that you take some over-the-counter medication to reduce your fever and drink plenty of fluids. If your symptoms persist, please make an appointment with your doctor\nPatient: When can I book an appointment?\nDocAI: Here are the available dates for your appointment in February. Which date would you like?\nPatient: 7 February \nDocAI: Here are the avaliable timeslots for your appointment on 7 February. Which slot would you like?\nPatient: 5.15pm\nDocAI: Done! Your appointment is booked for 17:15 on 2023/2/7\nThis is the real conversation\nDocAI: Hi there, how can I help you today?\n');
+app.post('/chatbot', async (req, res) => {
     try {
 
-      
-      const userinput = req.body.prompt;
-        convo +="Patient:" + userinput;
-  
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: `${convo}`, // The prompt is the text that the model will use to generate a response.
-        temperature: 0, // Higher values means the model will take more risks.
-        max_tokens: 1024, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-        top_p: 1, // alternative to sampling with temperature, called nucleus sampling
-        frequency_penalty: 0.5, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
-        presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
-      });
-      convo +=response.data.choices[0].text + "\n";
-      
-      res.status(200).send({
-        bot: response.data.choices[0].text
-      });
+        const userinput = req.body.prompt;
+        convo += "Patient: " + userinput;
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: `${convo}`, // The prompt is the text that the model will use to generate a response.
+            temperature: 0, // Higher values means the model will take more risks.
+            max_tokens: 1024, // The maximum number of tokens to generate in the completion. Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
+            top_p: 1, // alternative to sampling with temperature, called nucleus sampling
+            frequency_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.
+            presence_penalty: 0, // Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.
+        });
+        
+
+
+        let availslots;
+        let bookslot;
+
+        if (response.data.choices[0].text.includes("available timeslots for your appointment") === true) {
+            availslots = true;
+
+        }
+        if (response.data.choices[0].text.toLowerCase().includes("your appointment is booked for") === true) {
+            bookslot = true;
+        }
+        let url;
+        let url2;
+
+
+
+
+
+
+        if (availslots === true) {
+            availslots = false;
+            
+            //extract date from string and split into day and month
+            date = response.data.choices[0].text.match(/\s+\d{1,2}\s(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Oct(ober)?|Nov(ember)?|Dec(ember)?)/);
+            var day = date[0].trim().split(" ")[0];
+            var month = date[0].trim().split(" ")[1];
+            //convert month to number
+              switch (month) {
+                case "Jan":
+                case "January":
+                    month = 1;
+                    break;
+                case "Feb":
+                case "February":
+                    month = 2;
+                    break;
+                case "Mar":
+                case "March":
+                    month = 3;
+                    break;
+                case "Apr":
+                case "April":
+                    month = 4;
+                    break;
+                case "May":
+                    month = 5;
+                    break;
+                case "Jun":
+                case "June":
+                    month = 6;
+                    break;
+                case "Jul":
+                case "July":
+                    month = 7;
+                    break;
+                case "Aug":
+                case "August":
+                    month = 8;
+                    break;
+                case "Sep":
+                case "September":
+                    month = 9;
+                    break;
+                case "Oct":
+                case "October":
+                    month = 10;
+                    break;
+                case "Nov":
+                case "November":
+                    month = 11;
+                    break;
+                case "Dec":
+                case "December":
+                    month = 12;
+                    break;
+                default:
+                    month = 0;
+            }
+            
+            url = `https://aidochealth.azurewebsites.net/timeslots?year=2023&month=${month}&day=${day}`;
+            url2 = `https://aidochealth.azurewebsites.net/days?year=2023&month=${month}`;
+
+            const request = require('request');
+
+            function doRequest(url) {
+                return new Promise(function (resolve, reject) {
+                    request(url, function (error, res, body) {
+                        if (!error && res.statusCode === 200) {
+                            resolve(body);
+                        } else {
+                            reject(error);
+                        }
+                    });
+                });
+            }
+
+            // Usage:
+            async function main() {
+                try {
+                    let str = await doRequest(url);
+                    str = JSON.parse(str);
+                    str = JSON.stringify(str, null, 2)
+                    res.status(200).send({
+                        bot: response.data.choices[0].text + "\n" + str
+                    });
+                } catch (error) {
+                    console.error(error); // `error` will be whatever you passed to `reject()` at the top
+                }
+            }
+            convo += response.data.choices[0].text + "\n";
+            main();
+
+
+        }
+        else if (bookslot === true) {
+            bookslot = false;
+            var time;
+            var date;
+            function getTime(d)
+            {
+                //extract time from string and split into hours and minutes
+                time = d.match(/([01]?[0-9]|2[0-3]):[0-5][0-9]/);
+                return time[0];
+
+
+            }
+            function getDate(d)
+            {
+                //extract date from string and split into day, month, year
+                date = d.match(/[0-9]+\/[0-9]+\/[0-9]+/);
+                return date[0];
+
+                
+                
+
+            }
+            getDate(response.data.choices[0].text);
+            getTime(response.data.choices[0].text);
+            var hours = time[0].split(":")[0];
+                var minutes = time[0].split(":")[1];
+            var year = date[0].split("/")[0];
+                var month = date[0].split("/")[1];
+                var day = date[0].split("/")[2];
+            (async () => {
+                const rawResponse = await fetch(`https://aidochealth.azurewebsites.net/book?year=${year}&month=${month}&day=${day}&hour=${hours}&minute=${minutes}`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+
+                    },
+
+                });
+                const content = await rawResponse.json();
+
+                console.log(content);
+                
+                if (content.message === "Invalid time slot") {
+                    //if content message says invalid time slot, then send the user the available timeslots
+                    url = `https://aidochealth.azurewebsites.net/timeslots?year=${year}&month=${month}&day=${day}`;
+                    url2 = `https://aidochealth.azurewebsites.net/days?year=${year}&month=${month}`;
+
+                    const request = require('request');
+
+                    function doRequest(url) {
+                        return new Promise(function (resolve, reject) {
+                            request(url, function (error, res, body) {
+                                if (!error && res.statusCode === 200) {
+                                    resolve(body);
+                                } else {
+                                    reject(error);
+                                }
+                            });
+                        });
+                    }
+
+                    // Usage:
+                    async function main() {
+                        try {
+                            let str = await doRequest(url);
+                            str = JSON.parse(str);
+                            str = JSON.stringify(str, null, 2)
+                            let invalid = "Invalid time slot. Please choose from the following available timeslots: \n"
+                            convo += invalid + "\n";
+                            res.status(200).send({
+                                bot: invalid + str
+                            });
+                        } catch (error) {
+                            console.error(error); // `error` will be whatever you passed to `reject()` at the top
+                        }
+                    }
+                    
+                    main();
+                    
+
+                }
+                //if content message says cannot book outside bookable timeframe, then tell the user that timeslots are only available from Monday to Friday, 9am to 6pm
+                else if (content.message === "Cannot book outside bookable timeframe") {
+                    let invalid = "Cannot book outside bookable timeframe. Timeslots are only available from Monday to Friday, 9am to 6pm."
+                    convo += invalid + "\n";
+                    res.status(200).send({
+                        bot: invalid
+                    });
+                }
+                
+        
+                else {
+                    res.status(200).send({
+                        bot: response.data.choices[0].text
+                    });
+                    convo += response.data.choices[0].text + "\n";
+                }
+               
+            })();
+            
+            
+        }
+        else {
+
+            res.status(200).send({
+                bot: response.data.choices[0].text
+            });
+            convo += response.data.choices[0].text + "\n";
+        }
+
+
+
     } catch (error) {
-      console.error(error)
-      res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
+        console.error(error)
+        res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
     }
-  })
-//end of chatbot
+})
+//end chatbot
+
 
 app.get('/usersdashboard', function (req, response) 
 {
