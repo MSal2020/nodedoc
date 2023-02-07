@@ -1,7 +1,10 @@
 
+
 function generatePDF(){
     var date = document.getElementById("date-container").getAttribute("data-date");
     const element = document.getElementById("summaryreport");
+    var clonedElement = element.cloneNode(true);
+    $(clonedElement).css("display", "block");
     var opt = {
       margin:       1,
       filename:     "Summary Report " + date,
@@ -11,8 +14,10 @@ function generatePDF(){
     };
     html2pdf()
     .set(opt)
-    .from(element)
+    .from(clonedElement)
     .save();
+    clonedElement.remove();
+
 }
 
 function generatePDF2(){
@@ -40,10 +45,13 @@ function generatePDF3(){
   var date = document.getElementById("date-container").getAttribute("data-date");
   const element1 = document.getElementById("all");;
   const element2 = document.getElementById("hide");
+  const element3 = document.getElementById("summaryreport");
+
   var clonedElement = element2.cloneNode(true);
+  var clonedElement2 = element3.cloneNode(true);
   // change display of cloned element 
   $(clonedElement).css("display", "block");
-  var pdfContent = element1.innerHTML + clonedElement.innerHTML;
+  var pdfContent = clonedElement2.innerHTML + clonedElement.innerHTML;
   var opt = {
       margin:       1,
       filename:     "Medical Report " + date,
@@ -56,4 +64,5 @@ function generatePDF3(){
   .from(pdfContent)
   .save();
   clonedElement.remove();
+  clonedElement2.remove();
 }
