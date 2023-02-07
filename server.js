@@ -25,8 +25,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
 app.use(express.static('template'))
-
-
+app.use(express.static('template/js'))
+app.use(express.static('template/js/jquery'))
+app.use(express.static('template/img'))
+app.use(express.static('template/fonts'))
+app.use(express.static('template/css'))
+	
 //Azure Key Vault
 async function KVRetrieve(secretName) {
     const credential = new DefaultAzureCredential();
