@@ -24,6 +24,7 @@ require('dotenv').config()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('views'))
+app.use(express.static('public'))
 
 
 //Azure Key Vault
@@ -199,6 +200,38 @@ app.get('/', async function (request, response) {
         if (request.session.csrf === undefined) {
             request.session.sessionCheck = true
             request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
+            fs.readFile('home_guest.html', "utf8", function(err, data) {
+                if (err) throw err;
+            
+                var $ = cheerio.load(data);
+            
+                $(".csrftoken").attr('value', request.session.csrf)
+                response.send($.html());
+            });
+        }
+        else {
+            request.session.sessionCheck = true
+            fs.readFile('home_guest.html', "utf8", function(err, data) {
+                if (err) throw err;
+            
+                var $ = cheerio.load(data);
+            
+                $(".csrftoken").attr('value', request.session.csrf)
+                response.send($.html());
+            });
+        }
+    }
+})
+	
+app.get('/welcome', function (request, response) {
+	
+	if(request.session.loggedin == true){
+        response.redirect('./userdashboard')
+    }
+    else{
+        if (request.session.csrf === undefined) {
+            request.session.sessionCheck = true
+            request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
             fs.readFile('welcome.html', "utf8", function(err, data) {
                 if (err) throw err;
             
@@ -220,6 +253,41 @@ app.get('/', async function (request, response) {
             });
         }
     }
+})
+	
+
+app.get('/home_guest', function (request, response) {
+	
+	if(request.session.loggedin == true){
+        response.redirect('./userdashboard')
+    }
+    else{
+        if (request.session.csrf === undefined) {
+            request.session.sessionCheck = true
+            request.session.csrf = randomBytes(100).toString('base64'); // convert random data to a string
+            fs.readFile('home_guest.html', "utf8", function(err, data) {
+                if (err) throw err;
+            
+                var $ = cheerio.load(data);
+            
+                $(".csrftoken").attr('value', request.session.csrf)
+                response.send($.html());
+            });
+        }
+        else {
+            request.session.sessionCheck = true
+            fs.readFile('home_guest.html', "utf8", function(err, data) {
+                if (err) throw err;
+            
+                var $ = cheerio.load(data);
+            
+                $(".csrftoken").attr('value', request.session.csrf)
+                response.send($.html());
+            });
+        }
+    }
+	
+	
 })
 
 app.get('/signup', function (request, response) {
@@ -505,6 +573,7 @@ app.get('/logout', async function (req, response)
     }
 })
 
+
 app.get('/userdashboard', async function (req, response) 
 {
     waitForSession(req.session.sessionCheck, 10000)
@@ -521,7 +590,7 @@ app.get('/userdashboard', async function (req, response)
             }
             else if(req.session.role == 'user'){
 
-                response.render("afterLogin.ejs")
+                response.sendFile(path.join(__dirname + '/home_user.html'));
             }
             else if(req.session.role == 'doctor')
             {
@@ -608,8 +677,30 @@ app.get('/userdashboard', async function (req, response)
 
 })
 
+app.get('/userDashboardSelect', function (req, response) {
+
+	    var ua = parser(req.headers['user-agent']);
+            delete ua.device
+            if (!req.session.loggedin) {
+                response.send('please login to view dashboard')
+                response.end()
+            }
+            else if(!(_.isEqual(ua, req.session.fingerprint))){
+                response.send('fingerprint change detected')
+                response.end()
+            }
+            else if(req.session.role == 'user'){
+
+                response.render("afterLogin.ejs")
+            }
+            else if(req.session.role == 'doctor')
+            {
+		response.redirect("/userdashboard")
+	    }
+})
+	
 //After selecting date (only for user acc)
-app.post('/userdashboard', function (req, response) 
+app.post('/userDashboardSelect', function (req, response) 
 {
     console.log(req.session.loggedin)
 
