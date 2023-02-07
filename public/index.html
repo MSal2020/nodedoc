@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="robot.ico" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+    
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AskAI : An OpenAI project</title>
     <style>
@@ -16,13 +19,12 @@
 }
 
 body {
-  background: #343541;
+
 }
 
 #app {
   width: 100vw;
   height: 100vh;
-  background: #343541;
 
   display: flex;
   flex-direction: column;
@@ -58,7 +60,7 @@ body {
 }
 
 .ai {
-  background: #40414F;
+
 }
 
 .chat {
@@ -96,7 +98,7 @@ body {
 
 .message {
   flex: 1;
-  color: #dcdcdc;
+  color: #00b5ad;
   font-size: 20px;
   max-width: 100%;
   overflow-x: scroll;
@@ -115,10 +117,10 @@ form {
   max-width: 1280px;
   margin: 0 auto;
   padding: 10px;
-  background: #40414F;
   display: flex;
   flex-direction: row;
   gap: 10px;
+  background-color: #081f3e;
 }
 
 textarea {
@@ -146,6 +148,63 @@ form img {
     </style>
   </head>
   <body>
+
+    <div id="preloader">
+        <div class="medilife-load"></div>
+    </div>
+
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area">
+        <!-- Top Header Area -->
+       
+
+        <!-- Main Header Area -->
+        <div class="main-header-area" id="stickyHeader">
+            <div class="container h-100">
+                <div class="row h-100 align-items-center">
+                    <div class="col-12 h-100">
+                        <div class="main-menu h-100">
+                            <nav class="navbar h-100 navbar-expand-lg">
+                                <!-- Logo Area  -->
+                                <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo"></a>
+
+                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+                                <div class="collapse navbar-collapse" id="medilifeMenu">
+                                    <!-- Menu Area -->
+                                    <ul class="navbar-nav ml-auto">
+                                        <li class="nav-item ">
+                                            <a class="nav-link" href="/userdashboard">Home </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/userDashboardSelect">Dashboard</a>
+                                        </li>
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="/bot">Chatbot<span class="sr-only">(current)</span></a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/call">Call</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/userProfile">Profile</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="about-us.html">About Us</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/logout">Logout</a>
+                                        </li>
+                                    </ul>
+                                    <!-- Appointment Button -->
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <div id="app">
       <div id="chat_container"></div>
 
@@ -277,3 +336,16 @@ form.addEventListener('keyup', (e) => {
     </script>
   </body>
 </html>
+
+
+<script src="js/jquery/jquery-2.2.4.min.js"></script>
+    <!-- Popper js -->
+    <script src="js/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Plugins js -->
+    <script src="js/plugins.js"></script>
+    <!-- Active js -->
+    <script src="js/active.js"></script>
+
+
