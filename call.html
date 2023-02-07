@@ -4,6 +4,7 @@
         <title>Multi-User Video Call</title>
 
         <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <link rel="stylesheet" type="text/css" href="style.css">
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -20,6 +21,89 @@
     </head>
 
     <body>
+        <div id="preloader">
+            <div class="medilife-load"></div>
+        </div>
+    
+        <!-- ***** Header Area Start ***** -->
+        <header class="header-area" style="padding: 0;">
+            <!-- Top Header Area -->
+           
+    
+            <!-- Main Header Area -->
+            <div class="main-header-area" id="stickyHeader" style="padding: 0; ">
+                <div class="h-100" style="padding: 0; width:1350px; float:right">
+                    <div class="row h-100 align-items-center" style="padding: 0;">
+                        <div class="col-12 h-100" style="padding: 0; ">
+                            <div class="h-100" style="padding: 0; " >
+                                <nav class="navbar h-100 navbar-expand-lg" style="padding: 0; ">
+                                    <!-- Logo Area  -->
+                                    <p style="color: white;">Video Call</p>
+                                    <a class="navbar-brand" href="/userdashboard" style="margin-left: 10px;"><img src="img/core-img/logo.png" alt="Logo"></a>
+    
+                                    <span class="text-white mr-5" >
+                                        Unique Identifier: __2995627299__2336940343__<span id='randomNumber'></span>
+                                    </span>
+                    
+                                    <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-video' title="Hide Video">
+                                        <i class="fa fa-video text-white"></i>
+                                    </button>
+                    
+                                    <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-mute' title="Mute">
+                                        <i class="fa fa-microphone-alt text-white"></i>
+                                    </button>
+                    
+                                    <button class="btn btn-sm rounded-0 btn-no-effect" id='share-screen' title="Share screen">
+                                        <i class="fa fa-desktop text-white"></i>
+                                    </button>
+                    
+                                    <button class="btn btn-sm rounded-0 btn-no-effect" id='record' title="Record">
+                                        <i class="fa fa-dot-circle text-white"></i>
+                                    </button>
+                    
+                                    <button class="btn btn-sm text-white pull-right btn-no-effect" id='toggle-chat-pane'>
+                                        <i class="fa fa-comment"></i> <span class="badge badge-danger very-small font-weight-lighter" id='new-chat-notification' hidden>New</span>
+                                    </button>
+                    
+                                    <button class="btn btn-sm rounded-0 btn-no-effect text-white">
+                                        <a href="/" class="text-white text-decoration-none"><i class="fa fa-sign-out-alt text-white" title="Leave"></i></a>
+                                    </button>
+                                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+    
+                                    <div class="collapse navbar-collapse" style="margin-right: 15px;" id="medilifeMenu">
+                                        <!-- Menu Area -->
+                                        <ul class="navbar-nav ml-auto" >
+                                            <li class="nav-item ">
+                                                <a class="nav-link" href="/userdashboard">Home </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="/userDashboardSelect">Dashboard</a>
+                                            </li>
+                                            <li class="nav-item active">
+                                                <a class="nav-link" href="/bot">Chatbot<span class="sr-only">(current)</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="/call">Call</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="/userProfile">Profile</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="about-us.html">About Us</a>
+                                            </li>
+                                            <li class="nav-item" >
+                                                <a class="nav-link" href="/logout">Logout</a>
+                                            </li>
+                                        </ul>
+                                        <!-- Appointment Button -->
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
         <div class="custom-modal" id='recording-options-modal'>
             <div class="custom-modal-content">
                 <div class="row text-center">
@@ -39,40 +123,7 @@
             </div>
         </div>
         
-        <nav class="navbar fixed-top bg-info rounded-0 d-print-none">
-            <div class="text-white">Video Call</div>
-
-            <div class="pull-right room-comm" hidden>
-                <span class="text-white mr-5">
-                    Unique Identifier: <span id='randomNumber'></span>
-                </span>
-
-                <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-video' title="Hide Video">
-                    <i class="fa fa-video text-white"></i>
-                </button>
-
-                <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-mute' title="Mute">
-                    <i class="fa fa-microphone-alt text-white"></i>
-                </button>
-
-                <button class="btn btn-sm rounded-0 btn-no-effect" id='share-screen' title="Share screen">
-                    <i class="fa fa-desktop text-white"></i>
-                </button>
-
-                <button class="btn btn-sm rounded-0 btn-no-effect" id='record' title="Record">
-                    <i class="fa fa-dot-circle text-white"></i>
-                </button>
-
-                <button class="btn btn-sm text-white pull-right btn-no-effect" id='toggle-chat-pane'>
-                    <i class="fa fa-comment"></i> <span class="badge badge-danger very-small font-weight-lighter" id='new-chat-notification' hidden>New</span>
-                </button>
-
-                <button class="btn btn-sm rounded-0 btn-no-effect text-white">
-                    <a href="/" class="text-white text-decoration-none"><i class="fa fa-sign-out-alt text-white" title="Leave"></i></a>
-                </button>
-            </div>
-        </nav>
-
+        
         <div class="container-fluid" id='room-create' hidden>
             <div class="row">
                 <div class="col-12 h2 mt-5 text-center">Create Room</div>
@@ -152,3 +203,14 @@
         </div>
     </body>
 </html>
+
+<script src="js/jquery/jquery-2.2.4.min.js"></script>
+    <!-- Popper js -->
+    <script src="js/popper.min.js"></script>
+    <!-- Bootstrap js -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Plugins js -->
+    <script src="js/plugins.js"></script>
+    <!-- Active js -->
+    <script src="js/active.js"></script>
+
