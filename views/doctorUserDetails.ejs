@@ -1,14 +1,8 @@
 <title>User Details</title>
 
 <head>
-  <!-- loading billboard.js styles from the cdn -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
+  <link rel="stylesheet" href="style.css" />
 
-  <!--Loading D3.js -->
-  <script src="https://d3js.org/d3.v6.min.js"></script>
-
-  <!-- Loading billboard.js scripts from the cdn -->
-  <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
   <style>
     
 
@@ -71,10 +65,7 @@
 
     @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
 
-    body {
-      background-color: #DADADA;
-      font-family: Lato,system-ui,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";    
-    }
+    
 
     /* for custom scrollbar for webkit browser*/
 
@@ -216,21 +207,58 @@ input {
         }
   </style>
 </head>
-<div class="topnav">
-    <img src="heartbeat.png" style="float: left ; padding-left: 20px; width: 100px; height: 70px;
-"></span>
 
-    <a href="/logout" id="">Logout</a>
-    <a href="/doctorProfile">Profile</a>
-    <a href=""> Appointments</a>
-    <a href="/userdashboard"> Home </a>
-</div>
 <body style="text-align: center; height: 2200px;">
+
+
+  
+
+<!-- ***** Header Area Start ***** -->
+<header class="header-area">
+    <!-- Top Header Area -->
+   
+
+    <!-- Main Header Area -->
+    <div class="main-header-area" id="stickyHeader">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center">
+                <div class="col-12 h-100">
+                    <div class="main-menu h-100">
+                        <nav class="navbar h-100 navbar-expand-lg">
+                            <!-- Logo Area  -->
+                            <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo"></a>
+
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+                            <div class="collapse navbar-collapse" id="medilifeMenu">
+                                <!-- Menu Area -->
+                                <ul class="navbar-nav ml-auto">
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="/userdashboard">Home <span class="sr-only">(current)</span></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/call">Call</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/doctorProfile">Profile</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/logout">Logout</a>
+                                    </li>
+                                </ul>
+                                <!-- Appointment Button -->
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 
  <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">User Details</h1> </div>
  
- <div style="padding: 50px;margin:0 auto; width: 700px; border-radius: 15px; border: 2px solid ;height: 550px ">
-    <h2>User Details</h2>
+ <div style="padding: 50px;margin:0 auto; width: 700px; height: 550px ">
       
 
     <div style="text-align: left; padding-top: 10px; width: 600px;">
@@ -298,4 +326,16 @@ input {
   <% }); %>
 
 </body>
+</html>
+</script>
+<!-- jQuery (Necessary for All JavaScript Plugins) -->
+<script src="js/jquery/jquery-2.2.4.min.js"></script>
+<!-- Popper js -->
+<script src="js/popper.min.js"></script>
+<!-- Bootstrap js -->
+<script src="js/bootstrap.min.js"></script>
+<!-- Plugins js -->
+<script src="js/plugins.js"></script>
+<!-- Active js -->
+<script src="js/active.js"></script>
 </html>
