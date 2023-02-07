@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js" integrity="sha512-9uCjPZs30uENi8K34nm/jrFW9aw7Euk3SCdJYugmjNEgJQuzBhE0WDO9xVxbNdWQC5lWG4M/nFxOTkgTqEKdlA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.css" integrity="sha512-MCgTNsKwC2c/PSk77N5kuTXtsyD8tkpYMh7GnFfzTpOeNAKxuri9YuYswSiAkwPC3fBpIIMs9udL/hJIIapVHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css" />
+
     <script>
         const pageAccessedByReload = (
         (window.performance.navigation && window.performance.navigation.type === 1) ||
@@ -106,6 +108,49 @@
     </style>
 </head>
 <body>
+ 
+
+
+<!-- ***** Header Area Start ***** -->
+<header class="header-area">
+  <!-- Top Header Area -->
+ 
+
+  <!-- Main Header Area -->
+  <div class="main-header-area" id="stickyHeader">
+      <div class="container h-100">
+          <div class="row h-100 align-items-center">
+              <div class="col-12 h-100">
+                  <div class="main-menu h-100">
+                      <nav class="navbar h-100 navbar-expand-lg">
+                          <!-- Logo Area  -->
+                          <a class="navbar-brand" href="index-2.html"><img src="img/core-img/logo.png" alt="Logo"></a>
+
+                          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+                          <div class="collapse navbar-collapse" id="medilifeMenu">
+                              <!-- Menu Area -->
+                              <ul class="navbar-nav ml-auto">
+                                  <li class="nav-item">
+                                      <a class="nav-link" href="/home_guest">Home</a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a class="nav-link" href="about-us.html">About Us</a>
+                                  </li>
+                                  <li class="nav-item active">
+                                      <a class="nav-link" href="/welcome">Login </a>
+                                  </li>
+                              </ul>
+                              <!-- Appointment Button -->
+                          </div>
+                      </nav>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</header>
+
     <div class="ui middle aligned center aligned grid">
         <div class="column">
           <h2 class="ui teal image header">
@@ -257,8 +302,11 @@
           </form>
       
           <div class="ui message">
-            Existing User? <a href="/">Login here</a>
+            Existing User? <a href="/welcome">Login here</a>
           </div>
         </div>
       </div>
+
+      
 </body>
+
