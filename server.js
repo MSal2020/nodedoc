@@ -340,6 +340,7 @@ app.post('/auth', async function(request, response) {
         let tfaTokenInput = request['body']['2faOTP']
         
     
+	console.log(csrf)
         if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
             response.send('Unrecognized Email Format')
         }
