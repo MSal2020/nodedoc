@@ -260,7 +260,7 @@ app.get('/welcome', function (request, response) {
 })
 	
 
-app.get('/home_guest', function (request, response) {
+/* app.get('/home_guest', function (request, response) {
 	
 	if(request.session.loggedin == true){
         response.redirect('./userdashboard')
@@ -293,7 +293,7 @@ app.get('/home_guest', function (request, response) {
 	
 	
 })
-
+*/
 app.get('/signup', function (request, response) {
 	if (request.session.csrf === undefined) {
         request.session.sessionCheck = true
