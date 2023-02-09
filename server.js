@@ -1168,12 +1168,17 @@ app.post('/chatbot', async (req, res) => {
             // Usage:
             async function main() {
                 try {
-                    let str = await doRequest(url);
-                    str = JSON.parse(str);
-                    str = JSON.stringify(str, null, 2)
-                    res.status(200).send({
-                        bot: response.data.choices[0].text + "\n" + str
-                    });
+			let str = await doRequest(url);
+			str = JSON.parse(str);
+			let timeslots = str.timeslots;
+			let formattedData = "";
+			for (let i = 0; i < timeslots.length; i++) {
+    				let slot = timeslots[i];
+    				formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
+			}
+			res.status(200).send({
+    				bot: response.data.choices[0].text + "\n" + formattedData
+			});
                 } catch (error) {
                     console.error(error); // `error` will be whatever you passed to `reject()` at the top
                 }
@@ -1248,14 +1253,19 @@ app.post('/chatbot', async (req, res) => {
                     // Usage:
                     async function main() {
                         try {
-                            let str = await doRequest(url);
-                            str = JSON.parse(str);
-                            str = JSON.stringify(str, null, 2)
-                            let invalid = "Invalid time slot. Please choose from the following available timeslots: \n"
-                            convo += invalid + "\n";
-                            res.status(200).send({
-                                bot: invalid + str
-                            });
+                            	let str = await doRequest(url);
+				str = JSON.parse(str);
+				let timeslots = str.timeslots;
+				let formattedData = "";
+				for (let i = 0; i < timeslots.length; i++) {
+    					let slot = timeslots[i];
+    					formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
+				}
+				let invalid = "Invalid time slot. Please choose from the following available timeslots: \n"
+				convo += invalid + "\n";
+				res.status(200).send({
+  					bot: invalid + formattedData
+				});
                         } catch (error) {
                             console.error(error); // `error` will be whatever you passed to `reject()` at the top
                         }
