@@ -330,7 +330,13 @@ html
 
       </div>
       <h3>Recommendations</h3>
-      <p><%= averages.outp %></p>
+       <% averages.forEach(function(average){%>
+
+           <p><%= average.outp %></p>
+	   
+      <% }); %>
+      
+      
           <div>
             <% averages.forEach(function(average){%>
       
