@@ -992,7 +992,7 @@ app.post('/userDashboardSelect', function (req, response)
                         });
                         
                         outp =  completion.data.choices[0].text;
-                        
+                        console.log(outp)
                         
                     }
 
@@ -1000,7 +1000,7 @@ app.post('/userDashboardSelect', function (req, response)
     
     
                         averages = [{ heartratemin: heartratemin, outp: outp, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
-                       
+                        console.log(averages)
                         response.render("billboard.ejs", { data: data, averages: averages, date1: date1 })
                     })
         
