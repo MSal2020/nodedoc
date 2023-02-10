@@ -79,12 +79,16 @@
     h4
     {
       margin-top: 25px;
-      font-size: 30px;
+      font-size: 22px;
       color: #00b5ad;
       text-align: center;
       font-weight: 500;
+
     }
-    
+    h5{
+      color: #00b5ad;
+
+    }
     button
 {
   appearance: none;
@@ -238,6 +242,12 @@ html
 
 }
 
+.warning
+{
+  font-size: 22px;
+  color: red;
+}
+
   </style>
 </head>
 <div id="preloader">
@@ -257,7 +267,7 @@ html
                 <div class="main-menu h-100">
                     <nav class="navbar h-100 navbar-expand-lg">
                         <!-- Logo Area  -->
-                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 110px; width:130px"></a>
+                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
 
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -313,7 +323,7 @@ html
 
 
       <br>
-
+        <button class="btn" id="summaryToggle"><i class="fa fa-heartbeat" ></i>Summary</button>
         <button class="btn" id="heartToggle"><i class="fa fa-heartbeat" ></i> Heart</button>
         <button class="btn" id="bloodpressureToggle"><i class="fa fa-heart" ></i> Blood Pressure</button>
         <button class="btn" id="temperatureToggle"><i class="fa fa-thermometer" ></i> Temperature</button>
@@ -329,14 +339,170 @@ html
         <button class="btn" onclick="generatePDF3()"><i class="fa fa-download" ></i>Full Report</button>
 
       </div>
-      <h3>Recommendations</h3>
-       <% averages.forEach(function(average){%>
 
-           <p><%= average.outp %></p>
-	   
-      <% }); %>
+      <div id="summaryDashboard" >
+        <div style="padding-left: 250px;margin:0 auto; width: 1000px; float: left;" >
+          <div style="text-align: center; width: 800px; padding-right: 100px;">        
+            <h3>Recommendations</h3>
+            <% averages.forEach(function(average){%>
+              <p><%= average.outp %></p>
+        
+            <% }); %>
+          </div>
+          <br>
+          <br>
+          
+          
+      <h5 style = "float:left; margin-top: 20px;">Total number of readings:  <%= data.length %> </h5>
+
+          <% 
+          if(warningHeartRateHigh.length > 0 || warningHeartRateLow.length> 0 )
+          {
+            if(warningHeartRateHigh.length > 0 )
+            {
+              %>
+            <h4 class="warning" style = "float:left;">Warning: Heart Rate too high for <%= warningHeartRateHigh.length %> readings ( <%= Math.round((warningHeartRateHigh.length/data.length) * 100)/10  %> %)</h4>
+            
+              <% }; %>
+              
+            <%
+              if(warningHeartRateLow.length > 0 )
+              { 
+            %>
+          <h4 class="warning" style = "float:left;">Warning: Heart Rate too Low for <%= warningHeartRateLow.length %> readings ( <%= Math.round((warningHeartRateLow.length/data.length) * 100)/10 %> %)</h4>
+          
+            <% } %>
+            
+          <% }else{ %>
+          
+            <h4 style = "float:left;">No Warnings for heart rate</h4>
+          
+          <% }; %>
+  
+          <% 
+        if(warningRespiratoryRateHigh.length > 0 || warningRespiratoryRateLow)
+        {  
+            if(warningRespiratoryRateHigh.length > 0 )
+            {
+          %>
+        <h4 class="warning" style = "float:left;">Warning: Respiratory Rate too High for <%= warningRespiratoryRateHigh.length %> readings ( <%= Math.round((warningRespiratoryRateHigh.length/data.length) * 1000)/10 %> %)</h4>
+        
+          <% }; %>
+          <%
+          if(warningRespiratoryRateLow.length > 0 )
+          {
+        %>
+      <h4 class="warning" style = "float:left;">Warning: Respiratory Rate too Low for <%= warningRespiratoryRateLow.length %> readings ( <%= Math.round((warningRespiratoryRateLow.length/data.length) * 1000)/10 %> %)</h4>
+ 
+        <% }; %>
+          <% }else{ %>
+        
+          <h4 style = "float:left;">No Warnings for respiratory rate</h4>
+        
+        <% }; %>
+
+
+
+
+        <% 
+        if(warningDiastolicHigh.length > 0 || warningDiastolicLow > 0)
+        {
+          if(warningDiastolicHigh.length > 0 )
+              {
+            %>
+          <h4 class="warning" style = "float:left;">Warning: Diastolic Blood Pressure too high for <%= warningDiastolicHigh.length %> readings ( <%= Math.round((warningDiastolicHigh.length/data.length) * 1000)/10 %> %)</h4>
+            <% }; %>
+            
+            <%
+            if(warningDiastolicLow.length > 0 )
+            {
+          %>
+        <h4 class="warning" style = "float:left;">Warning: Diastolic Blood Pressure too Low for <%= warningDiastolicLow.length %> readings ( <%= Math.round((warningDiastolicLow.length/data.length) * 1000)/10 %> %)</h4>
+          <% }; %>
+            <% }else{ %>
+        
+          <h4 style = "float:left;">No Warnings for Diastolic Blood Pressure</h4>
+        
+        <% }; %>
+
+            
+        <% 
+        if(warningSystolicHigh.length > 0 || warningSystolicLow > 0)
+        {
+          if(warningSystolicHigh.length > 0 )
+              {
+            %>
+          <h4 class="warning" style = "float:left;">Warning: Systolic Blood Pressure high for <%= warningSystolicHigh.length %> readings ( <%= Math.round((warningSystolicHigh.length/data.length) * 1000)/10 %> %)</h4>
+       
+            <% }; %>
+            
+            <%
+            if(warningSystolicLow.length > 0 )
+            {
+          %>
+        <h4 class="warning" style = "float:left;">Warning: Systolic Blood Pressure Low for <%= warningSystolicLow.length %> readings ( <%= Math.round((warningSystolicLow.length/data.length) * 1000)/10 %> %)</h4>
+   
+          <% }; %>
+            <% }else{ %>
+        
+          <h4 style = "float:left;">No Warnings for Systolic Blood Pressure</h4>
+        
+        <% }; %>
+
+
+      <% 
+        if(warningTemperatureHigh.length > 0 || warningTemperatureLow > 0)
+        {
+          if(warningTemperatureHigh.length > 0 )
+              {
+            %>
+          <h4 class="warning" style = "float:left;">Warning: Body Temperature too high for <%= warningTemperatureHigh.length %> readings ( <%= Math.round((warningTemperatureHigh.length/data.length) * 1000)/10 %> %)</h4>
+   
+            <% }; %>
+            
+            <%
+            if(warningTemperatureLow.length > 0 )
+            {
+          %>
+        <h4 class="warning" style = "float:left;">Warning: Body Temperature too Low for <%= warningTemperatureLow.length %> readings ( <%= Math.round((warningTemperatureLow.length/data.length) * 1000)/10 %> %)</h4>
+   
+          <% }; %>
+            <% }else{ %>
+        
+          <h4 style = "float:left;">No Warnings for Body Temperature</h4>
+        
+        <% }; %>
+        
+        
+       
+
+          </div>  
+         
+          <div style="padding-left: 250px;margin:0 auto; width: 1000px; text-align: left;" >
+            <div>
+              <p style = "float: left; margin-top: 450px;"> *Ideal range for each reading </p>
+            </div>
+            <div style = "float: left;">
+              <p > Heart rate: 60 - 100 BPM </p>
+            </div>
+            <div style = "float: left;">
+              <p> Respiratory Rate: 13 - 16 BPM </p>
+            </div>
+            <div style = "float: left;">
+              <p > Diastolic Blood Pressure: 75 - 85 mmHg </p>
+            </div>
+            <div style = "float: left;">
+              <p > Systolic Blood Pressure: 115 - 125 mmHg </p>
+            </div>
+            <div style = "float: left;">
+              <p > Body Temperature: 36.1 - 37.2 °C </p>
+            </div>
+          </div>
+      </div>
+
+
       
-      
+
           <div>
             <% averages.forEach(function(average){%>
       
@@ -1022,12 +1188,35 @@ html
       });
     }
 
+    const summaryToggle = document.getElementById('summaryToggle');
+
+    summaryToggle.addEventListener('click', () => {
+
+          const summaryDashboard= document.getElementById('summaryDashboard');
+
+          if (summaryDashboard.style.display === 'none') {
+            // 👇️ this SHOWS the form
+              var heartDashboard= document.getElementById('heartDashboard');
+              var bloodpressureDashboard= document.getElementById('bloodpressureDashboard');
+              var readingsTable = document.getElementById('readingsTable');
+              var temperatureDashboard= document.getElementById('temperatureDashboard');
+
+              readingsTable.style.display = 'none';
+              heartDashboard.style.display = 'none';
+              bloodpressureDashboard.style.display = 'none';
+              temperatureDashboard.style.display = 'none';
+
+              summaryDashboard.style.display = 'block';
+          } else {
+            // 👇️ this HIDES the form
+            summaryDashboard.style.display = 'none';
+          }
+        });
 
 
     const heartToggle = document.getElementById('heartToggle');
 
   heartToggle.addEventListener('click', () => {
-           console.log('yes')
 
             const heartDashboard= document.getElementById('heartDashboard');
 
@@ -1036,6 +1225,10 @@ html
               var bloodpressureDashboard= document.getElementById('bloodpressureDashboard');
               var temperatureDashboard= document.getElementById('temperatureDashboard');
               var readingsTable = document.getElementById('readingsTable');
+              var summaryDashboard = document.getElementById('summaryDashboard');
+              var summaryToggle = document.getElementById('summaryToggle');
+              summaryToggle.click()
+              summaryDashboard.style.display === 'none'
               readingsTable.style.display = 'none';
               bloodpressureDashboard.style.display = 'none';
               temperatureDashboard.style.display = 'none';
@@ -1061,6 +1254,10 @@ html
               var heartDashboard= document.getElementById('heartDashboard');
               var temperatureDashboard= document.getElementById('temperatureDashboard');
               var readingsTable = document.getElementById('readingsTable');
+              var summaryDashboard = document.getElementById('summaryDashboard');
+              var summaryToggle = document.getElementById('summaryToggle');
+              summaryToggle.click()
+              summaryDashboard.style.display === 'none'
               readingsTable.style.display = 'none';
               heartDashboard.style.display = 'none';
               temperatureDashboard.style.display = 'none';
@@ -1083,7 +1280,10 @@ html
               var heartDashboard= document.getElementById('heartDashboard');
               var bloodpressureDashboard= document.getElementById('bloodpressureDashboard');
               var readingsTable = document.getElementById('readingsTable');
-
+              var summaryDashboard = document.getElementById('summaryDashboard');
+              var summaryToggle = document.getElementById('summaryToggle');
+              summaryToggle.click()
+              summaryDashboard.style.display === 'none'
               readingsTable.style.display = 'none';
               heartDashboard.style.display = 'none';
               bloodpressureDashboard.style.display = 'none';
@@ -1106,7 +1306,10 @@ html
     var heartDashboard= document.getElementById('heartDashboard');
     var bloodpressureDashboard= document.getElementById('bloodpressureDashboard');
     var temperatureDashboard= document.getElementById('temperatureDashboard');
-
+    var summaryDashboard = document.getElementById('summaryDashboard');
+    var summaryToggle = document.getElementById('summaryToggle');
+    summaryToggle.click()
+    summaryDashboard.style.display === 'none'
     temperatureDashboard.style.display = 'none';
     heartDashboard.style.display = 'none';
     bloodpressureDashboard.style.display = 'none';
@@ -1131,6 +1334,9 @@ downloadButtons.style.display = 'block';
 } else {
 // 👇️ this HIDES the form
 downloadButtons.style.display = 'none';
+
+
+
 }
 });
 
