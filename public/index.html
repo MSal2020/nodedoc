@@ -4,10 +4,16 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="robot.ico" />
     <link rel="stylesheet" type="text/css" href="style.css">
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AskAI : An OpenAI project</title>
+    <title>DocAI: Virtual Doctor</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@100;300;400;500;700;800;900&display=swap");
 
@@ -209,9 +215,11 @@ form img {
       <div id="chat_container"></div>
 
       <form>
-        <textarea name="prompt" rows="1" cols="1" placeholder="Type something..."></textarea>
+        <textarea id ="message" name="prompt" rows="1" cols="1" placeholder="Type something..."></textarea>
         <button type="submit"><img src="public/assets/send.svg" alt="send" />
+          <button id="clear"><img src="public/assets/clear.png" alt="clear" />
       </form>
+      <button id='btnGiveCommand'><img src="public/assets/voice.png" width="50" height="50" alt="voice command"></button>
     </div>
 
     <script type="module">
@@ -219,6 +227,49 @@ form img {
 
 const form = document.querySelector('form')
 const chatContainer = document.querySelector('#chat_container')
+var isclear;
+isclear = false;
+var message = document.querySelector('#message');
+        
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
+
+        var grammar = '#JSGF V1.0;'
+
+        var recognition = new SpeechRecognition();
+        var speechRecognitionList = new SpeechGrammarList();
+        speechRecognitionList.addFromString(grammar, 1);
+        recognition.grammars = speechRecognitionList;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        recognition.onresult = function(event) {
+            var last = event.results.length - 1;
+            var command = event.results[last][0].transcript;
+            var commandNew = command.replace(/,/g, '');
+            
+            message.textContent = commandNew;
+        }
+        recognition.onspeechend = function() {
+            recognition.stop();
+        };
+
+        recognition.onerror = function(event) {
+            message.textContent = 'Error occurred in recognition: ' + event.error;
+        }        
+
+        document.querySelector('#btnGiveCommand').addEventListener('click', function(){
+            recognition.start();
+
+        });
+        //set isclear to true when clear button is clicked
+        document.querySelector('#clear').addEventListener('click', function(){
+            isclear = true;
+        });
+        //set isclear to false if clear button is not clicked
+        document.querySelector('#message').addEventListener('click', function(){
+            isclear = false;
+        });
 
 let loadInterval
 
@@ -305,7 +356,8 @@ const handleSubmit = async (e) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            prompt: data.get('prompt')
+            prompt: data.get('prompt'),
+            clear: isclear
         })
     })
 

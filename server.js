@@ -1043,8 +1043,48 @@ io.of( '/stream' ).on( 'connection', stream );
 
 
 app.get('/bot', (req, res) => {
+    waitForSession(req.session.sessionCheck, 10000)
+
+.then((sessionCheck) => {
+
+var ua = parser(req.headers['user-agent']);
+
+delete ua.device
+
+if (!req.session.loggedin) {
+
+response.send('please login to view dashboard')
+
+response.end()
+
+}
+
+else if(!(_.isEqual(ua, req.session.fingerprint))){
+
+response.send('fingerprint change detected')
+
+response.end()
+
+}
+
+else if(req.session.role == 'user'){
+
+//the rest of the code here
+res.sendFile(path.join(__dirname, '/public/index.html'));
+}
+
+})
+
+.catch((error) => {
+
+console.log(error)
+
+response.send('sorry session timed out')
+
+response.end()
+
+});
     
-    res.sendFile(path.join(__dirname, '/public/index.html'));
   })
 //chatbot
 app.get('/chatbot', async (req, res) => {
@@ -1055,6 +1095,15 @@ app.get('/chatbot', async (req, res) => {
 var convo = ('Pretend you are doctor named DocAI. You are helpful, creative, clever, and very friendly. You are talking to a patient. Answer with medical advice. If a patient asks you which day they can book an appointment, ask them what date and time they prefer for their appointment. After you book the appointment, always make sure your response includes "your appointment is booked for" and include the date in yyyy/mm/dd format and include the time in 24 hour format. It is the year 2023.\nThis is an example of how you should respond as DocAI.\nDocAI: How can I help you today?\nPatient: I am having a fever\nDocAI: Could you please take a reading of your temperature and tell me?\nPatient: My temperature is 37 degrees celsius\nDocAI: It is possible that you have a fever if your temperature is above 37.5 degrees Celsius. Are you experiencing any other symptoms?\nPatient: Yes, I feel a bit cold when I sit under a fan\nDocAI: I recommend that you take some over-the-counter medication to reduce your fever and drink plenty of fluids. If your symptoms persist, please make an appointment with your doctor\nPatient: When can I book an appointment?\nDocAI: Here are the available dates for your appointment in February. Which date would you like?\nPatient: 7 February \nDocAI: Here are the avaliable timeslots for your appointment on 7 February. Which slot would you like?\nPatient: 5.15pm\nDocAI: Done! Your appointment is booked for 17:15 on 2023/2/7\nThis is the real conversation\nDocAI: Hi there, how can I help you today?\n');
 app.post('/chatbot', async (req, res) => {
     try {
+        if (req.body.clear === true ) {
+
+            convo = ('Pretend you are doctor named DocAI. You are helpful, creative, clever, and very friendly. You are talking to a patient. Answer with medical advice. If a patient asks you which day they can book an appointment, ask them what date and time they prefer for their appointment. After you book the appointment, always make sure your response includes "your appointment is booked for" and include the date in yyyy/mm/dd format and include the time in 24 hour format. It is the year 2023.\nThis is an example of how you should respond as DocAI.\nDocAI: How can I help you today?\nPatient: I am having a fever\nDocAI: Could you please take a reading of your temperature and tell me?\nPatient: My temperature is 37 degrees celsius\nDocAI: It is possible that you have a fever if your temperature is above 37.5 degrees Celsius. Are you experiencing any other symptoms?\nPatient: Yes, I feel a bit cold when I sit under a fan\nDocAI: I recommend that you take some over-the-counter medication to reduce your fever and drink plenty of fluids. If your symptoms persist, please make an appointment with your doctor\nPatient: When can I book an appointment?\nDocAI: Here are the available dates for your appointment in February. Which date would you like?\nPatient: 7 February \nDocAI: Here are the avaliable timeslots for your appointment on 7 February. Which slot would you like?\nPatient: 5.15pm\nDocAI: Done! Your appointment is booked for 17:15 on 2023/2/7\nThis is the real conversation\nDocAI: Hi there, how can I help you today?\n');
+            res.status(200).send({
+                bot: "Conversation cleared"	
+            });
+        }
+
+        else {
 
         const userinput = req.body.prompt;
         convo += "Patient: " + userinput;
@@ -1295,7 +1344,7 @@ app.post('/chatbot', async (req, res) => {
         }
 
 
-
+    }
     } catch (error) {
         console.error(error)
         res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
