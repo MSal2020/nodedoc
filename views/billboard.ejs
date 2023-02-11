@@ -267,7 +267,7 @@ html
                 <div class="main-menu h-100">
                     <nav class="navbar h-100 navbar-expand-lg">
                         <!-- Logo Area  -->
-                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
+                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width: 80px"></a>
 
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -323,7 +323,7 @@ html
 
 
       <br>
-        <button class="btn" id="summaryToggle"><i class="fa fa-heartbeat" ></i>Summary</button>
+        <button class="btn" id="summaryToggle"><i class="fa fa-toggle-down" ></i>Summary</button>
         <button class="btn" id="heartToggle"><i class="fa fa-heartbeat" ></i> Heart</button>
         <button class="btn" id="bloodpressureToggle"><i class="fa fa-heart" ></i> Blood Pressure</button>
         <button class="btn" id="temperatureToggle"><i class="fa fa-thermometer" ></i> Temperature</button>
@@ -380,7 +380,7 @@ html
           <% }; %>
   
           <% 
-        if(warningRespiratoryRateHigh.length > 0 || warningRespiratoryRateLow)
+        if(warningRespiratoryRateHigh.length > 0 || warningRespiratoryRateLow.length > 0)
         {  
             if(warningRespiratoryRateHigh.length > 0 )
             {
@@ -405,7 +405,7 @@ html
 
 
         <% 
-        if(warningDiastolicHigh.length > 0 || warningDiastolicLow > 0)
+        if(warningDiastolicHigh.length > 0 || warningDiastolicLow.length > 0)
         {
           if(warningDiastolicHigh.length > 0 )
               {
@@ -427,7 +427,7 @@ html
 
             
         <% 
-        if(warningSystolicHigh.length > 0 || warningSystolicLow > 0)
+        if(warningSystolicHigh.length > 0 || warningSystolicLow.length > 0)
         {
           if(warningSystolicHigh.length > 0 )
               {
@@ -451,7 +451,7 @@ html
 
 
       <% 
-        if(warningTemperatureHigh.length > 0 || warningTemperatureLow > 0)
+        if(warningTemperatureHigh.length > 0 || warningTemperatureLow.length > 0)
         {
           if(warningTemperatureHigh.length > 0 )
               {
