@@ -866,40 +866,50 @@ app.post('/userDashboardSelect', function (req, response)
             
     
             
-            request.on("requestCompleted", function (rowCount, more) 
-            {
+ request.on("requestCompleted", function (rowCount, more) 
+	    {
                 if (result.length <= 0)
-                {
+		{
                     response.render("afterLogin.ejs")
-                }           
-                else
-                {
+                }
+                else {
                     var data = []
-                    var heartratetotal = 0 
-                    var heartratevariabilitytotal = 0 
-                    var respiratoryRatetotal = 0 
-                    var diastolictotal = 0 
-                    var systolictotal = 0 
-                    var temperaturetotal = 0 
-            
-                    var heartratemax = 0 
-                    var heartratevariabilitymax = 0 
-                    var respiratoryRatemax = 0 
-                    var diastolicmax = 0 
-                    var systolicmax = 0 
-                    var temperaturemax = 0 
-                    
-                    var heartratemin = 1000 
-                    var heartratevariabilitymin= 1000 
-                    var respiratoryRatemin= 1000
-                    var diastolicmin = 1000 
-                    var systolicmin = 1000 
-                    var temperaturemin = 1000 
-                    for (let index = 0; index < result.length; index++) 
-                    {
-                        
+                    var heartratetotal = 0
+                    var heartratevariabilitytotal = 0
+                    var respiratoryRatetotal = 0
+                    var diastolictotal = 0
+                    var systolictotal = 0
+                    var temperaturetotal = 0
+
+                    var heartratemax = 0
+                    var heartratevariabilitymax = 0
+                    var respiratoryRatemax = 0
+                    var diastolicmax = 0
+                    var systolicmax = 0
+                    var temperaturemax = 0
+
+                    var heartratemin = 1000
+                    var heartratevariabilitymin = 1000
+                    var respiratoryRatemin = 1000
+                    var diastolicmin = 1000
+                    var systolicmin = 1000
+                    var temperaturemin = 1000
+
+                    var warningHeartRateHigh = []
+                    var warningRespiratoryRateHigh = []
+                    var warningDiastolicHigh = []
+                    var warningSystolicHigh = []
+                    var warningTemperatureHigh = []
+                    var warningHeartRateLow = []
+                    var warningRespiratoryRateLow = []
+                    var warningDiastolicLow = []
+                    var warningSystolicLow = []
+                    var warningTemperatureLow = []
+
+                    for (let index = 0; index < result.length; index++) {
+
                         row = result[index]
-                        
+
                         var date = row[1]
                         var readings = JSON.parse(row[2])
                         var heartrate = readings.HeartRate
@@ -907,67 +917,101 @@ app.post('/userDashboardSelect', function (req, response)
                         var respiratoryRate = readings.RespiratoryRate
                         var diastolic = (readings.BloodPressure).Diastolic
                         var systolic = (readings.BloodPressure).Systolic
-                        var temperature = (5/9) * (readings.BodyTemperature - 32)
-			temperature = Math.round(temperature * 10) / 10
-                        var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
+                        var temperature = (5 / 9) * (readings.BodyTemperature - 32)
+                        temperature = Math.round(temperature * 10) / 10
+                        var reading = { heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date }
                         data.push(reading)
-        
-                        if (heartrate > heartratemax)
-                        {
+
+                        if (heartrate > heartratemax) {
                             heartratemax = heartrate
                         }
-                        else if (heartrate < heartratemin)
-                        {
+                        else if (heartrate < heartratemin) {
                             heartratemin = heartrate
                         }
-                        if (heartratevariability > heartratevariabilitymax)
-                        {
+                        if (heartratevariability > heartratevariabilitymax) {
                             heartratevariabilitymax = heartratevariability
                         }
-                        else if (heartratevariability < heartratevariabilitymin)
-                        {
+                        else if (heartratevariability < heartratevariabilitymin) {
                             heartratevariabilitymin = heartratevariability
                         }
-                        if (respiratoryRate > respiratoryRatemax)
-                        {
+                        if (respiratoryRate > respiratoryRatemax) {
                             respiratoryRatemax = respiratoryRate
                         }
-                        else if (respiratoryRate < respiratoryRatemin)
-                        {
+                        else if (respiratoryRate < respiratoryRatemin) {
                             respiratoryRatemin = respiratoryRate
                         }
-                        if (diastolic > diastolicmax)
-                        {
+                        if (diastolic > diastolicmax) {
                             diastolicmax = diastolic
                         }
-                        else if (diastolic < diastolicmin)
-                        {
+                        else if (diastolic < diastolicmin) {
                             diastolicmin = diastolic
                         }
-                        if (systolic > systolicmax)
-                        {
+                        if (systolic > systolicmax) {
                             systolicmax = systolic
                         }
-                        else if (systolic < systolicmin)
-                        {
+                        else if (systolic < systolicmin) {
                             systolicmin = systolic
                         }
-                        if (temperature > temperaturemax)
-                        {
+                        if (temperature > temperaturemax) {
                             temperaturemax = temperature
                         }
-                        else if (temperature < temperaturemin)
-                        {
+                        else if (temperature < temperaturemin) {
                             temperaturemin = temperature
                         }
-                        
+
+                        if(heartrate > 100)
+                        {
+                            warningHeartRateHigh.push({high: heartrate, date: date})
+                        }
+                        else if(heartrate < 60)
+                        {
+                            warningHeartRateLow.push({low: heartrate, date: date})
+
+                        }
+                        if(respiratoryRate > 16)
+                        {
+                            warningRespiratoryRateHigh.push({high: respiratoryRate, date: date})
+                        }
+                        else if(respiratoryRate < 13)
+                        {
+                            warningRespiratoryRateLow.push({low: respiratoryRate, date: date})
+
+                        }
+                        if(diastolic > 85)
+                        {
+                            warningDiastolicHigh.push({high: diastolic, date: date})
+                        }
+                        else if(heartrate < 75)
+                        {
+                            warningDiastolicLow.push({low: diastolic, date: date})
+
+                        }
+                        if(systolic > 125)
+                        {
+                            warningSystolicHigh.push({high: systolic, date: date})
+                        }
+                        else if(systolic < 115)
+                        {
+                            warningSystolicLow.push({low: systolic, date: date})
+
+                        }
+                        if(temperature >= 37.2)
+                        {
+                            warningTemperatureHigh.push({high: temperature, date: date})
+                        }
+                        else if(temperature < 36.1)
+                        {
+                            warningTemperatureLow.push({low: temperature, date: date})
+
+                        }
+
                         heartratetotal += heartrate
                         heartratevariabilitytotal += heartratevariability
                         respiratoryRatetotal += respiratoryRate
                         diastolictotal += diastolic
                         systolictotal += systolic
-                        temperaturetotal += temperature 
-        
+                        temperaturetotal += temperature
+
                     }
                     heartrateavg = heartratetotal / result.length
                     heartrateavg = Math.round(heartrateavg * 10) / 10
@@ -981,30 +1025,28 @@ app.post('/userDashboardSelect', function (req, response)
                     systolicavg = Math.round(systolicavg * 10) / 10
                     temperatureavg = temperaturetotal / result.length
                     temperatureavg = Math.round(temperatureavg * 10) / 10
+
                     let outp;
 
                     async function runCompletion () {
                         const completion = await openai.createCompletion({
                         model: "text-davinci-003",
-                        prompt: "Pretend you are doctor. Based on the following information, you will give medical advice to the patient. You will give recommended treatments as well. If heart rate is over 90 beats per minute, it is too high. If heart rate variability is over 50 milliseconds, it is too high. If respiratory rate is over 13 breaths per minute, it is too high. If diastolic pressure is below 60mmHg, it is too low. If systolic pressure is below 90mmHg, it is too low.\nPatient details:\nHeart rate is " + heartrateavg + " beats per minute.\nBody temperature is " + temperatureavg + " degrees celsius.\nHeart rate variability is  " + heartratevariabilityavg + " milliseconds.\nRespiratory rate is  " + heartratevariabilityavg + " breaths per minute.\nDiastolic pressure is  " + diastolicavg + "mmHg.\nSystolic pressure is  " + systolicavg + "mmHg.\nDoctor:",
+                        prompt: "Pretend you are doctor. Based on the following information, you will give medical advice to the patient. You will give recommended treatments as well. If heart rate is over 90 beats per minute, it is too high. If heart rate variability is over 50 milliseconds, it is too high. If respiratory rate is over 13 breaths per minute, it is too high. If diastolic pressure is below 60mmHg, it is too low. If systolic pressure is below 90mmHg, it is too low.\nPatient details:\nHeart rate is " + heartrateavg + " beats per minute.\nBody temperature is " + temperatureavg + " degrees celsius.\nHeart rate variability is  " + heartratevariabilityavg + " milliseconds.\nRespiratory rate is  " + respiratoryRateavg + " breaths per minute.\nDiastolic pressure is  " + diastolicavg + "mmHg.\nSystolic pressure is  " + systolicavg + "mmHg.\nDoctor:",
                         max_tokens: 1024,
                         temperature: 0,
                         });
                         
                         outp =  completion.data.choices[0].text;
                         
-                        
                     }
 
                     runCompletion().then(() => {
     
     
-                        averages = [{ heartratemin: heartratemin, outp: outp, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg, }]
-                       
-                        response.render("billboard.ejs", { data: data, averages: averages, date1: date1 })
+                        averages = [{ heartratemin: heartratemin, outp: outp, heartratevariabilitymin: heartratevariabilitymin,respiratoryRatemin: respiratoryRatemin,respiratoryRatemin: respiratoryRatemin,diastolicmin: diastolicmin,systolicmin: systolicmin, temperaturemin, temperaturemin, heartratemax: heartratemax, heartratevariabilitymax: heartratevariabilitymax, respiratoryRatemax: respiratoryRatemax, diastolicmax: diastolicmax, systolicmax: systolicmax, temperaturemax: temperaturemax, heartrateavg: heartrateavg, heartratevariabilityavg: heartratevariabilityavg, respiratoryRateavg: respiratoryRateavg, systolicavg: systolicavg, diastolicavg: diastolicavg, temperatureavg: temperatureavg}]
+                        response.render("billboard.ejs", { data: data, averages: averages, date1: date1, warningDiastolicHigh: warningDiastolicHigh, warningDiastolicLow: warningDiastolicLow ,warningRespiratoryRateHigh: warningRespiratoryRateHigh,warningRespiratoryRateLow:warningRespiratoryRateLow,warningHeartRateHigh: warningHeartRateHigh,warningHeartRateLow:warningHeartRateLow, warningSystolicHigh: warningSystolicHigh,warningSystolicLow: warningSystolicLow ,warningTemperatureHigh, warningTemperatureHigh, warningTemperatureLow: warningTemperatureLow })
                     })
-        
-                    
+     
                 }
                 
     
@@ -1022,13 +1064,6 @@ app.post('/userDashboardSelect', function (req, response)
 
         response.redirect("/userdashboard")
     }
-
-    
-
-        
-    
-	
-   
 
 })
 //video call
@@ -1217,12 +1252,17 @@ app.post('/chatbot', async (req, res) => {
             // Usage:
             async function main() {
                 try {
-                    let str = await doRequest(url);
-                    str = JSON.parse(str);
-                    str = JSON.stringify(str, null, 2)
-                    res.status(200).send({
-                        bot: response.data.choices[0].text + "\n" + str
-                    });
+			let str = await doRequest(url);
+			str = JSON.parse(str);
+			let timeslots = str.timeslots;
+			let formattedData = "";
+			for (let i = 0; i < timeslots.length; i++) {
+    				let slot = timeslots[i];
+    				formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
+			}
+			res.status(200).send({
+    				bot: response.data.choices[0].text + "\n" + formattedData
+			});
                 } catch (error) {
                     console.error(error); // `error` will be whatever you passed to `reject()` at the top
                 }
@@ -1297,14 +1337,19 @@ app.post('/chatbot', async (req, res) => {
                     // Usage:
                     async function main() {
                         try {
-                            let str = await doRequest(url);
-                            str = JSON.parse(str);
-                            str = JSON.stringify(str, null, 2)
-                            let invalid = "Invalid time slot. Please choose from the following available timeslots: \n"
-                            convo += invalid + "\n";
-                            res.status(200).send({
-                                bot: invalid + str
-                            });
+                            	let str = await doRequest(url);
+				str = JSON.parse(str);
+				let timeslots = str.timeslots;
+				let formattedData = "";
+				for (let i = 0; i < timeslots.length; i++) {
+    					let slot = timeslots[i];
+    					formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
+				}
+				let invalid = "Invalid time slot. Please choose from the following available timeslots: \n"
+				convo += invalid + "\n";
+				res.status(200).send({
+  					bot: invalid + formattedData
+				});
                         } catch (error) {
                             console.error(error); // `error` will be whatever you passed to `reject()` at the top
                         }

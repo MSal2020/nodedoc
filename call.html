@@ -39,10 +39,10 @@
                                 <nav class="navbar h-100 navbar-expand-lg" style="padding: 0; ">
                                     <!-- Logo Area  -->
                                     <p style="color: white;">Video Call</p>
-                                    <a class="navbar-brand" href="/userdashboard" style="margin-left: 10px;"><img src="img/core-img/logo.png" alt="Logo"></a>
+                                    <a class="navbar-brand" href="/userdashboard" style="margin-left: 10px;"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
     
                                     <span class="text-white mr-5" >
-                                        Unique Identifier: __2995627299__2336940343__<span id='randomNumber'></span>
+                                        Unique Identifier: <span id='randomNumber'></span>
                                     </span>
                     
                                     <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-video' title="Hide Video">
@@ -79,11 +79,11 @@
                                             <li class="nav-item">
                                                 <a class="nav-link" href="/userDashboardSelect">Dashboard</a>
                                             </li>
-                                            <li class="nav-item active">
-                                                <a class="nav-link" href="/bot">Chatbot<span class="sr-only">(current)</span></a>
+                                            <li class="nav-item ">
+                                                <a class="nav-link" href="/bot">Chatbot</a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="/call">Call</a>
+                                            <li class="nav-item active">
+                                                <a class="nav-link" href="/call"><span class="sr-only">(current)</span>Call</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="/userProfile">Profile</a>
@@ -145,7 +145,7 @@
                 </div>
 
                 <div class="col-12 col-md-4 offset-md-4 mb-3">
-                    <button id='create-room' class="btn btn-block rounded-0 btn-info">Create Room</button>
+                    <button id='create-room' class="btn btn-block rounded-0 btn-info">Create Consultation Room</button>
                 </div>
 
                 <div class="col-12 col-md-4 offset-md-4 mb-3" id='room-created'></div>
@@ -213,4 +213,3 @@
     <script src="js/plugins.js"></script>
     <!-- Active js -->
     <script src="js/active.js"></script>
-
