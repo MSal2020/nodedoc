@@ -1069,8 +1069,29 @@ app.post('/userDashboardSelect', function (req, response)
 //video call
 app.use( '/assets', express.static( path.join( __dirname, 'assets' ) ) );
 app.use( '/public', express.static( path.join( __dirname, 'public' ) ) );
-app.get( '/call', ( req, res ) => {
-    res.sendFile( __dirname + '/call.html' );
+app.get( '/call', ( req, res ) => 
+{
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
+    if (!req.session.loggedin) {
+	response.send('please login to view dashboard')
+        response.end()
+	}
+    else if(!(_.isEqual(ua, req.session.fingerprint))){
+        response.send('fingerprint change detected')
+        response.end()
+    }
+    else if(req.session.role == 'user')
+    {	
+	 res.sendFile( __dirname + '/calluser.html' );
+
+    }	
+     else if(req.session.role == 'doctor')
+    {	
+	 res.sendFile( __dirname + '/calldoctor.html' );
+
+    }
+
 } );
 
 
