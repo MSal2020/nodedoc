@@ -37,6 +37,7 @@
     "ua-parser-js": "^1.0.33"
   },
   "devDependencies": {
+    "eslint": "^8.34.0",
     "nodemon": "^2.0.20"
   },
   "description": ""
