@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 /**
  * @author Amir Sanni <amirsanni@gmail.com>
  * @date 6th January, 2020
