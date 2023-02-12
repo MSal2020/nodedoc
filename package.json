@@ -23,6 +23,7 @@
     "fetch": "^1.1.0",
     "googleapis": "^110.0.0",
     "hcaptcha": "^0.1.1",
+    "helmet": "^6.0.1",
     "jquery": "^3.6.3",
     "lodash": "^4.17.21",
     "memorystore": "^1.6.7",
@@ -37,7 +38,6 @@
     "ua-parser-js": "^1.0.33"
   },
   "devDependencies": {
-    "eslint": "^8.34.0",
     "nodemon": "^2.0.20"
   },
   "description": ""

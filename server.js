@@ -21,6 +21,7 @@ const { SecretClient } = require("@azure/keyvault-secrets");
 const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identity");
 const sleep = require('util').promisify(setTimeout)
 const cors = require('cors');
+const helmet = require('helmet')
 require('dotenv').config()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -43,6 +44,16 @@ async function KVRetrieve(secretName) {
     const secret = await client.getSecret(secretName);
     return secret.value
 }
+
+//HelmetJS
+app.use(helmet.hsts());
+app.use(
+    helmet.frameguard({
+      action: "deny",
+    })
+);
+app.use(helmet.noSniff());
+app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
 
 //CORS
 app.use(
@@ -1412,9 +1423,10 @@ app.post('/chatbot', async (req, res) => {
 
 
     }
+    //Snyk: Information Exposure, removed sending of error object to client
     } catch (error) {
         console.error(error)
-        res.status(500).send(error || 'Sorry, something went wrong. Please try again later.');
+        res.status(500).send('Sorry, something went wrong. Please try again later.');
     }
 })
 //end chatbot
