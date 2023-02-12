@@ -1,3 +1,4 @@
+/* eslint no-unused-vars: 0, no-undef: "off", no-useless-escape: "off", no-inner-declarations: 1, no-dupe-keys: 1, no-redeclare: 1*/
 (async function() {
 const fs = require('fs');
 const express = require('express')
@@ -610,7 +611,7 @@ app.post('/createUser', function(request, response){
                                                 request.session.firstName = firstName;
                                                 request.session.email = email;
                                                 request.session.age = age
-					                        	request.session.firstName = "user";
+                                                request.session.firstName = "user";
 
                                                 response.redirect('/userdashboard');	
                                                 response.end();
@@ -768,7 +769,7 @@ app.get('/userdashboard', async function (req, response)
 
 app.get('/userDashboardSelect', function (req, response) {
 
-	    var ua = parser(req.headers['user-agent']);
+        var ua = parser(req.headers['user-agent']);
             delete ua.device
             if (!req.session.loggedin) {
                 response.send('please login to view dashboard')
@@ -785,7 +786,7 @@ app.get('/userDashboardSelect', function (req, response) {
             else if(req.session.role == 'doctor')
             {
 		response.redirect("/userdashboard")
-	    }
+        }
 })
 	
 //After selecting date (only for user acc)
@@ -867,7 +868,7 @@ app.post('/userDashboardSelect', function (req, response)
     
             
  request.on("requestCompleted", function (rowCount, more) 
-	    {
+        {
                 if (result.length <= 0)
 		{
                     response.render("afterLogin.ejs")
@@ -1083,12 +1084,12 @@ app.get( '/call', ( req, res ) =>
     }
     else if(req.session.role == 'user')
     {	
-	 res.sendFile( __dirname + '/calluser.html' );
+	res.sendFile( __dirname + '/calluser.html' );
 
     }	
      else if(req.session.role == 'doctor')
     {	
-	 res.sendFile( __dirname + '/calldoctor.html' );
+	res.sendFile( __dirname + '/calldoctor.html' );
 
     }
 
@@ -1278,11 +1279,11 @@ app.post('/chatbot', async (req, res) => {
 			let timeslots = str.timeslots;
 			let formattedData = "";
 			for (let i = 0; i < timeslots.length; i++) {
-    				let slot = timeslots[i];
-    				formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
+                let slot = timeslots[i];
+                formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
 			}
 			res.status(200).send({
-    				bot: response.data.choices[0].text + "\n" + formattedData
+				bot: response.data.choices[0].text + "\n" + formattedData
 			});
                 } catch (error) {
                     console.error(error); // `error` will be whatever you passed to `reject()` at the top
@@ -1358,18 +1359,18 @@ app.post('/chatbot', async (req, res) => {
                     // Usage:
                     async function main() {
                         try {
-                            	let str = await doRequest(url);
+                            let str = await doRequest(url);
 				str = JSON.parse(str);
 				let timeslots = str.timeslots;
 				let formattedData = "";
 				for (let i = 0; i < timeslots.length; i++) {
-    					let slot = timeslots[i];
-    					formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
+                        let slot = timeslots[i];
+                        formattedData += `slot ${i + 1}: ${slot.startTime.substr(1, 8)} - ${slot.endTime.substr(1, 8)}\n`;
 				}
 				let invalid = "Invalid time slot. Please choose from the following available timeslots: \n"
 				convo += invalid + "\n";
 				res.status(200).send({
-  					bot: invalid + formattedData
+					bot: invalid + formattedData
 				});
                         } catch (error) {
                             console.error(error); // `error` will be whatever you passed to `reject()` at the top
@@ -1422,8 +1423,8 @@ app.post('/chatbot', async (req, res) => {
 app.get('/usersdashboard', function (req, response) 
 {
 	console.log(req.session.loggedin)
-    	var ua = parser(req.headers['user-agent']);
-        delete ua.device
+    var ua = parser(req.headers['user-agent']);
+    delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
         response.end()
@@ -1449,7 +1450,7 @@ app.get('/usersdashboard', function (req, response)
 })
 app.get('/doctorUserDetails', function (req, response) 
 {
-    	var ua = parser(req.headers['user-agent']);
+        var ua = parser(req.headers['user-agent']);
         delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
@@ -1476,7 +1477,7 @@ app.get('/doctorUserDetails', function (req, response)
 //user dashboard in doctors page
 app.post('/usersdashboard', function (req, response) 
 {
-    	var ua = parser(req.headers['user-agent']);
+        var ua = parser(req.headers['user-agent']);
         delete ua.device
     if (!req.session.loggedin) {
 		response.send('please login to view dashboard')
@@ -1602,7 +1603,7 @@ app.post('/usersdashboard', function (req, response)
                     var diastolic = (readings.BloodPressure).Diastolic
                     var systolic = (readings.BloodPressure).Systolic
                     var temperature = (5/9) * (readings.BodyTemperature - 32)
-		    temperature = Math.round(temperature * 10) / 10
+                    temperature = Math.round(temperature * 10) / 10
                     var reading = {heartrate: heartrate, heartratevariability: heartratevariability, respiratoryRate: respiratoryRate, diastolic: diastolic, systolic: systolic, temperature: temperature, date: date}
                     data.push(reading)
     
@@ -1717,8 +1718,6 @@ app.post('/doctorUserDetails', function (req, response)
     }
     else if(req.session.role == 'doctor')
     {
-
-	    
         var email = (req.body).email
         var deviceid = (req.body).deviceid
 
@@ -2227,7 +2226,7 @@ app.post('/editUserProfile', function (req, response) {
     }
     else if(req.session.role == 'doctor')
     {
-	    response.redirect('/usersdashboard')
+        response.redirect('/usersdashboard')
     }
     
 
@@ -2246,14 +2245,13 @@ app.post('/editDoctorProfile', function (req, response) {
     }
     else if(req.session.role == 'user')
     {
-      	response.redirect('/usersdashboard')
+        response.redirect('/usersdashboard')
     }
     else if(req.session.role == 'doctor')
     {
-	var field1 = req.body.field1
-    	var field2 = req.body.field2
-    	editDetails(field1, field2, req, response)
-	    
+        var field1 = req.body.field1
+        var field2 = req.body.field2
+        editDetails(field1, field2, req, response)
     }
 })
 	
