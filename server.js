@@ -22,6 +22,7 @@ const { DefaultAzureCredential, EnvironmentCredential } = require("@azure/identi
 const sleep = require('util').promisify(setTimeout)
 const cors = require('cors');
 const helmet = require('helmet')
+const {RateLimiterMemory} = require('rate-limiter-flexible');
 require('dotenv').config()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -90,6 +91,23 @@ app.use(session({
     },
     proxy:true
 }));
+
+//Rate Limiter (Deny over 20 requests every 3 seconds)
+const limiterFlexible = new RateLimiterMemory({
+    points: 20,
+    duration: 3,
+  });
+const rateLimiterMiddleware = (req, res, next) => {
+    limiterFlexible.consume(req.ip)
+    .then(() => {
+        next();
+    })
+    .catch(() => {
+        console.log('Rate Limit imposed on ' + req.ip)
+        res.status(429).send('Too Many Requests to the website! Try Again Later.');
+    });
+};
+app.use(rateLimiterMiddleware);
 
 
 //calendar
