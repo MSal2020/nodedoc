@@ -23,6 +23,7 @@ const sleep = require('util').promisify(setTimeout)
 const cors = require('cors');
 const helmet = require('helmet')
 const {RateLimiterMemory} = require('rate-limiter-flexible');
+var hpp = require('hpp');
 require('dotenv').config()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -220,6 +221,9 @@ var config = {
         database: 'testdb' 
     }
 };
+
+//Parameter Pollution Prevention
+app.use(hpp());
 
 //HCaptcha Secret
 const hcaptchaSecret = await KVRetrieve('hCaptchaAPI');
