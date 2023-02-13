@@ -704,9 +704,9 @@ app.get('/logout', async function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
-	console.log("dashboard:" + req.session)
     waitForSession(req.session.sessionCheck, 10000)
         .then((sessionCheck) => {
+	    console.log(req.session.loggedin)
             var ua = parser(req.headers['user-agent']);
             delete ua.device
             if (!req.session.loggedin) {
@@ -719,6 +719,7 @@ app.get('/userdashboard', async function (req, response)
             }
             else if(req.session.role == 'user'){
 
+		console.log("Sending home page")
                 response.sendFile(path.join(__dirname + '/home_user.html'));
             }
             else if(req.session.role == 'doctor')
