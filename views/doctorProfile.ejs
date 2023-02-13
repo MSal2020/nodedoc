@@ -5,7 +5,8 @@
 
   <link rel="stylesheet" href="style.css" />
 
-  <style>
+  <style>  
+  .navbar-brand{height: 75px; width: 80px;}
     table {
       width: 100%;
       table-layout: fixed;
@@ -68,7 +69,7 @@
     html,
     body
     {
-      height: 1500px;
+      height: 100%
     }
     /* demo styles */
 
@@ -204,6 +205,61 @@
       padding: 0;
       box-sizing: border-box;
     }
+    .topdiv{text-align:center;
+  padding-top: 50px;
+}
+.heartbeatimg
+{
+  width: 60; height: 60; vertical-align:middle
+}
+img
+{
+  width: 60; height: 60; vertical-align:middle
+}
+.header
+{
+  display: inline-block; vertical-align:middle; padding-left: 20px;
+}
+.passwordinput
+{
+  width: 200px; height: 30px;
+}
+.submitbutton
+{
+  margin-top: 25px;
+}
+.iconimg
+{
+  width: 50px; height: 50px; float: left;
+}
+.box1
+{
+  padding: 50px;margin:0 auto; width: 700px; height: 710px 
+}
+.box2
+{
+  padding-top: 10px; width: 600px;
+}
+.detailsleft
+{
+float: left;
+}
+.detailsright
+{
+float: right;
+}
+.passworddiv
+{
+  text-align: center; margin-top: 80px;
+}
+.passwordform
+{
+  display: none;
+}
+.formcenter
+{
+  text-align: center;
+}
   </style>
 </head>
 
@@ -220,7 +276,7 @@
                   <div class="main-menu h-100">
                       <nav class="navbar h-100 navbar-expand-lg">
                           <!-- Logo Area  -->
-                          <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
+                          <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" ></a>
 
                           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -249,33 +305,33 @@
       </div>
   </div>
 </header>
-<body style="text-align: center; height: 2200px;">
+<body>
 
-  <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;">
-    <h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">User Details</h1>
-  </div>
+  <div class="topdiv"><h1 class="header">Doctor Profile</h1> </div>
+
 
   <% if(success.success=="no" ) { %>
     <h3>Please enter password first before seeing Profile</h3>
 
-    <form class="ui large form" action="/doctorProfile" method="post">
+    <div class="formcenter">
+    <form class="ui large form" action="/userProfile" method="post">
       <div class="field">
         <div class="ui left icon input">
           <i class="lock icon"></i>
-          <input style="width: 200px; height: 30px;" type="password" name="password" placeholder="Password"
+          <input class="passwordinput" type="password" name="password" placeholder="Password"
             id="password" required>
         </div>
       </div>
-      <input style="margin-top: 25px;" class="ui fluid large teal submit button" type="submit" value="Submit">
+      <input class="submitbutton" class="ui fluid large teal submit button" type="submit" value="Submit">
       </div>
       <div class="ui error message"></div>
     </form>
 
-    
+  </div>
 
     <% } else if(success.success=="yes" ) { %>
-      <div style="padding: 50px;margin:0 auto; width: 700px; height: 710px ">
-        <div style="padding-top: 10px; width: 600px;">
+      <div class="box1">
+        <div class="box2">
           <% userdetails.forEach(function(user){%>
 
             
@@ -283,9 +339,9 @@
           
     
             <div class="profiledetails">
-              <img src="img/icons/firstname.png" style="width: 50px; height: 50px; float: left;">  
-              <p style="float:left;" >First Name</p>  
-              <p style="float:right;">
+              <img src="img/icons/firstname.png" class="iconimg">  
+              <p class="detailsleft" >First Name</p>  
+              <p class="detailsright" >
                 <%= user.firstname %>
               </p>
             </div>
@@ -293,9 +349,9 @@
             <br>
 
             <div class="profiledetails">
-              <img src="img/icons/deviceid.png" style="width: 50px; height: 50px; float: left;">  
-              <p style="float:left;" >Device Id</p>  
-              <p style="float:right;">
+              <img src="img/icons/deviceid.png" class="iconimg">  
+              <p class="detailsleft" >Device Id</p>  
+              <p class="detailsright" >
                 <%= user.deviceid %>
               </p>
             </div>
@@ -303,9 +359,9 @@
             <br>
 
             <div class="profiledetails">
-              <img src="img/icons/age.jpg" style="width: 50px; height: 50px; float: left;">  
-              <p style="float:left;" >Age</p>  
-              <p style="float:right;">
+              <img src="img/icons/age.jpg" class="iconimg">  
+              <p class="detailsleft" >Age</p>  
+              <p class="detailsright" >
                 <%= user.age %>
               </p>
             </div>
@@ -314,9 +370,9 @@
             <br>
 
             <div class="profiledetails">
-              <img src="img/icons/email.png" style="width: 50px; height: 50px; float: left;">  
-              <p style="float:left;" >Email</p>  
-              <p style="float:right;">
+              <img src="img/icons/email.png" class="iconimg">  
+              <p class="detailsleft" >Email</p>  
+              <p class="detailsright" >
                 <%= user.email %>
               </p>
             </div>
@@ -325,16 +381,16 @@
             <br>
 
             <div class="profiledetails">
-              <img src="img/icons/seed.png" style="width: 50px; height: 50px; float: left;">  
-              <p style="float:left;" >2FA Seed</p>  
-              <p style="float:right;">
+              <img src="img/icons/seed.png" class="iconimg">  
+              <p class="detailsleft" >2FA Seed</p>  
+              <p class="detailsright" >
                 <%= user.seed %>
               </p>
             </div>
            
            
-            <div style="text-align: center; margin-top: 80px;">
-              <form id="passwordForm" style="display: none;" action="/editUserProfile" method="post">
+            <div class="passworddiv">
+              <form id="passwordForm" class="passwordform" action="/editUserProfile" method="post">
                 <input pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,50}$"
                   title="Password Policy: Must contain at least 1 lowercase, 1 uppercase, 1 number and 1 symbol, between 8 to 50 characters"
                   type="password" name="field1" placeholder="Password" id="field1" required>
@@ -368,7 +424,7 @@
 </body>
 
 </html>
-
+</script>
 <!-- jQuery (Necessary for All JavaScript Plugins) -->
 <script src="js/jquery/jquery-2.2.4.min.js"></script>
 <!-- Popper js -->
