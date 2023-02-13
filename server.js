@@ -531,6 +531,7 @@ app.post('/auth', async function(request, response) {
                                         request.session.age = resultArray[3];
                                         request.session.firstName = resultArray[5];
                                         request.session.role = resultArray[6];
+					console.log(request.session)
                                         response.redirect('/userdashboard');
                                     }
                                     else{
@@ -704,6 +705,7 @@ app.get('/logout', async function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
+	console.log(req.session)
     waitForSession(req.session.sessionCheck, 10000)
         .then((sessionCheck) => {
 	    console.log(req.session.loggedin)
