@@ -241,7 +241,8 @@ body,
 html
 {
   text-align: center; 
-  height: 100%;
+  height: 2400px;
+  overflow-y: scroll;
 
 }
 
@@ -271,8 +272,11 @@ html
 }
 .summarydashboard1
 {
-  padding-left: 250px;margin:0 auto; width: 1000px; float: left;
-        
+  padding-left: 250px;margin:0 auto; width: 1000px; float: left;     
+}
+.summarydashboardprint
+{
+  margin:0 auto; width: 1000px; float: left;     
 }
 .summarydashboard2
 {
@@ -369,7 +373,7 @@ html
   width: 100%; table-layout: fixed;
 }
 .summarydashboard{
-  display: none;
+  display: block;
 }
   </style>
 </head>
@@ -457,14 +461,16 @@ html
         <br><br>
         <div id = "downloadButtons" class="downloadButtons">
           <br>
-        <button class="btn" onclick="generatePDF()"><i class="fa fa-download" ></i>Summary</button>
-        <button class="btn" onclick="generatePDF2()"><i class="fa fa-download" ></i>Graph</button>
-        <button class="btn" onclick="generatePDF3()"><i class="fa fa-download" ></i>Full Report</button>
+
+        <button class="btn" id="generatePDF4"><i class="fa fa-download" ></i>Summary</button>
+        <button class="btn" id="generatePDF1"><i class="fa fa-download" ></i>Report</button>
+        <button class="btn" id="generatePDF2"><i class="fa fa-download" ></i>Graph</button>
+        <button class="btn" id="generatePDF3"><i class="fa fa-download" ></i>Full Report</button>
 
       </div>
 
       <div id="summaryDashboard" class="summarydashboard">
-        <div class="summarydashboard1">
+        <div class="summarydashboard1" id="summarydashboard1" >
           <div class="summarydashboard2">        
             <h3>Recommendations</h3>
             <% averages.forEach(function(average){%>
@@ -478,6 +484,7 @@ html
           
       <h5 class = "readingsnumber">Total number of readings:  <%= data.length %> </h5>
 
+      <br><br>
           <% 
           if(warningHeartRateHigh.length > 0 || warningHeartRateLow.length> 0 )
           {
@@ -629,7 +636,7 @@ html
           <div>
             <% averages.forEach(function(average){%>
       
-          <div id ="heartDashboard" class="heartDashboardon">
+          <div id ="heartDashboard" class="heartDashboardclose">
             <div id="readingsSummary" class="readingsSummary" >
               <h3>Heart</h3>
               <h4>Heart Rate (Beats per minute)</h4>
@@ -1311,6 +1318,8 @@ html
       });
     }
 
+   
+
     const summaryToggle = document.getElementById('summaryToggle');
 
     summaryToggle.addEventListener('click', () => {
@@ -1460,8 +1469,6 @@ downloadButtons.style.display = 'block';
 // 👇️ this HIDES the form
 downloadButtons.style.display = 'none';
 
-
-
 }
 });
 
@@ -1473,9 +1480,133 @@ downloadButtons.style.display = 'none';
 
 
 
+  function generatePDF(){
+    var date = document.getElementById("date-container").getAttribute("data-date");
+    const element = document.getElementById("summaryreport");
+    var clonedElement = element.cloneNode(true);
+    $(clonedElement).css("display", "block");
+    var opt = {
+      margin:       1,
+      filename:     "Summary Report " + date,
+      image:        { type: 'jpeg', quality: 1 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf()
+    .set(opt)
+    .from(clonedElement)
+    .save();
+    clonedElement.remove();
 
+}
+
+function generatePDF2(){
+    var date = document.getElementById("date-container").getAttribute("data-date");
+    const element = document.getElementById("hide");
+    var clonedElement = element.cloneNode(true);
+    
+    // change display of cloned element 
+    $(clonedElement).css("display", "block");
+    var opt = {
+        margin:       1,
+        filename:     "Medical Graphs " + date,
+        image:        { type: 'jpeg', quality: 1 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { format: 'letter', orientation: 'portrait' }
+      };
+    html2pdf()
+    .set(opt)
+    .from(clonedElement)
+    .save();
+    clonedElement.remove();
+}
+
+function generatePDF3(){
+  var date = document.getElementById("date-container").getAttribute("data-date");
+  const element1 = document.getElementById("all");;
+  const element2 = document.getElementById("hide");
+  const element3 = document.getElementById("summaryreport");
+
+  var clonedElement = element2.cloneNode(true);
+  var clonedElement2 = element3.cloneNode(true);
+  // change display of cloned element 
+  $(clonedElement).css("display", "block");
+  var pdfContent = clonedElement2.innerHTML + clonedElement.innerHTML;
+  var opt = {
+      margin:       1,
+      filename:     "Medical Report " + date,
+      image:        { type: 'jpeg', quality: 1 },
+      html2canvas:  { scale: 2},
+      jsPDF:        { format: 'letter', orientation: 'portrait' }
+    };
+  html2pdf()
+  .set(opt)
+  .from(pdfContent)
+  .save();
+  clonedElement.remove();
+  clonedElement2.remove();
+  }
+
+  function generatePDF4(){
+  var date = document.getElementById("date-container").getAttribute("data-date");
+  const element1 = document.getElementById("summaryDashboard");
+  const element2 = document.getElementById("summarydashboard1");
+  var clonedElement = element1.cloneNode(true);
+  var clonedElement2 = element2.cloneNode(true);
+  clonedElement2.className="summarydashboardprint"
+  // change display of cloned element 
+  if(clonedElement.style.display = 'none')
+  {
+    $(clonedElement).css("display", "block");
+    $(clonedElement2).css("display", "block");
+
+  }
+ 
+
+  var opt = {
+      margin:       1,
+      filename:     "Medical Report " + date,
+      image:        { type: 'jpeg', quality: 1 },
+      html2canvas:  { dpi: 96, letterRendering: true },
+      jsPDF:        { format: 'letter', orientation: 'portrait' }
+    };
+  html2pdf()
+  .set(opt)
+  .from(clonedElement2)
+  .save();
+  clonedElement2.remove();
+  }
+  
+document.addEventListener("DOMContentLoaded", function () {
+         // do things after the DOM loads partially
+  var pdf1 = document.getElementById('generatePDF1')
+  
+  pdf1.addEventListener('click', () => {
+
+    console.log("hey")
+    generatePDF()
+  })
+  var pdf2 = document.getElementById('generatePDF2')
+  pdf2.addEventListener('click', () => {
+
+    generatePDF2()
+  })
+  var pdf3 = document.getElementById('generatePDF3')
+  pdf3.addEventListener('click', () => {
+
+    generatePDF3()
+  })
+
+  var pdf4 = document.getElementById('generatePDF4')
+  pdf4.addEventListener('click', () => {
+
+    generatePDF4()
+  })
+           });
 
 </script>
+
+
   <!-- jQuery (Necessary for All JavaScript Plugins) -->
   <script src="js/jquery/jquery-2.2.4.min.js"></script>
   <!-- Popper js -->
