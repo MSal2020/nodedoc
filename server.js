@@ -650,6 +650,7 @@ app.post('/createUser', function(request, response){
                                                 request.session.age = age
                                                 request.session.firstName = "user";
 						console.log("Logging in")
+						console.log(request.session)
                                                 response.redirect('/userdashboard');	
                                                 response.end();
                                             });
@@ -703,6 +704,7 @@ app.get('/logout', async function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
+	console.log("dashboard:" + req.session)
     waitForSession(req.session.sessionCheck, 10000)
         .then((sessionCheck) => {
             var ua = parser(req.headers['user-agent']);
