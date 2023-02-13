@@ -12,8 +12,9 @@
 
     <link rel="stylesheet" href="style.css" />
   
-  <style>
-    
+    <style> 
+      .navbar-brand{height: 75px; width: 80px;}
+
     .tbl-header {
       background-color: rgba(255, 255, 255, 0.3);
     }
@@ -74,19 +75,34 @@
     h4
     {
       margin-top: 25px;
-      font-size: 30px;
+      font-size: 22px;
       color: #00b5ad;
       text-align: center;
       font-weight: 500;
+
     }
+    h5{
+      color: #00b5ad;
+
+    }
+    .readingsnumber{float:left; margin-top: 20px;}
+    button
+{
+  appearance: none;
+    -webkit-appearance: none;
+    color: #95a5a6;
+    font-family: "Helvetica", arial, sans-serif;
+    font-size: 13px;
+    border:1px solid #ecf0f1;
+    border-radius: 15px;
+    background:#ecf0f1;
+    padding:5px;
+    display: inline-block !important;
+    visibility: visible !important;
+}
     /* demo styles */
 
     @import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
-
-    html,
-    body {
-      height: 100%;
-    }
 
     /* for custom scrollbar for webkit browser*/
 
@@ -151,99 +167,191 @@ input {
     display: inline-block !important;
     visibility: visible !important;
   }
-
-  .dropdown {
-            display: inline-block;
-            position: relative;
+        .box {
+  
+          height: 10px;
+          width: 10px;
+          margin-bottom: 15px;
+          border: 1px solid black;
+          clear: both;
+          margin: auto;
+          display: inline-block
         }
 
-        button {
-            border: none;
-            border-radius: 5px;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            background-color: #fff;
-
+        .red {
+          background-color: red;
         }
 
-        button:hover{
-            background-color: #ddd;
+        .green {
+          background-color: green;
         }
 
-        .dropdown-options {
-            display: none;
-            position: absolute;
-            overflow: auto;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.4);
+        .blue {
+          background-color: blue;
+        }
+        .otherblue{
+          background-color: #2596be
         }
 
-        .dropdown:hover .dropdown-options {
-            display: block;
-        }
-
-        .dropdown-options a {
-            display: block;
-            color: #000000;
-            padding: 5px;
-            text-decoration: none;
-            padding: 20px 40px;
-        }
-
-        .dropdown-options a:hover {
-            color: #0a0a23;
-            background-color: #ddd;
-            border-radius: 5px;
-        }
-        .topnav {
-            overflow: hidden;
-            background-color: #00b5ad;
-        }
-
-        .topnav a {
-            float: right;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 17px;
-        }
-
-        .topnav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        .topnav a.active {
-            background-color: #04AA6D;
-            color: white;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        button
-{
-  appearance: none;
-    -webkit-appearance: none;
-    color: #95a5a6;
-    font-family: "Helvetica", arial, sans-serif;
-    font-size: 13px;
-    border:1px solid #ecf0f1;
-    border-radius: 15px;
-    background:#ecf0f1;
-    padding:5px;
-    display: inline-block !important;
-    visibility: visible !important;
+        .btn {
+  width: 160px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  height: 55px;
+  text-align:center;
+  border: none;
+  background-size: 300% 100%;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
 }
+
+.btn:hover {
+  background-position: 100% 0;
+  moz-transition: all .4s ease-in-out;
+  -o-transition: all .4s ease-in-out;
+  -webkit-transition: all .4s ease-in-out;
+  transition: all .4s ease-in-out;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn {
+  background-image: linear-gradient(
+    to right,
+    #0ba360,
+    #3cba92,
+    #30dd8a,
+    #2bb673
+  );
+  box-shadow: 0 4px 15px 0 rgba(23, 168, 108, 0.75);
+}
+
+body,
+html
+{
+  text-align: center; 
+  height: 100%;
+
+}
+
+.warning
+{
+  font-size: 22px;
+  color: red;
+  float: left
+}
+
+.nowarning
+{
+  font-size: 22px;
+  float: left
+}
+.idealrange
+{
+  float: left;
+}
+.idealrangeheader
+{
+  float: left; margin-top: 450px;
+}
+.downloadButtons
+{
+  display: none;
+}
+.summarydashboard1
+{
+  padding-left: 250px;margin:0 auto; width: 1000px; float: left;
+        
+}
+.summarydashboard2
+{
+  text-align: center; width: 800px; padding-right: 100px;
+}
+.idealrangediv
+{
+  padding-left: 250px;margin:0 auto; width: 1000px; text-align: left;
+}
+.heartDashboard
+{
+  display: block;
+}
+.bloodpressureDashboard
+{
+  display: none;
+}
+.temperatureDashboard
+{
+  display: none;
+}
+.readingsTable
+{
+  display: none;
+}
+.readingsSummary
+{
+  padding: 50px;margin:0 auto; width: 700px;
+}
+.summaryreport
+{
+  display: none;
+}
+.readingslabeltop
+{
+  text-align:left; margin-top: 30px;
+}
+.readingslabelleft
+{
+  text-align:left;
+}
+.readingslabelright
+{
+  float:right
+}
+.chart
+{
+  height: 450px; overflow-x: scroll;
+}
+.topdiv{text-align:center;
+  padding-top: 50px;
+}
+.heartbeatimg
+{
+  width: 60; height: 60; vertical-align:middle
+}
+.header
+{
+  display: inline-block; vertical-align:middle; padding-left: 20px;
+}
+.dateform
+{
+  padding: 50px;
+}
+.graphheader
+{
+  padding-top: 150px; padding-bottom: 40px;
+}
+.readingstableheader
+{
+  margin-top: 100px;
+}
+.hide
+{
+  display: none;
+}
+.tablereading{
+  width: 100%; table-layout: fixed;
+}
+
   </style>
 </head>
 
-<body style="text-align: center; height: 2200px;">
+<body>
     <!-- ***** Header Area Start ***** -->
 <header class="header-area">
   <!-- Top Header Area -->
@@ -257,7 +365,7 @@ input {
                   <div class="main-menu h-100">
                       <nav class="navbar h-100 navbar-expand-lg">
                           <!-- Logo Area  -->
-                          <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
+                          <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" ></a>
 
                           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -288,10 +396,10 @@ input {
 </header>
 
 
-  <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">Data Dashboard of User</h1> </div>
+  <div class="topdiv"> <h1 class="header">Data Dashboard of User</h1> </div>
   <h3><%=userdetails.firstname %></h3>
 
-    <form action="/usersdashboard" style="padding: 50px;" method="post">
+    <form action="/usersdashboard" class="dateform" method="post">
       <label for="date">Select date to show data of user:</label>
       <input type="date" id="date" name="date">
       <input type="hidden" id="deviceid" name="deviceid" value=<%=userdetails.deviceid %> >
@@ -308,238 +416,238 @@ input {
     <br><br>
     
 
-      <div>
-        <% averages.forEach(function(average){%>
-  
-      <div id ="heartDashboard" style="display: none;">
-        <div id="readingsSummary" style="padding: 50px;margin:0 auto; width: 700px;" >
-          <h3>Heart</h3>
-          <h4>Heart Rate (Beats per minute)</h4>
-          Heart rate is the number of times your heart beats per minute
-          <p style="text-align:left; margin-top: 30px;">
-            Heart Rate Max:
-            <span style="float:right;">
-              <%= average.heartratemax %> BPM
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Heart Rate Min:
-            <span style="float:right;">
-              <%= average.heartratemin %> BPM
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Heart Rate Average:
-            <span style="float:right;">
-              <%= average.heartrateavg %> BPM
-            </span>
-          </p>
-  
-          <h4>Heart Rate Variability (miliseconds)</h4>
-          Heart rate variability is the difference in time between the beats of your heart, measured in milliseconds (ms).       
-          <p style="text-align:left; margin-top: 30px;">
-            Heart Rate Variability Max:
-            <span style="float:right;">
-              <%= average.heartratevariabilitymax %> ms
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Heart Rate Variability Min:
-            <span style="float:right;">
-              <%= average.heartratevariabilitymin %> ms
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Heart Rate Variability Average:
-            <span style="float:right;">
-              <%= average.heartratevariabilityavg %> ms
-            </span>
-          </p>
-  
-          <h3>Respiratory Rate (Breaths Per Minute)</h3>
-          Respiratory rate is the number of breaths you take per minute
-          <p style="text-align:left; margin-top: 30px;">
-            Respiratory Rate Max:
-            <span style="float:right;">
-              <%= average.respiratoryRatemax %> BPM
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Respiratory Rate Min:
-            <span style="float:right;">
-              <%= average.respiratoryRatemin %> BPM
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Respiratory Rate Average:
-            <span style="float:right;">
-              <%= average.respiratoryRateavg %> BPM
-            </span>
-          </p>
-         </div>
-          <div id="charting1" style="height: 450px; overflow-x: scroll;"></div>
-        </div>
+    <div>
+      <% averages.forEach(function(average){%>
 
-         
-  
-          <div id = "bloodpressureDashboard" style="display: none;">
-            <div id="readingsSummary" style="padding: 50px;margin:0 auto; width: 700px;" >
+    <div id ="heartDashboard" class="heartDashboard">
+      <div id="readingsSummary" class="readingsSummary" >
+        <h3>Heart</h3>
+        <h4>Heart Rate (Beats per minute)</h4>
+        Heart rate is the number of times your heart beats per minute
+        <p class="readingslabeltop">
+          Heart Rate Max:
+          <span class="readingslabelright">
+            <%= average.heartratemax %> BPM
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Heart Rate Min:
+          <span class="readingslabelright">
+            <%= average.heartratemin %> BPM
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Heart Rate Average:
+          <span class="readingslabelright">
+            <%= average.heartrateavg %> BPM
+          </span>
+        </p>
 
-          <h3>Blood Pressure</h3>
-          <h4>Diastolic (millimeters of mercury)</h4>
-          The pressure in your arteries when your heart beats.
-          <p style="text-align:left; margin-top: 30px;">
-            Diastolic Max:
-            <span style="float:right;">
-              <%= average.diastolicmax %> mmHg
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Diastolic Min:
-            <span style="float:right;">
-              <%= average.diastolicmin %> mmHg
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Diastolic Average:
-            <span style="float:right;">
-              <%= average.diastolicavg %> mmHg
-            </span>
-          </p>
-  
-          <h4>Systolic (millimeters of mercury)</h4>
-          The pressure in your arteries when your heart rests between beats.
-          <p style="text-align:left; margin-top: 30px;">
-            Systolic Max:
-            <span style="float:right;">
-              <%= average.systolicmax %> mmHg
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Systolic Min:
-            <span style="float:right;">
-              <%= average.systolicmin %> mmHg
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Systolic Average:
-            <span style="float:right;">
-              <%= average.systolicavg %> mmHg
-            </span>
-          </p>
-          </div>  
-          <div id="charting2" style="height: 450px; overflow-x: scroll;"></div>
+        <h4>Heart Rate Variability (miliseconds)</h4>
+        Heart rate variability is the difference in time between the beats of your heart, measured in milliseconds (ms).       
+        <p class="readingslabeltop">
+          Heart Rate Variability Max:
+          <span class="readingslabelright">
+            <%= average.heartratevariabilitymax %> ms
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Heart Rate Variability Min:
+          <span class="readingslabelright">
+            <%= average.heartratevariabilitymin %> ms
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Heart Rate Variability Average:
+          <span class="readingslabelright">
+            <%= average.heartratevariabilityavg %> ms
+          </span>
+        </p>
 
-          </div>  
-
-          <div id="temperatureDashboard" style="display: none;">
-
-            <div id="readingsSummary" style="padding: 50px;margin:0 auto; width: 700px;" >
-
-          <h3>Body Temperature</h3>
-          Your body temperature
-          <p style="text-align:left; margin-top: 30px;">
-            Temperature Max:
-            <span style="float:right;">
-              <%= average.temperaturemax %> °C
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Temperature Min:
-            <span style="float:right;">
-              <%= average.temperaturemin %> °C
-            </span>
-          </p>
-          <p style="text-align:left;">
-            Temperature Average:
-            <span style="float:right;">
-              <%= average.temperatureavg %> °C
-            </span>
-          </p>
-          </div>  
-          <div id="charting3" style="height: 450px; overflow-x: scroll;"></div>
-
-  </div>
-  
-  
-          <% }); %>
+        <h3>Respiratory Rate (Breaths Per Minute)</h3>
+        Respiratory rate is the number of breaths you take per minute
+        <p class="readingslabeltop">
+          Respiratory Rate Max:
+          <span class="readingslabelright">
+            <%= average.respiratoryRatemax %> BPM
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Respiratory Rate Min:
+          <span class="readingslabelright">
+            <%= average.respiratoryRatemin %> BPM
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Respiratory Rate Average:
+          <span class="readingslabelright">
+            <%= average.respiratoryRateavg %> BPM
+          </span>
+        </p>
+       </div>
+        <div id="charting1" class="chart"></div>
       </div>
 
+       
+
+        <div id = "bloodpressureDashboard" class="bloodpressureDashboard">
+          <div id="readingsSummary" class="readingsSummary">
+
+        <h3>Blood Pressure</h3>
+        <h4>Diastolic (millimeters of mercury)</h4>
+        The pressure in your arteries when your heart beats.
+        <p class="readingslabeltop">
+          Diastolic Max:
+          <span class="readingslabelright">
+            <%= average.diastolicmax %> mmHg
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Diastolic Min:
+          <span class="readingslabelright">
+            <%= average.diastolicmin %> mmHg
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Diastolic Average:
+          <span class="readingslabelright">
+            <%= average.diastolicavg %> mmHg
+          </span>
+        </p>
+
+        <h4>Systolic (millimeters of mercury)</h4>
+        The pressure in your arteries when your heart rests between beats.
+        <p class="readingslabeltop">
+          Systolic Max:
+          <span class="readingslabelright">
+            <%= average.systolicmax %> mmHg
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Systolic Min:
+          <span class="readingslabelright">
+            <%= average.systolicmin %> mmHg
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Systolic Average:
+          <span class="readingslabelright">
+            <%= average.systolicavg %> mmHg
+          </span>
+        </p>
+        </div>  
+        <div id="charting2" class="chart"></div>
+
+        </div>  
+
+        <div id="temperatureDashboard" class="temperatureDashboard">
+
+          <div id="readingsSummary" class="readingsSummary">
+
+        <h3>Body Temperature</h3>
+        Your body temperature
+        <p class="readingslabeltop">
+          Temperature Max:
+          <span class="readingslabelright">
+            <%= average.temperaturemax %> °C
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Temperature Min:
+          <span class="readingslabelright">
+            <%= average.temperaturemin %> °C
+          </span>
+        </p>
+        <p class="readingslabelleft">
+          Temperature Average:
+          <span class="readingslabelright">
+            <%= average.temperatureavg %> °C
+          </span>
+        </p>
+        </div>  
+        <div id="charting3" class="chart"></div>
+
+</div>
+
+
+        <% }); %>
+    </div>
+
   
 
-      <div id="readingsTable" style="display: none;">
-        <h1 style="margin-top: 100px;">All data readings</h1>
-      <div class="tbl-header">
-        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; table-layout: fixed;">
-          <thead>
+    <div id="readingsTable">
+      <h1 class="readingstableheader">All data readings</h1>
+    <div class="tbl-header">
+      <table cellpadding="0" cellspacing="0" border="0" class="tablereading">
+        <thead>
+          <tr>
+            <th>Reading No.</th>
+            <th>Heart rate (BPM)</th>
+            <th>Heart Rate Variability (ms)</th>
+            <th>Respiratory Rate (BPM)</th>
+            <th>Diastolic Blood Pressure (mmHg)</th>
+            <th>Systolic Blood Pressure (mmHg) </th>
+            <th>Body Temperature (°C)</th>
+  
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div class="tbl-content">
+      <table cellpadding="0" cellspacing="0" border="0" class="tablereading">
+        <tbody>
+          <% 
+          var number=0 
+          var heartrate=["HeartRate"] 
+          var heartratevariability=["HeartRateVariability"] 
+          var respiratoryRate=["RespiratoryRate"] 
+          var diastolic=["Diastolic"] 
+          var systolic=["Systolic"] 
+          var temperature=["Temperature"] 
+          var numberOfReadings=data.length 
+          data.forEach(function(reading)
+          {
+            heartrate.push(reading.heartrate) 
+            heartratevariability.push(reading.heartratevariability)
+            respiratoryRate.push(reading.respiratoryRate) 
+            diastolic.push(reading.diastolic)
+            systolic.push(reading.systolic) 
+            temperature.push(reading.temperature) 
+            number++ 
+            
+            %>
+  
+  
             <tr>
-              <th>Reading No.</th>
-              <th>Heart rate (BPM)</th>
-              <th>Heart Rate Variability (ms)</th>
-              <th>Respiratory Rate (BPM)</th>
-              <th>Diastolic Blood Pressure (mmHg)</th>
-              <th>Systolic Blood Pressure (mmHg) </th>
-              <th>Body Temperature (°C)</th>
-    
+              <td>
+                <%= number %>
+              </td>
+              <td>
+                <%= reading.heartrate %>
+              </td>
+              <td>
+                <%= reading.heartratevariability %>
+              </td>
+              <td>
+                <%= reading.respiratoryRate %>
+              </td>
+              <td>
+                <%= reading.diastolic %>
+              </td>
+              <td>
+                <%= reading.systolic %>
+              </td>
+              <td>
+                <%= reading.temperature %>
+              </td>
+  
             </tr>
-          </thead>
-        </table>
-      </div>
-      <div class="tbl-content">
-        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%; table-layout: fixed;">
-          <tbody>
-            <% 
-            var number=0 
-            var heartrate=["HeartRate"] 
-            var heartratevariability=["HeartRateVariability"] 
-            var respiratoryRate=["RespiratoryRate"] 
-            var diastolic=["Diastolic"] 
-            var systolic=["Systolic"] 
-            var temperature=["Temperature"] 
-            var numberOfReadings=data.length 
-            data.forEach(function(reading)
-            {
-              heartrate.push(reading.heartrate) 
-              heartratevariability.push(reading.heartratevariability)
-              respiratoryRate.push(reading.respiratoryRate) 
-              diastolic.push(reading.diastolic)
-              systolic.push(reading.systolic) 
-              temperature.push(reading.temperature) 
-              number++ 
-              
-              %>
-    
-    
-              <tr>
-                <td>
-                  <%= number %>
-                </td>
-                <td>
-                  <%= reading.heartrate %>
-                </td>
-                <td>
-                  <%= reading.heartratevariability %>
-                </td>
-                <td>
-                  <%= reading.respiratoryRate %>
-                </td>
-                <td>
-                  <%= reading.diastolic %>
-                </td>
-                <td>
-                  <%= reading.systolic %>
-                </td>
-                <td>
-                  <%= reading.temperature %>
-                </td>
-    
-              </tr>
-    
-              <% }); %>
-          </tbody>
-        </table>
-      </div>
-      </div>
+  
+            <% }); %>
+        </tbody>
+      </table>
+    </div>
+    </div>
   <div id="heartratediv" data-heartrate=<%=heartrate %>></div>
   <div id="heartratevariabilitydiv" data-heartratevariability=<%=heartratevariability %>></div>
   <div id="respiratoryRatediv" data-respiratoryrate=<%=respiratoryRate %>></div>
