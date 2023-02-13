@@ -1114,12 +1114,12 @@ app.get( '/call', ( req, res ) =>
     var ua = parser(req.headers['user-agent']);
     delete ua.device
     if (!req.session.loggedin) {
-	response.send('please login to view dashboard')
+	res.send('please login to view dashboard')
         response.end()
 	}
     else if(!(_.isEqual(ua, req.session.fingerprint))){
-        response.send('fingerprint change detected')
-        response.end()
+        res.send('fingerprint change detected')
+        res.end()
     }
     else if(req.session.role == 'user')
     {	
