@@ -648,7 +648,7 @@ app.post('/createUser', function(request, response){
                                                 request.session.firstName = firstName;
                                                 request.session.email = email;
                                                 request.session.age = age
-                                                request.session.firstName = "user";
+                                                request.session.role = "user";
 						console.log("Logging in")
 						console.log(request.session)
                                                 response.redirect('/userdashboard');	
