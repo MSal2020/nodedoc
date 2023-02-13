@@ -56,6 +56,7 @@ app.use(
 );
 app.use(helmet.noSniff());
 app.use(helmet.hidePoweredBy({ setTo: 'PHP 4.2.0' }));
+app.use(helmet.xssFilter());
 
 //CORS
 app.use(
@@ -464,8 +465,6 @@ app.post('/auth', async function(request, response) {
         let captchaToken = request['body']['h-captcha-response'];
         let tfaTokenInput = request['body']['2faOTP']
         
-    
-	console.log(csrf)
         if(!(regexTest(reEmail,email)) || !(regexTest(reEmail2,email))){
             response.send('Unrecognized Email Format')
         }
