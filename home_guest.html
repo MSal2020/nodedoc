@@ -19,8 +19,12 @@
     <!-- Style CSS -->
     <link rel="stylesheet" type="text/css" href="/style.css">
 
-    <style>
-        
+    <style> 
+     .navbar-brand{height: 75px; width: 80px;}
+     .background{background-image: url(/img/bg-img/background.jpg);}
+     .background1{background-image: url(/img/bg-img/background4.jpg)}
+     .content{padding-top: 10px; padding-right: 400px;}
+     .icons{width: 50px; height: 50px}
     </style>
 </head>
 
@@ -41,7 +45,7 @@
                         <div class="main-menu h-100">
                             <nav class="navbar h-100 navbar-expand-lg">
                                 <!-- Logo Area  -->
-                                <a class="navbar-brand" href="/"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width: 80px"></a>
+                                <a class="navbar-brand" href="/"><img src="img/core-img/logo.png" class="logoimg" alt="Logo" ></a>
 
                                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -74,7 +78,8 @@
     <!-- ***** Hero Area End ***** -->
 
 
-    <div style="background-image: url(/img/bg-img/background.jpg);">
+
+    <div class="background">
 
     <!-- ***** About Us Area Start ***** -->
     <section class="medica-about-us-area section-padding-100-20"  >
@@ -84,19 +89,19 @@
                         <h2>Why Remote Health Monitoring?</h2>
                     </div>
                 </div>
-                <div style="padding-top: 10px; padding-right: 400px;">
+                <div class="content">
                     <h4>Lack of resources</h4>
                     <p>Especially with Covid-19, the number of patients have risen, so healthcare resources are getting depleted. Remote monitoring 
                         helps to reduce the need of such resources in the hospital.
                     </p>
                 </div>
-                <div style="padding-top: 10px; padding-right: 400px;">
+                <div class="content">
                     <h4>Reduces workload</h4>
                     <p>Healthcare professionals are experiencing greater than ever workload and pressure due to the current circumstances. To help
                         reduce their load, remote monitoring ensures that patients are taken care of without the need of 24/7 care.
                     </p>
                 </div>
-                <div style="padding-top: 10px; padding-right: 400px;">
+                <div class="content">
                     <h4>Virtual Experience</h4>
                     <p>Things such as appointments and consultations need not be done physically. With the use of our online features, patients
                         can do such things virtually. Our dashboard and chatbot feature will also aid in the virtual experience as patients can easily
@@ -149,7 +154,7 @@
     </section>
     <!-- ***** Cool Facts Area End ***** -->
 </div>
-<div style="background-image: url(/img/bg-img/background4.jpg);">
+<div class="background1">
     <!-- ***** Gallery Area Start ***** -->
     <div class="medilife-gallery-area owl-carousel">
         <!-- Single Gallery Item -->
@@ -191,11 +196,11 @@
                 <div class="col-12 col-lg-6">
                     <div class="features-content">
                         <h2>A new Patient? Sign up now to view your dashboard and access our other services!</h2>
-                        <img src="img/icons/dashboard.jpg" style="width: 50px; height: 50px;"><p>Dashboard - Allows you to view your test results from a certain date</p>
-                        <img src="img/icons/chatbot.png" style="width: 50px; height: 50px;"><p>Chatbot - Gives you advice depending on the symptons that you have entered</p>
-                        <img src="img/icons/recommendations.png" style="width: 50px; height: 50px;"><p>Recommendations- Based on your test results, gives you recommendations</p>
-                        <img src="img/icons/call.jpg" style="width: 50px; height: 50px;"><p>Consultations Call - Allows your doctor to meet with you using a virtual conference call</p>
-                        <img src="img/icons/security.png" style="width: 50px; height: 50px;"><p>Security - Our website is secured, so be assured that your details are safe</p>
+                        <img src="img/icons/dashboard.jpg" class="icons"><p>Dashboard - Allows you to view your test results from a certain date</p>
+                        <img src="img/icons/chatbot.png" class="icons"><p>Chatbot - Gives you advice depending on the symptons that you have entered</p>
+                        <img src="img/icons/recommendations.png" class="icons"><p>Recommendations- Based on your test results, gives you recommendations</p>
+                        <img src="img/icons/call.jpg" class="icons"><p>Consultations Call - Allows your doctor to meet with you using a virtual conference call</p>
+                        <img src="img/icons/security.png" class="icons"><p>Security - Our website is secured, so be assured that your details are safe</p>
 
 
                         <a href="/signup" class="btn medilife-btn mt-50">Sign Up here! <span>+</span></a>
