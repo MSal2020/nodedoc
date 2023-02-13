@@ -56,14 +56,6 @@
                 document.getElementById('div-input').classList.add('error')
                 document.getElementById('continue-button').classList.replace('active','disabled')
             }
-            var checkotp = document.getElementById('checkTOTP')
-            checkotp.addEventListener('click', () => {
-              checkTOTP()
-            })
-            var show2FA= document.getElementById('show2FAModal')
-            show2FA.addEventListener('click', () => {
-              show2FAModal()
-            })
 
         }
     </script>
@@ -120,22 +112,6 @@
                           input::-webkit-inner-spin-button {
                               -webkit-appearance: none;
                           }
-        .store1
-        {
-          --width: 128%
-        }
-        .store2
-        {
-          display: inline-block; overflow: hidden; border-radius: 13px; width: 150px; height: 50px;
-        }
-        .store3
-        {
-          border-radius: 13px; width: 150px; height: 50px;
-        }
-        .store4
-        {
-          --width: 128%
-        }
     </style>
 </head>
 <body>
@@ -230,7 +206,7 @@
 
 
               <!-- 2fa -->
-              <button type='button' id ='show2FAModal' class="ui teal large fluid button">Continue</button>
+              <button type='button' onclick='show2FAModal()' class="ui teal large fluid button">Continue</button>
               <input type='hidden' name='2faSeed' class='2fa-hidden-Id' value=''>
               <div class="ui fullscreen modal">
                 <i class="close icon"></i>
@@ -278,16 +254,16 @@
                       <p>Scan this QR code with your prefered authenticator app to generate One-Time Passwords(OTPs) to login in the future.</p>
                       <p><b><span class="ui big text">Google Authenticator:</span></b></p>
                       <a class='storeLink' href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                          <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' class="store1"/>
+                          <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="--width: 128%"/>
                       </a>
-                      <a class='storeLink store2' href="https://apps.apple.com/us/app/google-authenticator/id388497605?itsct=apps_box_badge&amp;itscg=30200">
-                          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1284940800" alt="Download on the App Store" class="store3">
+                      <a class='storeLink' href="https://apps.apple.com/us/app/google-authenticator/id388497605?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 150px; height: 50px;">
+                          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1284940800" alt="Download on the App Store" style="border-radius: 13px; width: 150px; height: 50px;">
                       </a>
                       <br>
                       <br>
                       <p><b><span class="ui big text">Aegis Authenticator:</span></b></p>
                       <a class='storeLink' href='https://play.google.com/store/apps/details?id=com.beemdevelopment.aegis&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
-                          <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' class="store4"/>
+                          <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="--width: 128%"/>
                       </a>
                       <a class='storeLink-fdroid-badge' href="https://f-droid.org/packages/com.beemdevelopment.aegis/">
                           <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
@@ -303,7 +279,7 @@
                           
                           
                           <input type="number" id='otp-input' placeholder="Input OTP here...">
-                          <button id='checkTOTP' class="ui primary button">
+                          <button onclick='checkTOTP()' class="ui primary button">
                               Verify
                           </button>
                       </div>
