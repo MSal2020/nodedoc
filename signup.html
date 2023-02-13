@@ -103,7 +103,15 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        
+        .navbar-brand{height: 75px; width: 80px;}
+                          [type='number'] {
+                              -moz-appearance:textfield;
+                          }
+                          
+                          input::-webkit-outer-spin-button,
+                          input::-webkit-inner-spin-button {
+                              -webkit-appearance: none;
+                          }
     </style>
 </head>
 <body>
@@ -123,7 +131,7 @@
                   <div class="main-menu h-100">
                       <nav class="navbar h-100 navbar-expand-lg">
                           <!-- Logo Area  -->
-                          <a class="navbar-brand" href="/"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
+                          <a class="navbar-brand" href="/"><img src="img/core-img/logo.png" alt="Logo" ></a>
 
                           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -268,16 +276,8 @@
                       <h2>Verify Authentication: </h2>
                       <div id='div-input' class="ui input">
                           <br>
-                          <style>
-                          [type='number'] {
-                              -moz-appearance:textfield;
-                          }
                           
-                          input::-webkit-outer-spin-button,
-                          input::-webkit-inner-spin-button {
-                              -webkit-appearance: none;
-                          }
-                          </style>
+                          
                           <input type="number" id='otp-input' placeholder="Input OTP here...">
                           <button onclick='checkTOTP()' class="ui primary button">
                               Verify
