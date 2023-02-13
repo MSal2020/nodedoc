@@ -3,7 +3,8 @@
 <head>
   <link rel="stylesheet" href="style.css" />
 
-  <style>
+  <style>  
+  .navbar-brand{height: 75px; width: 80px;}
     
 
     table {
@@ -208,12 +209,45 @@ input {
         html,
         body
         {
+          text-align: center;
             height: 100%
         }
+        .topdiv{text-align:center;
+  padding-top: 50px;
+}
+.heartbeatimg
+{
+  width: 60; height: 60; vertical-align:middle
+}
+.header
+{
+  display: inline-block; vertical-align:middle; padding-left: 20px;
+}
+.dateform
+{
+  padding: 50px;
+}
+.detailsleft
+{
+  text-align:left; margin-top: 30px;
+}
+.detailsright
+{
+  float:right;
+  margin-top: 12px;
+}
+.box1
+{
+  padding: 50px;margin:0 auto; width: 700px; height: 550px 
+}
+.box2
+{
+  text-align: left; padding-top: 10px; width: 600px;
+}
   </style>
 </head>
 
-<body style="text-align: center; height: 2200px;">
+<body>
 
 
   
@@ -231,7 +265,7 @@ input {
                     <div class="main-menu h-100">
                         <nav class="navbar h-100 navbar-expand-lg">
                             <!-- Logo Area  -->
-                            <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
+                            <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" ></a>
 
                             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -261,48 +295,48 @@ input {
     </div>
 </header>
 
- <div style="padding-top: 50px;"> <img src="heartbeat.png" style="width: 60; height: 60; vertical-align:middle;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px;">User Details</h1> </div>
+<div class="topdiv"> <h1 class="header">User Details</h1> </div>
  
- <div style="padding: 50px;margin:0 auto; width: 700px; height: 550px ">
+ <div class="box1">
       
 
-    <div style="text-align: left; padding-top: 10px; width: 600px;">
+    <div class="box2">
       <% userdetails.forEach(function(user){%>
 
 
-        <p style="text-align:left; margin-top: 30px;">
+        <p class="detailsleft">
           First Name:
-          <span style="float:right;">
+          <p class="detailsright">
             <%= user.firstname %> 
           </span>
         </p>
 
-        <p style="text-align:left; margin-top: 30px;">
+        <p class="detailsleft">
             Device Id:
-            <span style="float:right;">
+            <p class="detailsright">
               <%= user.deviceid %> 
             </span>
           </p>
 
-          <p style="text-align:left; margin-top: 30px;">
+          <p class="detailsleft">
             Age:
-            <span style="float:right;">
+            <p class="detailsright">
               <%= user.age %> 
             </span>
           </p>
 
-          <p style="text-align:left; margin-top: 30px;">
+          <p class="detailsleft">
             Email:
-            <span style="float:right;">
+            <p class="detailsright">
               <%= user.email %> 
             </span>
           </p>
 
-          <p style="text-align:left; margin-top: 30px;">
+          <p class="detailsleft">
             Data Date range:
             <% dates.forEach(function(date){%>
 
-            <span style="float:right; margin-top: 20px;">
+            <span class="detailsright">
               <%= date.start %>  
               to 
               <br>
@@ -320,7 +354,7 @@ input {
  </div>
  <% userdetails.forEach(function(user){%>
 
-  <form action="/usersdashboard" style="padding: 50px;" method="post">
+  <form action="/usersdashboard" class="dateform" method="post">
     <label for="date">Select date to show data of user:</label>
     <input type="date" id="date" name="date">
     <input type="hidden" id="deviceid" name="deviceid" value=<%=user.deviceid %> >

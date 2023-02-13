@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.css" integrity="sha512-MCgTNsKwC2c/PSk77N5kuTXtsyD8tkpYMh7GnFfzTpOeNAKxuri9YuYswSiAkwPC3fBpIIMs9udL/hJIIapVHA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css" />
     <style type="text/css">
-        body {
-          background-color: #DADADA;
-        }
+        
         body > .grid {
           height: 100%;
         }
@@ -22,6 +20,15 @@
         .column {
           max-width: 450px;
         }
+        .navbar-brand{height: 75px; width: 80px;}
+                  [type='number'] {
+                      -moz-appearance:textfield;
+                  }
+                  
+                  input::-webkit-outer-spin-button,
+                  input::-webkit-inner-spin-button {
+                      -webkit-appearance: none;
+                  }
       </style>
       <script>
         const pageAccessedByReload = (
@@ -55,7 +62,7 @@
                   <div class="main-menu h-100">
                       <nav class="navbar h-100 navbar-expand-lg">
                           <!-- Logo Area  -->
-                          <a class="navbar-brand" href="/"><img src="img/core-img/logo.png" alt="Logo" style="height: 75px; width:80px  "></a>
+                          <a class="navbar-brand" href="/"><img src="img/core-img/logo.png" alt="Logo"></a>
 
                           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -110,16 +117,8 @@
               <div class="field">
                 <div class="ui left icon input">
                   <i class="lock icon"></i>
-                  <style>
-                  [type='number'] {
-                      -moz-appearance:textfield;
-                  }
+                   
                   
-                  input::-webkit-outer-spin-button,
-                  input::-webkit-inner-spin-button {
-                      -webkit-appearance: none;
-                  }
-                  </style>
                   <input pattern="^[0-9]{6,6}$" title="6 Digit Code" type="text" name="2faOTP" placeholder="6 Digit OTP Code" id="2faOTP" required>
                 </div>
               </div>
