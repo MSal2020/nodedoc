@@ -10,7 +10,8 @@
 
   <!-- Loading billboard.js scripts from the cdn -->
   <script src="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js"></script>
-  <style>
+  <style>  
+  .navbar-brand{height: 75px; width: 80px;}
     p 
     {
       margin-top: 10px;
@@ -115,6 +116,30 @@ input {
       text-align: center;
       font-weight: 500;
     }
+    .background
+    {
+      background-image: url(img/bg-img/breadcumb3.jpg); height:1280px; background-blend-mode: lighten;
+    }
+    body,html{text-align: center;}
+    .topdiv{text-align:center;
+  padding-top: 50px;
+}
+.heartbeatimg
+{
+  width: 60; height: 60; vertical-align:middle
+}
+.header
+{
+  display: inline-block; vertical-align:middle; padding-left: 20px;
+}
+.dateform
+{
+  padding: 50px;
+}
+.nodata
+{
+  margin-top: 50px;
+}
   </style>
 </head>
  
@@ -136,7 +161,7 @@ input {
                 <div class="main-menu h-100">
                     <nav class="navbar h-100 navbar-expand-lg">
                         <!-- Logo Area  -->
-                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" style = "height: 75px; width:80px"></a>
+                        <a class="navbar-brand" href="/userdashboard"><img src="img/core-img/logo.png" alt="Logo" ></a>
 
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#medilifeMenu" aria-controls="medilifeMenu" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
@@ -175,20 +200,20 @@ input {
 </div>
 </header>
 
-<div style="background-image: url(img/bg-img/breadcumb3.jpg); height:1280px; background-blend-mode: lighten;">
+<div class="background">
 
 
-<body style="text-align: center; height: 2200px;">
+<body>
 
- <div style="padding-top: 50px;"><h1 style="display: inline-block; vertical-align:middle; padding-left: 20px; " >Data Dashboard</h1> </div>
+  <div class="topdiv"> <img src="heartbeat.png" class="heartbeatimg"><h1 class="header">Data Dashboard</h1> </div>
 
-  <form action="/userDashboardSelect" style="padding: 50px;" method="post">
+  <form action="/userDashboardSelect" class="dateform" method="post">
     <label for="date">Select date to show data:</label>
     <input type="date" id="date" name="date">
     <input type="submit">
   </form>
 
-  <h1 style="margin-top: 50px;"> No Data To Be Shown For Selected Date Or Please Select a Date </h1>
+  <h1 class="nodata"> No Data To Be Shown For Selected Date Or Please Select a Date </h1>
 </div>
 </body>
 
