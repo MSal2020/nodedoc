@@ -639,6 +639,7 @@ app.post('/createUser', function(request, response){
 
                                             dbrequest2.on("requestCompleted", function (rowCount, more) {
                                                 connection2.close();
+						console.log("usercreated")
                                                 var ua = parser(request.headers['user-agent']);
                                                 delete ua.device
                                                 request.session.sessionCheck = true
@@ -648,7 +649,7 @@ app.post('/createUser', function(request, response){
                                                 request.session.email = email;
                                                 request.session.age = age
                                                 request.session.firstName = "user";
-
+						console.log("Logging in")
                                                 response.redirect('/userdashboard');	
                                                 response.end();
                                             });
