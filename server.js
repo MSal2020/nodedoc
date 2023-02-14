@@ -67,13 +67,10 @@ app.use(
     })
 );
 
-app.disable('x-powered-by');
 app.use(function (request,response,next){
 
-    response.header("X-Frame-Options", "DENY");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    response.header("X-Content-Type-Options", "nosniff");
-    response.header("Content-Security-Policy", "default-src 'self'; script-src 'report-sample' 'self' https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js https://d3js.org/d3.v6.min.js https://js.hcaptcha.com/1/api.js https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js 'sha256-bw05y0zyeSd5jRlbyqGLntl9WwV3/yWs2HUGbKIHEhs=' 'sha256-/VijZ2wN6Kjm26aVcKtRp3IPAUrCs8LNlHHRd5hBRes=' 'sha256-1YRVENZq/SKZ9JsV1byhdT4vBd4+/fB2Xuz7wxTHhME=' 'sha256-lEsliGGgrydK7dVovRSSd+WPDM+8lagKBoWEpJz/Cd8='  'sha256-Wl5F9VxPkJYeAbwU/N5SvqgaTjGCm+4qVF3r2axeA5I=' 'sha256-gShiWDzR7fwYubdtKJH7zpTKSxn/MnMuL/E/vVCGq5E=' 'sha256-vnNncvBZxM0PW4zE8ODt/zjYdDUbBm0IOgvzjygRYvc=' 'sha256-srNkjMdJWxxav/2NcIn61PAzeMEiv/cODfhqrb37c8U=';  style-src 'report-sample' 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://stackpath.bootstrapcdn.com https://use.fontawesome.com https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css 'sha256-ioYHo0ab7vp2Fwl0xb6TH3I7cpGP1zOQ+h6hNKE5Vok=' 'sha256-ncCubXbAnjGtVKt3rIYQS0f/qiZNlO44ayOP7Nh0CjY=' 'sha256-8Aq/4u095fOwU5jFCxfcRHEQyAZTA1bYK1Jg4Z4c0as=' 'sha256-1/p/WHg3OuE5Xk4qn/pE84dAjlfClPYNkAh2nC2zZ7c=' 'sha256-5RoeMppAz7zOD+dP81W3gDJucMfr9jGEuSijrn/BLlA=' 'sha256-KCWmVczoYJKZRHilo/0RlVMkpbaIwIt5RntvtxET+h4=' 'sha256-RzT6TL2rZ3eEL4w6JRWbjfrEKHyhByWPGY7quYXzQ8k=' 'sha256-A1Mq/soPBz/VnX6Krv+YwmToBATIgC8L3f4oRLrKpfs=' 'sha256-a3IkG7mlk1ZAraVqVeEtII4Yizqp/YJEmpmFOyryL7k=' 'sha256-m/iZjaAuaTiv+iJPCtiu8+J74OuDeVZxtFGCvf9bbU8=' 'sha256-pRozmfihq/ezoo5GRzCzFhml5uq1v+K5zUMa0kyK9AY=' 'sha256-a+6g99vfj7u6i3qk6e3a1OKTatauPaaM0ugTa4hRFV0=' 'sha256-zcW2/JShNGFR0XVYi2Kwi+JQjn5dSY8vu7kFhSDIx4Q=' 'sha256-6WJwev1QA6Ct/03EOR6lOuYCm0fd74++htvqmZpd/DQ='  'sha256-Gydt0iYx8tWsKsvzYjAP9QkQaA7uQdwk6s/tldb4VpA=' 'sha256-6Qq95ZfTsYE2VVIVRKbGyxCO2Sf8SUItTxi/UkOX9NU=' 'sha256-d0RcaebhpZjvi/Kp254cZyEjpU4D9efsVHJE+Ru9COA=' 'sha256-oj3Ktiorzo1c1M7bv8fEu3M4W2QMbltyCc2A/goSUes='    ; object-src 'none';base-uri 'self';connect-src 'self'; font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com https://use.fontawesome.com;frame-src 'self' https://newassets.hcaptcha.com;img-src 'self' https://fdroid.gitlab.io https://play.google.com https://tools.applemediaservices.com;manifest-src 'self';media-src 'self';report-uri https://63e911791110c9e871bfe10c.endpoint.csper.io/?v=2;worker-src 'none';")
+    //response.header("Content-Security-Policy", "default-src 'self'; script-src 'report-sample' 'self' https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.js https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.1/semantic.min.js https://d3js.org/d3.v6.min.js https://js.hcaptcha.com/1/api.js https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js 'sha256-bw05y0zyeSd5jRlbyqGLntl9WwV3/yWs2HUGbKIHEhs=' 'sha256-/VijZ2wN6Kjm26aVcKtRp3IPAUrCs8LNlHHRd5hBRes=' 'sha256-1YRVENZq/SKZ9JsV1byhdT4vBd4+/fB2Xuz7wxTHhME=' 'sha256-lEsliGGgrydK7dVovRSSd+WPDM+8lagKBoWEpJz/Cd8='  'sha256-Wl5F9VxPkJYeAbwU/N5SvqgaTjGCm+4qVF3r2axeA5I=' 'sha256-gShiWDzR7fwYubdtKJH7zpTKSxn/MnMuL/E/vVCGq5E=' 'sha256-vnNncvBZxM0PW4zE8ODt/zjYdDUbBm0IOgvzjygRYvc=' 'sha256-srNkjMdJWxxav/2NcIn61PAzeMEiv/cODfhqrb37c8U=';  style-src 'report-sample' 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://stackpath.bootstrapcdn.com https://use.fontawesome.com https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css 'sha256-ioYHo0ab7vp2Fwl0xb6TH3I7cpGP1zOQ+h6hNKE5Vok=' 'sha256-ncCubXbAnjGtVKt3rIYQS0f/qiZNlO44ayOP7Nh0CjY=' 'sha256-8Aq/4u095fOwU5jFCxfcRHEQyAZTA1bYK1Jg4Z4c0as=' 'sha256-1/p/WHg3OuE5Xk4qn/pE84dAjlfClPYNkAh2nC2zZ7c=' 'sha256-5RoeMppAz7zOD+dP81W3gDJucMfr9jGEuSijrn/BLlA=' 'sha256-KCWmVczoYJKZRHilo/0RlVMkpbaIwIt5RntvtxET+h4=' 'sha256-RzT6TL2rZ3eEL4w6JRWbjfrEKHyhByWPGY7quYXzQ8k=' 'sha256-A1Mq/soPBz/VnX6Krv+YwmToBATIgC8L3f4oRLrKpfs=' 'sha256-a3IkG7mlk1ZAraVqVeEtII4Yizqp/YJEmpmFOyryL7k=' 'sha256-m/iZjaAuaTiv+iJPCtiu8+J74OuDeVZxtFGCvf9bbU8=' 'sha256-pRozmfihq/ezoo5GRzCzFhml5uq1v+K5zUMa0kyK9AY=' 'sha256-a+6g99vfj7u6i3qk6e3a1OKTatauPaaM0ugTa4hRFV0=' 'sha256-zcW2/JShNGFR0XVYi2Kwi+JQjn5dSY8vu7kFhSDIx4Q=' 'sha256-6WJwev1QA6Ct/03EOR6lOuYCm0fd74++htvqmZpd/DQ='  'sha256-Gydt0iYx8tWsKsvzYjAP9QkQaA7uQdwk6s/tldb4VpA=' 'sha256-6Qq95ZfTsYE2VVIVRKbGyxCO2Sf8SUItTxi/UkOX9NU=' 'sha256-d0RcaebhpZjvi/Kp254cZyEjpU4D9efsVHJE+Ru9COA=' 'sha256-oj3Ktiorzo1c1M7bv8fEu3M4W2QMbltyCc2A/goSUes='    ; object-src 'none';base-uri 'self';connect-src 'self'; font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com https://use.fontawesome.com;frame-src 'self' https://newassets.hcaptcha.com;img-src 'self' https://fdroid.gitlab.io https://play.google.com https://tools.applemediaservices.com;manifest-src 'self';media-src 'self';report-uri https://63e911791110c9e871bfe10c.endpoint.csper.io/?v=2;worker-src 'none';")
     next();
 })
     
@@ -534,6 +531,7 @@ app.post('/auth', async function(request, response) {
                                         request.session.age = resultArray[3];
                                         request.session.firstName = resultArray[5];
                                         request.session.role = resultArray[6];
+					console.log(request.session)
                                         response.redirect('/userdashboard');
                                     }
                                     else{
@@ -642,6 +640,7 @@ app.post('/createUser', function(request, response){
 
                                             dbrequest2.on("requestCompleted", function (rowCount, more) {
                                                 connection2.close();
+						console.log("usercreated")
                                                 var ua = parser(request.headers['user-agent']);
                                                 delete ua.device
                                                 request.session.sessionCheck = true
@@ -650,8 +649,9 @@ app.post('/createUser', function(request, response){
                                                 request.session.firstName = firstName;
                                                 request.session.email = email;
                                                 request.session.age = age
-                                                request.session.firstName = "user";
-
+                                                request.session.role = "user";
+						console.log("Logging in")
+						console.log(request.session)
                                                 response.redirect('/userdashboard');	
                                                 response.end();
                                             });
@@ -705,8 +705,10 @@ app.get('/logout', async function (req, response)
 
 app.get('/userdashboard', async function (req, response) 
 {
+	console.log(req.session)
     waitForSession(req.session.sessionCheck, 10000)
         .then((sessionCheck) => {
+	    console.log(req.session.loggedin)
             var ua = parser(req.headers['user-agent']);
             delete ua.device
             if (!req.session.loggedin) {
@@ -719,6 +721,7 @@ app.get('/userdashboard', async function (req, response)
             }
             else if(req.session.role == 'user'){
 
+		console.log("Sending home page")
                 response.sendFile(path.join(__dirname + '/home_user.html'));
             }
             else if(req.session.role == 'doctor')
