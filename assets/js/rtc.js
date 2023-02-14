@@ -1,6 +1,6 @@
 /* eslint-disable no-inner-declarations */
 /**
- * @author Amir Sanni <amirsanni@gmail.com>
+ * @author Amir Sanni 
  * @date 6th January, 2020
  */
 import h from './helpers.js';
